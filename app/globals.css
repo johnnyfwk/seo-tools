@@ -4,7 +4,7 @@
     --light-grey: #e1e1e1;
     --red: #ff0000;
     --orange: #ff9900;
-    --green: #00cd18;
+    --green: #09ff00;
     --light-pink: #ffd3d3;
     --light-blue: #d0d0ff;
 
@@ -52,11 +52,15 @@ nav {
 }
 
 main {
-    background-color: var(--light-pink);
+    /* background-color: var(--light-pink); */
 }
 
 section {
     margin: 0 0 30px 0;
+}
+
+section:last-of-type {
+    margin: 0;
 }
 
 h1,
@@ -65,11 +69,24 @@ h3,
 h4,
 h5,
 h6 {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.3rem;
 }
 
-section:last-of-type {
-    margin: 0;
+ul {
+    list-style: disc;
+    padding-left: 2rem;
+}
+
+ol {
+    list-style: decimal;
+    padding-left: 2rem;
+}
+
+table,
+th,
+td {
+    border: 1px solid var(--black);
+    padding: 5px;
 }
 
 footer {
@@ -78,11 +95,4 @@ footer {
 
 table {
     border-collapse: collapse;
-}
-
-table,
-th,
-td {
-    border: 1px solid var(--black);
-    padding: 5px;
 }

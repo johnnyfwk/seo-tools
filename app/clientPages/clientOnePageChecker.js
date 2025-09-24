@@ -9,11 +9,21 @@ export default function ClientOnPageChecker() {
 
     const [metaTitles, setMetaTitles] = useState(null);
     const [h1s, setH1s] = useState(null);
+    const [h2s, setH2s] = useState(null);
+    const [h3s, setH3s] = useState(null);
+    const [h4s, setH4s] = useState(null);
+    const [h5s, setH5s] = useState(null);
+    const [h6s, setH6s] = useState(null);
 
     async function handleCheckPage() {
         setError(null);
         setMetaTitles(null);
         setH1s(null);
+        setH2s(null);
+        setH3s(null);
+        setH4s(null);
+        setH5s(null);
+        setH6s(null);
 
         let input = url.trim();
 
@@ -46,6 +56,11 @@ export default function ClientOnPageChecker() {
             } else {
                 setMetaTitles(data.metaTitles);
                 setH1s(data.h1s);
+                setH2s(data.h2s);
+                setH3s(data.h3s);
+                setH4s(data.h4s);
+                setH5s(data.h5s);
+                setH6s(data.h6s);
             }
 
             setIsCheckingPage(false);
@@ -88,15 +103,10 @@ export default function ClientOnPageChecker() {
 
                     <input
                         type="submit"
-                        value="Check Page"
+                        value={isCheckingPage ? "Fetching data..." : "Check Page"}
                         disabled={!url || isCheckingPage}
                     />
                 </form>
-
-                {isCheckingPage
-                    ? <p>Fetching page data...</p>
-                    : null
-                }
 
                 {error
                     ? <p className="error">{error}</p>
@@ -127,7 +137,7 @@ export default function ClientOnPageChecker() {
                                         return (
                                             <tr key={i}>
                                                 <td style={{ textAlign: 'left' }}>{metaTitle}</td>
-                                                <td style={{ textAlign: 'center' }} className={metaTitle.length <= 60 ? 'success' : 'error'}>{metaTitle.length}</td>
+                                                <td style={{ textAlign: 'center' }} className={metaTitle.length > 60 ? 'error' : null}>{metaTitle.length}</td>
                                             </tr>
                                         )
                                     })}
@@ -141,17 +151,83 @@ export default function ClientOnPageChecker() {
             {h1s === null
                 ? null
                 : <section>
-                    <h2>H1 Tag</h2>
+                    <h2>H1 Tags</h2>
                     {h1s.length === 0
                         ? <p className="error">No &lt;h1&gt; tag found.</p>
-                        : h1s.length === 1
-                            ? <p>{h1s[0]}</p>
-                            : <>
-                                <p className="warning">Multiple &lt;h1&gt; tags found.</p>
-                                <ul>
-                                    {h1s.map((h1, i) => <li key={i}>{h1}</li>)}
-                                </ul>
-                            </>
+                        : <>
+                            {h1s.length > 1
+                                ? <p className="warning">Multiple &lt;H1&gt; tags found.</p>
+                                : null
+                            }
+                            <ul>
+                                {h1s.map((h1, i) => <li key={i}>{h1}</li>)}
+                            </ul>
+                        </>
+                    }
+                </section>
+            }
+
+            {h2s === null
+                ? null
+                : <section>
+                    <h2>H2 Tags</h2>
+                    {h2s.length === 0
+                        ? <p>No &lt;H2&gt; tags found.</p>
+                        : <ul>
+                            {h2s.map((h2, i) => <li key={i}>{h2}</li>)}
+                        </ul>
+                    }
+                </section>
+            }
+
+            {h3s === null
+                ? null
+                : <section>
+                    <h2>H3 Tags</h2>
+                    {h3s.length === 0
+                        ? <p>No &lt;H3&gt; tags found.</p>
+                        : <ul>
+                            {h3s.map((h3, i) => <li key={i}>{h3}</li>)}
+                        </ul>
+                    }
+                </section>
+            }
+
+            {h4s === null
+                ? null
+                : <section>
+                    <h2>H4 Tags</h2>
+                    {h4s.length === 0
+                        ? <p>No &lt;H4&gt; tags found.</p>
+                        : <ul>
+                            {h4s.map((h4, i) => <li key={i}>{h4}</li>)}
+                        </ul>
+                    }
+                </section>
+            }
+
+            {h5s === null
+                ? null
+                : <section>
+                    <h2>H5 Tags</h2>
+                    {h5s.length === 0
+                        ? <p>No &lt;H5&gt; tags found.</p>
+                        : <ul>
+                            {h5s.map((h5, i) => <li key={i}>{h5}</li>)}
+                        </ul>
+                    }
+                </section>
+            }
+
+            {h6s === null
+                ? null
+                : <section>
+                    <h2>H6 Tags</h2>
+                    {h6s.length === 0
+                        ? <p>No &lt;H6&gt; tags found.</p>
+                        : <ul>
+                            {h6s.map((h6, i) => <li key={i}>{h6}</li>)}
+                        </ul>
                     }
                 </section>
             }
