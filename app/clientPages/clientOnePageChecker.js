@@ -7,12 +7,13 @@ export default function ClientOnPageChecker() {
     const [isCheckingPage, setIsCheckingPage] = useState(false);
     const [error, setError] = useState(null);
 
-    const [metaTitle, setMetaTitle] = useState(null);
-    
+    const [metaTitles, setMetaTitles] = useState(null);
+    const [h1s, setH1s] = useState(null);
 
     async function handleCheckPage() {
         setError(null);
-        setMetaTitle(null);
+        setMetaTitles(null);
+        setH1s(null);
 
         let input = url.trim();
 
@@ -24,9 +25,6 @@ export default function ClientOnPageChecker() {
         let validatedUrl;
         try {
             validatedUrl = new URL(input);
-            if (!validatedUrl.protocol.startsWith("http")) {
-                throw new Error("URL must start with http:// or https://");
-            }
         } catch (err) {
             setError("Please enter a valid URL (must start with http:// or https://).");
             return;
@@ -46,7 +44,8 @@ export default function ClientOnPageChecker() {
             if (data.error) {
                 setError(data.error);
             } else {
-                setMetaTitle(data.metaTitle);
+                setMetaTitles(data.metaTitles);
+                setH1s(data.h1s);
             }
 
             setIsCheckingPage(false);
@@ -80,7 +79,6 @@ export default function ClientOnPageChecker() {
                         value={url}
                         onChange={(e) => setUrl(e.target.value)}
                         placeholder="https://example.com"
-                        pattern="https://.*"
                         required
                         disabled={isCheckingPage}
                         style={{width: '100%'}}
@@ -94,38 +92,66 @@ export default function ClientOnPageChecker() {
                         disabled={!url || isCheckingPage}
                     />
                 </form>
+
+                {isCheckingPage
+                    ? <p>Fetching page data...</p>
+                    : null
+                }
+
+                {error
+                    ? <p className="error">{error}</p>
+                    : null
+                }
             </section>
 
-            {isCheckingPage
-                ? <p>Fetching page data...</p>
-                : null
-            }
-
-            {error
-                ? <p className="error">{error}</p>
-                : null
-            }
-
-            {metaTitle === null
+            {metaTitles === null
                 ? null
                 : <section>
                     <h2>Meta Title</h2>
-                    {metaTitle
-                        ? <table>
-                            <thead>
-                                <tr>
-                                    <th scope="col" style={{ textAlign: 'left' }}>Text</th>
-                                    <th scope="col" style={{ textAlign: 'center' }}>Length</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td style={{ textAlign: 'left' }}>{metaTitle}</td>
-                                    <td style={{ textAlign: 'center' }} className={metaTitle.length <= 60 ? 'success' : 'error'}>{metaTitle.length}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        : <p className="error">The page has no &lt;title&gt; tag or it is empty.</p>
+                    {metaTitles.length === 0
+                        ? <p className="error">No &lt;title&gt; tag found.</p>
+                        : <>
+                            {metaTitles.length > 1
+                                ? <p className="warning">Multiple &lt;title&gt; tags found.</p>
+                                : null
+                            }
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style={{ textAlign: 'left' }}>Text</th>
+                                        <th scope="col" style={{ textAlign: 'center' }}>Length</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {metaTitles.map((metaTitle, i) => {
+                                        return (
+                                            <tr key={i}>
+                                                <td style={{ textAlign: 'left' }}>{metaTitle}</td>
+                                                <td style={{ textAlign: 'center' }} className={metaTitle.length <= 60 ? 'success' : 'error'}>{metaTitle.length}</td>
+                                            </tr>
+                                        )
+                                    })}
+                                </tbody>
+                            </table>
+                        </>
+                    }
+                </section>
+            }
+
+            {h1s === null
+                ? null
+                : <section>
+                    <h2>H1 Tag</h2>
+                    {h1s.length === 0
+                        ? <p className="error">No &lt;h1&gt; tag found.</p>
+                        : h1s.length === 1
+                            ? <p>{h1s[0]}</p>
+                            : <>
+                                <p className="warning">Multiple &lt;h1&gt; tags found.</p>
+                                <ul>
+                                    {h1s.map((h1, i) => <li key={i}>{h1}</li>)}
+                                </ul>
+                            </>
                     }
                 </section>
             }

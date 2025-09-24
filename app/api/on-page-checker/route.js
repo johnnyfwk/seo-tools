@@ -20,11 +20,21 @@ export async function POST(req) {
         const html = await response.text(); // Get the HTML content of the page
         const $ = cheerio.load(html); // Load HTML into Cheerio for parsing
 
-        const metaTitle = $('title').text().trim();  // Extract the content of the <title> tag
+        // Extract the content of the <title> tag
+        const metaTitles = $('title')
+            .map((i, element) => $(element).text())
+            .get();
+
+        // Get all H1 tags as an array of strings
+        const h1s = $('h1')
+            .map((i, element) => $(element).text())
+            .get();
 
         return new Response(
-            JSON.stringify({ metaTitle }),
-            {
+            JSON.stringify({
+                metaTitles,
+                h1s
+            }), {
                 status: 200,
                 headers: { 'Content-Type': 'application/json' }
             }
