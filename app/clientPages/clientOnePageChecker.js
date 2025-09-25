@@ -1,5 +1,6 @@
 'use client';
 import { useState } from "react";
+import * as utils from '@/app/utils/utils';
 
 export default function ClientOnPageChecker() {
     const [url, setUrl] = useState("");
@@ -8,6 +9,7 @@ export default function ClientOnPageChecker() {
     const [error, setError] = useState(null);
 
     const [metaTitles, setMetaTitles] = useState(null);
+    const [metaDescription, setMetaDescription] = useState(null);
     const [h1s, setH1s] = useState(null);
     const [h2s, setH2s] = useState(null);
     const [h3s, setH3s] = useState(null);
@@ -18,6 +20,7 @@ export default function ClientOnPageChecker() {
     async function handleCheckPage() {
         setError(null);
         setMetaTitles(null);
+        setMetaDescription(null);
         setH1s(null);
         setH2s(null);
         setH3s(null);
@@ -55,6 +58,7 @@ export default function ClientOnPageChecker() {
                 setError(data.error);
             } else {
                 setMetaTitles(data.metaTitles);
+                setMetaDescription(data.metaDescription);
                 setH1s(data.h1s);
                 setH2s(data.h2s);
                 setH3s(data.h3s);
@@ -136,7 +140,7 @@ export default function ClientOnPageChecker() {
                                     {metaTitles.map((metaTitle, i) => {
                                         return (
                                             <tr key={i}>
-                                                <td style={{ textAlign: 'left' }}>{metaTitle}</td>
+                                                <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(metaTitle)}</td>
                                                 <td style={{ textAlign: 'center' }} className={metaTitle.length > 60 ? 'error' : null}>{metaTitle.length}</td>
                                             </tr>
                                         )
@@ -144,6 +148,30 @@ export default function ClientOnPageChecker() {
                                 </tbody>
                             </table>
                         </>
+                    }
+                </section>
+            }
+
+            {metaDescription === null
+                ? null
+                : <section>
+                    <h2>Meta Description</h2>
+                    {metaDescription
+                        ? <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style={{ textAlign: 'left' }}>Text</th>
+                                        <th scope="col" style={{ textAlign: 'center' }}>Length</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(metaDescription)}</td>
+                                        <td style={{ textAlign: 'center' }} className={metaDescription.length > 160 ? 'error' : null}>{metaDescription.length}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        : <p className="error">The meta description tag does not exist or is empty.</p>
                     }
                 </section>
             }
