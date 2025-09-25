@@ -1,5 +1,6 @@
 'use client';
 import { useState } from "react";
+import Link from "next/link";
 import * as utils from '@/app/utils/utils';
 
 export default function ClientOnPageChecker() {
@@ -8,6 +9,8 @@ export default function ClientOnPageChecker() {
     const [isCheckingPage, setIsCheckingPage] = useState(false);
     const [error, setError] = useState(null);
 
+    const [statusCode, setStatusCode] = useState(null);
+    const [finalUrl, setFinalUrl] = useState(null);
     const [metaTitles, setMetaTitles] = useState(null);
     const [metaDescription, setMetaDescription] = useState(null);
     const [h1s, setH1s] = useState(null);
@@ -19,6 +22,8 @@ export default function ClientOnPageChecker() {
 
     async function handleCheckPage() {
         setError(null);
+        setStatusCode(null);
+        setFinalUrl(null);
         setMetaTitles(null);
         setMetaDescription(null);
         setH1s(null);
@@ -53,10 +58,11 @@ export default function ClientOnPageChecker() {
             });
 
             const data = await res.json();
+            setStatusCode(data.statusCode);
 
             if (data.error) {
                 setError(data.error);
-            } else {
+            } else if (data.statusCode === 200) {
                 setMetaTitles(data.metaTitles);
                 setMetaDescription(data.metaDescription);
                 setH1s(data.h1s);
@@ -65,6 +71,8 @@ export default function ClientOnPageChecker() {
                 setH4s(data.h4s);
                 setH5s(data.h5s);
                 setH6s(data.h6s);
+            } else if (data.statusCode >= 300 && data.statusCode < 400) {
+                setFinalUrl(data.finalUrl);
             }
 
             setIsCheckingPage(false);
@@ -117,6 +125,22 @@ export default function ClientOnPageChecker() {
                     : null
                 }
             </section>
+
+            {statusCode === null || statusCode === undefined
+                ? null
+                : <section>
+                    <h2>Status Code</h2>
+                    <p>{statusCode}</p>
+                </section>
+            }
+
+            {finalUrl
+                ? <section>
+                    <h2>Redirect URL</h2>
+                    <Link href={finalUrl} target="_blank">{finalUrl}</Link>
+                </section>
+                : null
+            }
 
             {metaTitles === null
                 ? null
