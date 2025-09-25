@@ -24,6 +24,8 @@ export async function POST(req) {
             .map((i, element) => $(element).text())
             .get();
 
+        const metaDescription = $('meta[name="description"]').attr('content') || '';
+
         const h1s = $('h1')
             .map((i, element) => $(element).text())
             .get();
@@ -51,6 +53,7 @@ export async function POST(req) {
         return new Response(
             JSON.stringify({
                 metaTitles,
+                metaDescription,
                 h1s,
                 h2s,
                 h3s,
