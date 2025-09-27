@@ -4,7 +4,8 @@ import Link from "next/link";
 import * as utils from '@/app/utils/utils';
 
 export default function ClientOnPageChecker() {
-    const [url, setUrl] = useState("");
+    const [InputUrl, setInputUrl] = useState("");
+    const [analysedUrl, setAnalysedUrl] = useState("");
 
     const [isCheckingPage, setIsCheckingPage] = useState(false);
     const [error, setError] = useState(null);
@@ -35,7 +36,7 @@ export default function ClientOnPageChecker() {
         setH5s(null);
         setH6s(null);
 
-        let input = url.trim();
+        let input = InputUrl.trim();
 
         if (!input.startsWith("http://") && !input.startsWith("https://")) {
             input = "https://" + input;
@@ -51,6 +52,7 @@ export default function ClientOnPageChecker() {
         }
 
         setIsCheckingPage(true);
+        setAnalysedUrl(validatedUrl.href);
 
         try {
             const res = await fetch('/api/on-page-checker', {
@@ -108,8 +110,8 @@ export default function ClientOnPageChecker() {
                         type="url"
                         name="url"
                         id="url"
-                        value={url}
-                        onChange={(e) => setUrl(e.target.value)}
+                        value={InputUrl}
+                        onChange={(e) => setInputUrl(e.target.value)}
                         placeholder="https://example.com"
                         required
                         disabled={isCheckingPage}
@@ -121,7 +123,7 @@ export default function ClientOnPageChecker() {
                     <input
                         type="submit"
                         value={isCheckingPage ? "Fetching data..." : "Check Page"}
-                        disabled={!url || isCheckingPage}
+                        disabled={!InputUrl || isCheckingPage}
                     />
                 </form>
 
@@ -135,7 +137,7 @@ export default function ClientOnPageChecker() {
                 ? null
                 : <section>
                     <h2>URL</h2>
-                     <Link href={url} target="_blank">{url}</Link>
+                     <Link href={analysedUrl} target="_blank">{analysedUrl}</Link>
                 </section>
             }
 
