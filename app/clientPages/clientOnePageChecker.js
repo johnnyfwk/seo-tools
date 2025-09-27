@@ -11,6 +11,7 @@ export default function ClientOnPageChecker() {
 
     const [statusCode, setStatusCode] = useState(null);
     const [finalUrl, setFinalUrl] = useState(null);
+    const [canonicalUrl, setCanonicalUrl] = useState(null);
     const [metaTitles, setMetaTitles] = useState(null);
     const [metaDescription, setMetaDescription] = useState(null);
     const [h1s, setH1s] = useState(null);
@@ -24,6 +25,7 @@ export default function ClientOnPageChecker() {
         setError(null);
         setStatusCode(null);
         setFinalUrl(null);
+        setCanonicalUrl(null);
         setMetaTitles(null);
         setMetaDescription(null);
         setH1s(null);
@@ -58,11 +60,14 @@ export default function ClientOnPageChecker() {
             });
 
             const data = await res.json();
+            // console.log(data.canonicalUrl);
+
             setStatusCode(data.statusCode);
 
             if (data.error) {
                 setError(data.error);
             } else if (data.statusCode === 200) {
+                setCanonicalUrl(data.canonicalUrl);
                 setMetaTitles(data.metaTitles);
                 setMetaDescription(data.metaDescription);
                 setH1s(data.h1s);
@@ -129,9 +134,25 @@ export default function ClientOnPageChecker() {
             {statusCode === null || statusCode === undefined
                 ? null
                 : <section>
+                    <h2>URL</h2>
+                     <Link href={url} target="_blank">{url}</Link>
+                </section>
+            }
+
+            {statusCode === null || statusCode === undefined
+                ? null
+                : <section>
                     <h2>Status Code</h2>
                     <p>{statusCode}</p>
                 </section>
+            }
+
+            {canonicalUrl
+                ? <section>
+                    <h2>Canonical URL</h2>
+                    <Link href={canonicalUrl} target="_blank">{canonicalUrl}</Link>
+                </section>
+                : null
             }
 
             {finalUrl
