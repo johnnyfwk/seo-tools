@@ -91,13 +91,15 @@ import puppeteer from 'puppeteer';
 async function scrapeWithCheerio(html) {
     const $ = cheerio.load(html);
 
-    const canonicalUrl = $('link[rel="canonical"]').attr('href') || '';
+    const metaRobotsTag = $('meta[name="robots"]').attr('content') || "";
+
+    const canonicalUrl = $('link[rel="canonical"]').attr('href') || "";
 
     const metaTitles = $('title')
         .map((i, element) => $(element).text())
         .get();
 
-    const metaDescription = $('meta[name="description"]').attr('content') || '';
+    const metaDescription = $('meta[name="description"]').attr('content') || "";
 
     const h1s = $('h1').map((i, element) => $(element).text()).get();
     const h2s = $('h2').map((i, element) => $(element).text()).get();
@@ -107,6 +109,7 @@ async function scrapeWithCheerio(html) {
     const h6s = $('h6').map((i, element) => $(element).text()).get();
 
     return {
+        metaRobotsTag,
         canonicalUrl,
         metaTitles,
         metaDescription,

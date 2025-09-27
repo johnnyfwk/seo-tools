@@ -12,6 +12,7 @@ export default function ClientOnPageChecker() {
 
     const [statusCode, setStatusCode] = useState(null);
     const [finalUrl, setFinalUrl] = useState(null);
+    const [metaRobotsTag, setMetaRobotsTag] = useState(null);
     const [canonicalUrl, setCanonicalUrl] = useState(null);
     const [metaTitles, setMetaTitles] = useState(null);
     const [metaDescription, setMetaDescription] = useState(null);
@@ -26,6 +27,7 @@ export default function ClientOnPageChecker() {
         setError(null);
         setStatusCode(null);
         setFinalUrl(null);
+        setMetaRobotsTag(null);
         setCanonicalUrl(null);
         setMetaTitles(null);
         setMetaDescription(null);
@@ -69,6 +71,7 @@ export default function ClientOnPageChecker() {
             if (data.error) {
                 setError(data.error);
             } else if (data.statusCode === 200) {
+                setMetaRobotsTag(data.metaRobotsTag);
                 setCanonicalUrl(data.canonicalUrl);
                 setMetaTitles(data.metaTitles);
                 setMetaDescription(data.metaDescription);
@@ -93,8 +96,6 @@ export default function ClientOnPageChecker() {
         <>
             <section>
                 <h1>On-Page Checker</h1>
-
-                <p>This is the introductory paragraph for the On-Page Checker page.</p>
 
                 <form
                     onSubmit={(e) => {
@@ -147,6 +148,14 @@ export default function ClientOnPageChecker() {
                     <h2>Status Code</h2>
                     <p>{statusCode}</p>
                 </section>
+            }
+
+            {metaRobotsTag
+                ? <section>
+                    <h2>Meta Robots Tag</h2>
+                    <p>{metaRobotsTag}</p>
+                </section>
+                : null
             }
 
             {canonicalUrl
