@@ -51,6 +51,10 @@ nav {
     background-color: var(--light-blue);
 }
 
+main {
+    padding: 20px;
+}
+
 section {
     margin: 0 0 30px 0;
 }
