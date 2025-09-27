@@ -12,6 +12,7 @@ export async function POST(req) {
         });
 
         const statusCode = response.status;
+
         const finalUrl = response.headers.get("location") || response.url;
 
         // If it's a redirect (3xx), just return status + final URL
@@ -40,6 +41,8 @@ export async function POST(req) {
         const html = await response.text(); // Get the HTML content of the page
         const $ = cheerio.load(html); // Load HTML into Cheerio for parsing
 
+        const canonicalUrl = $('link[rel="canonical"]').attr('href') || '';
+
         const metaTitles = $('title')
             .map((i, element) => $(element).text())
             .get();
@@ -57,6 +60,7 @@ export async function POST(req) {
             JSON.stringify({
                 statusCode,
                 finalUrl,
+                canonicalUrl,
                 metaTitles,
                 metaDescription,
                 h1s,
