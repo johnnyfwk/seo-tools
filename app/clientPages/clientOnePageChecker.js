@@ -182,7 +182,7 @@ export default function ClientOnPageChecker() {
                         ? <p className="error">No &lt;title&gt; tag found.</p>
                         : <>
                             {metaTitles.length > 1
-                                ? <p className="warning">Multiple &lt;title&gt; tags found.</p>
+                                ? <p className="error">Multiple &lt;title&gt; tags found.</p>
                                 : null
                             }
                             <table>

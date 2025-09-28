@@ -12,7 +12,7 @@
     --primary-text-color: var(--black);
 
     --error: var(--red);
-    --warning: var(--warning);
+    --warning: var(--orange);
     --success: var(--green);
 }
 
@@ -80,6 +80,10 @@ ul {
 ol {
     list-style: decimal;
     padding-left: 2rem;
+}
+
+input[type='url'] {
+    padding: 10px;
 }
 
 table,
