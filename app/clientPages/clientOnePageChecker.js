@@ -224,6 +224,7 @@ export default function ClientOnPageChecker() {
                             <table>
                                 <thead>
                                     <tr>
+                                        <th scope="col" style={{ textAlign: 'center' }}>#</th>
                                         <th scope="col" style={{ textAlign: 'left' }}>Text</th>
                                         <th scope="col" style={{ textAlign: 'center' }}>Length</th>
                                     </tr>
@@ -232,6 +233,7 @@ export default function ClientOnPageChecker() {
                                     {metaTitles.map((metaTitle, i) => {
                                         return (
                                             <tr key={i}>
+                                                <td style={{ textAlign: 'center' }}>{i + 1}</td>
                                                 <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(metaTitle)}</td>
                                                 <td style={{ textAlign: 'center' }} className={metaTitle.length > 60 ? 'error' : null}>{metaTitle.length}</td>
                                             </tr>
@@ -271,7 +273,7 @@ export default function ClientOnPageChecker() {
             {h1s === null
                 ? null
                 : <section>
-                    <h2>H1 Tags</h2>
+                    <h2>H1 Tags ({h1s.length})</h2>
                     {h1s.length === 0
                         ? <p className="error">No &lt;h1&gt; tag found.</p>
                         : <>
@@ -279,9 +281,24 @@ export default function ClientOnPageChecker() {
                                 ? <p className="warning">Multiple &lt;H1&gt; tags found.</p>
                                 : null
                             }
-                            <ul>
-                                {h1s.map((h1, i) => <li key={i}>{h1}</li>)}
-                            </ul>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style={{ textAlign: 'center' }}>#</th>
+                                        <th scope="col" style={{ textAlign: 'left' }}>H1</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {h1s.map((h1, i) => {
+                                        return (
+                                            <tr key={i}>
+                                                <td style={{ textAlign: 'center' }}>{i + 1}</td>
+                                                <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(h1)}</td>
+                                            </tr>
+                                        )
+                                    })}
+                                </tbody>
+                            </table>
                         </>
                     }
                 </section>
@@ -290,12 +307,27 @@ export default function ClientOnPageChecker() {
             {h2s === null
                 ? null
                 : <section>
-                    <h2>H2 Tags</h2>
+                    <h2>H2 Tags ({h2s.length})</h2>
                     {h2s.length === 0
                         ? <p>No &lt;H2&gt; tags found.</p>
-                        : <ul>
-                            {h2s.map((h2, i) => <li key={i}>{h2}</li>)}
-                        </ul>
+                        : <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col" style={{ textAlign: 'center' }}>#</th>
+                                    <th scope="col" style={{ textAlign: 'left' }}>H2</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {h2s.map((h2, i) => {
+                                    return (
+                                        <tr key={i}>
+                                            <td style={{ textAlign: 'center' }}>{i + 1}</td>
+                                            <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(h2)}</td>
+                                        </tr>
+                                    )
+                                })}
+                            </tbody>
+                        </table>
                     }
                 </section>
             }
@@ -303,12 +335,27 @@ export default function ClientOnPageChecker() {
             {h3s === null
                 ? null
                 : <section>
-                    <h2>H3 Tags</h2>
+                    <h2>H3 Tags ({h3s.length})</h2>
                     {h3s.length === 0
                         ? <p>No &lt;H3&gt; tags found.</p>
-                        : <ul>
-                            {h3s.map((h3, i) => <li key={i}>{h3}</li>)}
-                        </ul>
+                        : <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col" style={{ textAlign: 'center' }}>#</th>
+                                    <th scope="col" style={{ textAlign: 'left' }}>H3</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {h3s.map((h3, i) => {
+                                    return (
+                                        <tr key={i}>
+                                            <td style={{ textAlign: 'center' }}>{i + 1}</td>
+                                            <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(h3)}</td>
+                                        </tr>
+                                    )
+                                })}
+                            </tbody>
+                        </table>
                     }
                 </section>
             }
@@ -316,12 +363,27 @@ export default function ClientOnPageChecker() {
             {h4s === null
                 ? null
                 : <section>
-                    <h2>H4 Tags</h2>
+                    <h2>H4 Tags ({h4s.length})</h2>
                     {h4s.length === 0
                         ? <p>No &lt;H4&gt; tags found.</p>
-                        : <ul>
-                            {h4s.map((h4, i) => <li key={i}>{h4}</li>)}
-                        </ul>
+                        : <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col" style={{ textAlign: 'center' }}>#</th>
+                                    <th scope="col" style={{ textAlign: 'left' }}>H4</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {h4s.map((h4, i) => {
+                                    return (
+                                        <tr key={i}>
+                                            <td style={{ textAlign: 'center' }}>{i + 1}</td>
+                                            <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(h4)}</td>
+                                        </tr>
+                                    )
+                                })}
+                            </tbody>
+                        </table>
                     }
                 </section>
             }
@@ -329,12 +391,27 @@ export default function ClientOnPageChecker() {
             {h5s === null
                 ? null
                 : <section>
-                    <h2>H5 Tags</h2>
+                    <h2>H5 Tags ({h5s.length})</h2>
                     {h5s.length === 0
                         ? <p>No &lt;H5&gt; tags found.</p>
-                        : <ul>
-                            {h5s.map((h5, i) => <li key={i}>{h5}</li>)}
-                        </ul>
+                        : <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col" style={{ textAlign: 'center' }}>#</th>
+                                    <th scope="col" style={{ textAlign: 'left' }}>H5</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {h5s.map((h5, i) => {
+                                    return (
+                                        <tr key={i}>
+                                            <td style={{ textAlign: 'center' }}>{i + 1}</td>
+                                            <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(h5)}</td>
+                                        </tr>
+                                    )
+                                })}
+                            </tbody>
+                        </table>
                     }
                 </section>
             }
@@ -342,12 +419,27 @@ export default function ClientOnPageChecker() {
             {h6s === null
                 ? null
                 : <section>
-                    <h2>H6 Tags</h2>
+                    <h2>H6 Tags ({h6s.length})</h2>
                     {h6s.length === 0
                         ? <p>No &lt;H6&gt; tags found.</p>
-                        : <ul>
-                            {h6s.map((h6, i) => <li key={i}>{h6}</li>)}
-                        </ul>
+                        : <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col" style={{ textAlign: 'center' }}>#</th>
+                                    <th scope="col" style={{ textAlign: 'left' }}>H6</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {h6s.map((h6, i) => {
+                                    return (
+                                        <tr key={i}>
+                                            <td style={{ textAlign: 'center' }}>{i + 1}</td>
+                                            <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(h6)}</td>
+                                        </tr>
+                                    )
+                                })}
+                            </tbody>
+                        </table>
                     }
                 </section>
             }
@@ -355,12 +447,13 @@ export default function ClientOnPageChecker() {
             {pageLinks === null
                 ? null
                 : <section>
-                    <h2>Page Links</h2>
+                    <h2>Page Links  ({pageLinks.length})</h2>
                     {pageLinks.length === 0
                         ? <p>No links found on this page.</p>
                         : <table>
                             <thead>
                                 <tr>
+                                    <th style={{ textAlign: 'center' }}>#</th>
                                     <th style={{ textAlign: 'left' }}>Anchor Text</th>
                                     <th style={{ textAlign: 'center' }}>Page Link Status Code</th>
                                     <th style={{ textAlign: 'left' }}>Page Link URL</th>
@@ -371,6 +464,7 @@ export default function ClientOnPageChecker() {
                             <tbody>
                                 {pageLinks.map((link, i) => (
                                     <tr key={i}>
+                                        <td style={{ textAlign: 'center' }}>{i + 1}</td>
                                         <td>{link.anchor || "(no text)"}</td>
                                         <td style={{ textAlign: 'center' }}>{link.statusCode}</td>
                                         <td>
@@ -401,7 +495,7 @@ export default function ClientOnPageChecker() {
             {images === null
                 ? null
                 : <section>
-                    <h2>Image Alt Text</h2>
+                    <h2>Imagest</h2>
                     <table>
                         <thead>
                             <tr>

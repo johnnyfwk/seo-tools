@@ -1,17 +1,27 @@
 export function highlightWhitespace(str) {
-    if (!str) return str;
+if (!str) return str;
 
-    let highlighted = str;
+    const leadingMatch = str.match(/^(\s+)/);
+    const trailingMatch = str.match(/(\s+)$/);
 
-    // Highlight leading spaces
-    highlighted = highlighted.replace(/^(\s+)/, match => 
-        <span style={{ background: "yellow" }}>{'␣'.repeat(match.length)}</span>
+    const leading = leadingMatch ? leadingMatch[0] : "";
+    const trailing = trailingMatch ? trailingMatch[0] : "";
+
+    const core = str.substring(leading.length, str.length - trailing.length);
+
+    return (
+        <>
+            {leading && (
+                <span style={{ background: "yellow" }}>
+                    {"␣".repeat(leading.length)}
+                </span>
+            )}
+            {core}
+            {trailing && (
+                <span style={{ background: "yellow" }}>
+                    {"␣".repeat(trailing.length)}
+                </span>
+            )}
+        </>
     );
-
-    // Highlight trailing spaces
-    highlighted = highlighted.replace(/(\s+)$/, match => 
-        <span style={{ background: "yellow" }}>{'␣'.repeat(match.length)}</span>
-    );
-
-    return highlighted;
 }
