@@ -12,6 +12,7 @@ export default function ClientOnPageChecker() {
 
     const [statusCode, setStatusCode] = useState(null);
     const [finalUrl, setFinalUrl] = useState(null);
+    const [redirectChain, setRedirectChain] = useState(null);
     const [metaRobotsTag, setMetaRobotsTag] = useState(null);
     const [canonicalUrl, setCanonicalUrl] = useState(null);
     const [metaTitles, setMetaTitles] = useState(null);
@@ -28,6 +29,7 @@ export default function ClientOnPageChecker() {
         setError(null);
         setStatusCode(null);
         setFinalUrl(null);
+        setRedirectChain(null);
         setMetaRobotsTag(null);
         setCanonicalUrl(null);
         setMetaTitles(null);
@@ -86,6 +88,7 @@ export default function ClientOnPageChecker() {
                 setPageLinks(data.pageLinks);
             } else if (data.statusCode >= 300 && data.statusCode < 400) {
                 setFinalUrl(data.finalUrl);
+                setRedirectChain(data.redirectChain);
             }
 
             setIsCheckingPage(false);
@@ -140,8 +143,8 @@ export default function ClientOnPageChecker() {
             {statusCode === null || statusCode === undefined
                 ? null
                 : <section>
-                    <h2>Analysed URL</h2>
-                     <Link href={analysedUrl} target="_blank">{analysedUrl}</Link>
+                    <h2>URL Entered</h2>
+                    <Link href={analysedUrl} target="_blank">{analysedUrl}</Link>
                 </section>
             }
 
@@ -171,8 +174,27 @@ export default function ClientOnPageChecker() {
 
             {finalUrl
                 ? <section>
-                    <h2>Redirect URL</h2>
-                    <Link href={finalUrl} target="_blank">{finalUrl}</Link>
+                    <h2>Redirect Chain</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style={{ textAlign: 'center' }}>#</th>
+                                <th style={{ textAlign: 'left' }}>URL</th>
+                                <th style={{ textAlign: 'center' }}>Status Code</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {redirectChain.map((redirect, i) => {
+                                return (
+                                    <tr key={i}>
+                                        <td>{i + 1}</td>
+                                        <td><Link href={redirect.url}>{redirect.url}</Link></td>
+                                        <td>{redirect.statusCode}</td>
+                                    </tr>
+                                )
+                            })}
+                        </tbody>
+                    </table>
                 </section>
                 : null
             }
@@ -335,30 +357,30 @@ export default function ClientOnPageChecker() {
                                     <th style={{ textAlign: 'left' }}>Redirect Chain</th>
                                 </tr>
                             </thead>
-                                <tbody>
-                                    {pageLinks.map((link, i) => (
-                                        <tr key={i}>
-                                            <td>{link.anchor || "(no text)"}</td>
-                                            <td style={{ textAlign: 'center' }}>{link.statusCode}</td>
-                                            <td>
-                                                <Link href={link.url} target="_blank">{link.url}</Link>
-                                            </td>
-                                            <td>
-                                                <Link href={link.finalUrl} target="_blank">{link.finalUrl}</Link>
-                                            </td>
-                                            <td>
-                                                {link.redirectChain && link.redirectChain.length > 1
-                                                    ? link.redirectChain.map((r, idx) => (
-                                                        <div key={idx}>
-                                                            <Link href={r.url} target="_blank">{r.url}</Link> ({r.statusCode})
-                                                            {idx < link.redirectChain.length - 1 ? " → " : ""}
-                                                        </div>
-                                                    ))
-                                                    : "—"
-                                                }
-                                            </td>
-                                        </tr>
-                                    ))}
+                            <tbody>
+                                {pageLinks.map((link, i) => (
+                                    <tr key={i}>
+                                        <td>{link.anchor || "(no text)"}</td>
+                                        <td style={{ textAlign: 'center' }}>{link.statusCode}</td>
+                                        <td>
+                                            <Link href={link.url} target="_blank">{link.url}</Link>
+                                        </td>
+                                        <td>
+                                            <Link href={link.finalUrl} target="_blank">{link.finalUrl}</Link>
+                                        </td>
+                                        <td>
+                                            {link.redirectChain && link.redirectChain.length > 1
+                                                ? link.redirectChain.map((r, idx) => (
+                                                    <div key={idx}>
+                                                        <Link href={r.url} target="_blank">{r.url}</Link> ({r.statusCode})
+                                                        {idx < link.redirectChain.length - 1 ? " → " : ""}
+                                                    </div>
+                                                ))
+                                                : "—"
+                                            }
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     }
