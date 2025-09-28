@@ -24,6 +24,7 @@ export default function ClientOnPageChecker() {
     const [h5s, setH5s] = useState(null);
     const [h6s, setH6s] = useState(null);
     const [pageLinks, setPageLinks] = useState(null);
+    const [images, setImages] = useState(null);
 
     async function handleCheckPage() {
         setError(null);
@@ -41,6 +42,7 @@ export default function ClientOnPageChecker() {
         setH5s(null);
         setH6s(null);
         setPageLinks(null);
+        setImages(null);
 
         let input = InputUrl.trim();
 
@@ -86,6 +88,7 @@ export default function ClientOnPageChecker() {
                 setH5s(data.h5s);
                 setH6s(data.h6s);
                 setPageLinks(data.pageLinks);
+                setImages(data.images);
             } else if (data.statusCode >= 300 && data.statusCode < 400) {
                 setFinalUrl(data.finalUrl);
                 setRedirectChain(data.redirectChain);
@@ -384,6 +387,41 @@ export default function ClientOnPageChecker() {
                             </tbody>
                         </table>
                     }
+                </section>
+            }
+
+            {images === null
+                ? null
+                : <section>
+                    <h2>Image Alt Text</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style={{ textAlign: 'center' }}>#</th>
+                                <th style={{ textAlign: 'left' }}>Image Preview</th>
+                                <th style={{ textAlign: 'left' }}>Alt Text</th>
+                                <th style={{ textAlign: 'left' }}>Source URL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {images.map((image, i) => {
+                                return (
+                                    <tr key={i}>
+                                        <td style={{ textAlign: 'center' }}>{i + 1}</td>
+                                        <td>
+                                            <img
+                                                src={image.src}
+                                                alt={image.alt}
+                                                style={{ height: "100px", width: "auto", maxWidth: "100px" }} 
+                                            />
+                                        </td>
+                                        <td>{image.alt || "Image Preview"}</td>
+                                        <td><Link href={image.src} target="_blank">{image.src}</Link></td>
+                                    </tr>
+                                )
+                            })}
+                        </tbody>
+                    </table>
                 </section>
             }
         </>
