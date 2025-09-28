@@ -10,7 +10,7 @@ export default function ClientOnPageChecker() {
     const [isCheckingPage, setIsCheckingPage] = useState(false);
     const [error, setError] = useState(null);
 
-    const [statusCode, setStatusCode] = useState(null);
+    const [enteredUrlStatusCode, setEnteredUrlStatusCode] = useState(null);
     const [finalUrl, setFinalUrl] = useState(null);
     const [redirectChain, setRedirectChain] = useState(null);
     const [metaRobotsTag, setMetaRobotsTag] = useState(null);
@@ -28,7 +28,7 @@ export default function ClientOnPageChecker() {
 
     async function handleCheckPage() {
         setError(null);
-        setStatusCode(null);
+        setEnteredUrlStatusCode(null);
         setFinalUrl(null);
         setRedirectChain(null);
         setMetaRobotsTag(null);
@@ -72,11 +72,11 @@ export default function ClientOnPageChecker() {
             const data = await res.json();
             console.log(data);
 
-            setStatusCode(data.statusCode);
+            setEnteredUrlStatusCode(data.enteredUrlStatusCode);
 
             if (data.error) {
                 setError(data.error);
-            } else if (data.statusCode === 200) {
+            } else if (data.enteredUrlStatusCode === 200) {
                 setMetaRobotsTag(data.metaRobotsTag);
                 setCanonicalUrl(data.canonicalUrl);
                 setMetaTitles(data.metaTitles);
@@ -89,7 +89,7 @@ export default function ClientOnPageChecker() {
                 setH6s(data.h6s);
                 setPageLinks(data.pageLinks);
                 setImages(data.images);
-            } else if (data.statusCode >= 300 && data.statusCode < 400) {
+            } else {
                 setFinalUrl(data.finalUrl);
                 setRedirectChain(data.redirectChain);
             }
@@ -143,7 +143,7 @@ export default function ClientOnPageChecker() {
                 }
             </section>
 
-            {statusCode === null || statusCode === undefined
+            {enteredUrlStatusCode === null || enteredUrlStatusCode === undefined
                 ? null
                 : <section>
                     <h2>URL Entered</h2>
@@ -151,11 +151,11 @@ export default function ClientOnPageChecker() {
                 </section>
             }
 
-            {statusCode === null || statusCode === undefined
+            {enteredUrlStatusCode === null || enteredUrlStatusCode === undefined
                 ? null
                 : <section>
                     <h2>Status Code</h2>
-                    <p>{statusCode}</p>
+                    <p>{enteredUrlStatusCode}</p>
                 </section>
             }
 
@@ -176,6 +176,14 @@ export default function ClientOnPageChecker() {
             }
 
             {finalUrl
+                ? <section>
+                    <h2>Final URL</h2>
+                    <p><Link href={finalUrl} target="_blank">{finalUrl}</Link></p>
+                </section>
+                : null
+            }
+
+            {redirectChain
                 ? <section>
                     <h2>Redirect Chain</h2>
                     <table>
