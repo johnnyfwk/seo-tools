@@ -82,7 +82,7 @@ export default function ClientLinkChecker() {
 
             <section>
                 {error
-                    ? <p style={{ color: 'red' }}>{error}</p>
+                    ? <p className="error-text">{error}</p>
                     : null
                 }
 
