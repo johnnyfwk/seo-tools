@@ -43,7 +43,7 @@ export async function POST(req) {
         }
 
         let html = await response.text();
-        let scraped = scrapeWithCheerio(html);
+        let scraped = await scrapeWithCheerio(html, finalUrl);
 
         return new Response(
             JSON.stringify({

@@ -22,6 +22,7 @@ export default function ClientOnPageChecker() {
     const [h4s, setH4s] = useState(null);
     const [h5s, setH5s] = useState(null);
     const [h6s, setH6s] = useState(null);
+    const [pageLinks, setPageLinks] = useState(null);
 
     async function handleCheckPage() {
         setError(null);
@@ -37,6 +38,7 @@ export default function ClientOnPageChecker() {
         setH4s(null);
         setH5s(null);
         setH6s(null);
+        setPageLinks(null);
 
         let input = InputUrl.trim();
 
@@ -64,7 +66,7 @@ export default function ClientOnPageChecker() {
             });
 
             const data = await res.json();
-            // console.log(data.canonicalUrl);
+            console.log(data);
 
             setStatusCode(data.statusCode);
 
@@ -81,6 +83,7 @@ export default function ClientOnPageChecker() {
                 setH4s(data.h4s);
                 setH5s(data.h5s);
                 setH6s(data.h6s);
+                setPageLinks(data.pageLinks);
             } else if (data.statusCode >= 300 && data.statusCode < 400) {
                 setFinalUrl(data.finalUrl);
             }
@@ -312,6 +315,52 @@ export default function ClientOnPageChecker() {
                         : <ul>
                             {h6s.map((h6, i) => <li key={i}>{h6}</li>)}
                         </ul>
+                    }
+                </section>
+            }
+
+            {pageLinks === null
+                ? null
+                : <section>
+                    <h2>Page Links</h2>
+                    {pageLinks.length === 0
+                        ? <p>No links found on this page.</p>
+                        : <table>
+                            <thead>
+                                <tr>
+                                    <th style={{ textAlign: 'left' }}>Anchor Text</th>
+                                    <th style={{ textAlign: 'center' }}>Page Link Status Code</th>
+                                    <th style={{ textAlign: 'left' }}>Page Link URL</th>
+                                    <th style={{ textAlign: 'left' }}>Final URL</th>
+                                    <th style={{ textAlign: 'left' }}>Redirect Chain</th>
+                                </tr>
+                            </thead>
+                                <tbody>
+                                    {pageLinks.map((link, i) => (
+                                        <tr key={i}>
+                                            <td>{link.anchor || "(no text)"}</td>
+                                            <td style={{ textAlign: 'center' }}>{link.statusCode}</td>
+                                            <td>
+                                                <Link href={link.url} target="_blank">{link.url}</Link>
+                                            </td>
+                                            <td>
+                                                <Link href={link.finalUrl} target="_blank">{link.finalUrl}</Link>
+                                            </td>
+                                            <td>
+                                                {link.redirectChain && link.redirectChain.length > 1
+                                                    ? link.redirectChain.map((r, idx) => (
+                                                        <div key={idx}>
+                                                            <Link href={r.url} target="_blank">{r.url}</Link> ({r.statusCode})
+                                                            {idx < link.redirectChain.length - 1 ? " → " : ""}
+                                                        </div>
+                                                    ))
+                                                    : "—"
+                                                }
+                                            </td>
+                                        </tr>
+                                    ))}
+                            </tbody>
+                        </table>
                     }
                 </section>
             }
