@@ -235,7 +235,7 @@ export default function ClientOnPageChecker() {
                                             <tr key={i}>
                                                 <td style={{ textAlign: 'center' }}>{i + 1}</td>
                                                 <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(metaTitle)}</td>
-                                                <td style={{ textAlign: 'center' }} className={metaTitle.length > 60 ? 'error-text' : null}>{metaTitle.length}</td>
+                                                <td style={{ textAlign: 'center' }} className={metaTitle.length > 60 ? 'error-background' : null}>{metaTitle.length}</td>
                                             </tr>
                                         )
                                     })}
@@ -271,7 +271,7 @@ export default function ClientOnPageChecker() {
                                             <tr key={i}>
                                                 <td style={{ textAlign: 'center' }}>{i + 1}</td>
                                                 <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(metaDescription)}</td>
-                                                <td style={{ textAlign: 'center' }} className={metaDescription.length > 160 ? 'error-text' : null}>{metaDescription.length}</td>
+                                                <td style={{ textAlign: 'center' }} className={metaDescription.length > 160 ? 'error-background' : null}>{metaDescription.length}</td>
                                             </tr>
                                         )
                                     })}
