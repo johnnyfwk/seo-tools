@@ -1,40 +1,5 @@
-import * as cheerio from 'cheerio';
 import puppeteer from 'puppeteer';
-
-
-async function scrapeWithCheerio(html) {
-    const $ = cheerio.load(html);
-
-    const metaRobotsTag = $('meta[name="robots"]').attr('content') || "";
-
-    const canonicalUrl = $('link[rel="canonical"]').attr('href') || "";
-
-    const metaTitles = $('title')
-        .map((i, element) => $(element).text())
-        .get();
-
-    const metaDescription = $('meta[name="description"]').attr('content') || "";
-
-    const h1s = $('h1').map((i, element) => $(element).text()).get();
-    const h2s = $('h2').map((i, element) => $(element).text()).get();
-    const h3s = $('h3').map((i, element) => $(element).text()).get();
-    const h4s = $('h4').map((i, element) => $(element).text()).get();
-    const h5s = $('h5').map((i, element) => $(element).text()).get();
-    const h6s = $('h6').map((i, element) => $(element).text()).get();
-
-    return {
-        metaRobotsTag,
-        canonicalUrl,
-        metaTitles,
-        metaDescription,
-        h1s,
-        h2s,
-        h3s,
-        h4s,
-        h5s,
-        h6s,
-    };
-}
+import { scrapeWithCheerio } from '@/app/lib/scrapers';
 
 export async function POST(req) {
     try {
@@ -73,7 +38,7 @@ export async function POST(req) {
         }
 
         let html = await response.text();
-        let scraped = await scrapeWithCheerio(html);
+        let scraped = scrapeWithCheerio(html);
 
         // --- Step 2: Check if data is missing ---
         const needsPuppeteer =
@@ -89,7 +54,7 @@ export async function POST(req) {
             html = await page.content();
             await browser.close();
 
-            scraped = await scrapeWithCheerio(html);
+            scraped = scrapeWithCheerio(html);
         }
 
         return new Response(

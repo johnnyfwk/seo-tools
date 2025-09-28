@@ -1,7 +1,7 @@
 'use client';
 import { useState } from "react";
 import Link from "next/link";
-import * as utils from '@/app/utils/utils';
+import * as utils from '@/app/lib/utils';
 
 export default function ClientOnPageChecker() {
     const [InputUrl, setInputUrl] = useState("");
@@ -152,7 +152,7 @@ export default function ClientOnPageChecker() {
 
             {metaRobotsTag
                 ? <section>
-                    <h2>Meta Robots Tag</h2>
+                    <h2>Meta Robots</h2>
                     <p>{metaRobotsTag}</p>
                 </section>
                 : null
