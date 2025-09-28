@@ -540,7 +540,7 @@ export default function ClientOnPageChecker() {
                                                 style={{ height: "100px", width: "auto", maxWidth: "100px" }} 
                                             />
                                         </td>
-                                        <td>{image.alt || "Image Preview"}</td>
+                                        <td>{image.alt}</td>
                                         <td><Link href={image.src} target="_blank">{image.src}</Link></td>
                                     </tr>
                                 )
