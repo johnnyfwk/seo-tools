@@ -15,6 +15,10 @@ export default function Home() {
             <h2>
                 <Link href="/on-page-checker">On-Page Checker</Link>
             </h2>
+
+            <h2>
+                <Link href="/link-checker">Backlink & Internal Checker</Link>
+            </h2>
         </div>
     );
 }

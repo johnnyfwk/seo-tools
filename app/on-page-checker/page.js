@@ -1,7 +1,7 @@
-import ClientOnPageChecker from "../clientPages/clientOnePageChecker";
+import ClientOnPageChecker from "../clientPages/clientOnPageChecker";
 
 export const metadata = {
-    title: "This is the meta title for the On-Page Checker page | SEO Tools",
+    title: "On-Page Checker | SEO Tools",
     description: "This is the meta description for the On-Page Checker page.",
 }
 
