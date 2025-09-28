@@ -138,7 +138,7 @@ export default function ClientOnPageChecker() {
                 </form>
 
                 {error
-                    ? <p className="error">{error}</p>
+                    ? <p className="error-text">{error}</p>
                     : null
                 }
             </section>
@@ -215,10 +215,10 @@ export default function ClientOnPageChecker() {
                 : <section>
                     <h2>Meta Title</h2>
                     {metaTitles.length === 0
-                        ? <p className="error">No &lt;title&gt; tag found.</p>
+                        ? <p className="error-text">No &lt;title&gt; tag found.</p>
                         : <>
                             {metaTitles.length > 1
-                                ? <p className="error">Multiple &lt;title&gt; tags found.</p>
+                                ? <p className="error-text">Multiple &lt;title&gt; tags found.</p>
                                 : null
                             }
                             <table>
@@ -235,7 +235,7 @@ export default function ClientOnPageChecker() {
                                             <tr key={i}>
                                                 <td style={{ textAlign: 'center' }}>{i + 1}</td>
                                                 <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(metaTitle)}</td>
-                                                <td style={{ textAlign: 'center' }} className={metaTitle.length > 60 ? 'error' : null}>{metaTitle.length}</td>
+                                                <td style={{ textAlign: 'center' }} className={metaTitle.length > 60 ? 'error-text' : null}>{metaTitle.length}</td>
                                             </tr>
                                         )
                                     })}
@@ -251,10 +251,10 @@ export default function ClientOnPageChecker() {
                 : <section>
                     <h2>Meta Description</h2>
                     {metaDescriptions.length === 0
-                        ? <p className="error">No meta descriptions found.</p>
+                        ? <p className="error-text">No meta descriptions found.</p>
                         : <>
                             {metaDescriptions.length > 1
-                                ? <p className="warning">Multiple meta descriptions found.</p>
+                                ? <p className="warning-text">Multiple meta descriptions found.</p>
                                 : null
                             }
                             <table>
@@ -271,7 +271,7 @@ export default function ClientOnPageChecker() {
                                             <tr key={i}>
                                                 <td style={{ textAlign: 'center' }}>{i + 1}</td>
                                                 <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(metaDescription)}</td>
-                                                <td style={{ textAlign: 'center' }} className={metaDescription.length > 160 ? 'error' : null}>{metaDescription.length}</td>
+                                                <td style={{ textAlign: 'center' }} className={metaDescription.length > 160 ? 'error-text' : null}>{metaDescription.length}</td>
                                             </tr>
                                         )
                                     })}
@@ -287,10 +287,10 @@ export default function ClientOnPageChecker() {
                 : <section>
                     <h2>H1 Tags ({h1s.length})</h2>
                     {h1s.length === 0
-                        ? <p className="error">No &lt;h1&gt; tag found.</p>
+                        ? <p className="error-text">No &lt;h1&gt; tag found.</p>
                         : <>
                             {h1s.length > 1
-                                ? <p className="warning">Multiple &lt;H1&gt; tags found.</p>
+                                ? <p className="warning-text">Multiple &lt;H1&gt; tags found.</p>
                                 : null
                             }
                             <table>
@@ -467,8 +467,8 @@ export default function ClientOnPageChecker() {
                                 <tr>
                                     <th style={{ textAlign: 'center' }}>#</th>
                                     <th style={{ textAlign: 'left' }}>Anchor Text</th>
-                                    <th style={{ textAlign: 'center' }}>Page Link Status Code</th>
-                                    <th style={{ textAlign: 'left' }}>Page Link URL</th>
+                                    <th style={{ textAlign: 'center' }}>Status Code</th>
+                                    <th style={{ textAlign: 'left' }}>Link URL</th>
                                     <th style={{ textAlign: 'left' }}>Final URL</th>
                                     <th style={{ textAlign: 'left' }}>Redirect Chain</th>
                                 </tr>
@@ -478,7 +478,16 @@ export default function ClientOnPageChecker() {
                                     <tr key={i}>
                                         <td style={{ textAlign: 'center' }}>{i + 1}</td>
                                         <td>{link.anchor || "(no text)"}</td>
-                                        <td style={{ textAlign: 'center' }}>{link.statusCode}</td>
+                                        <td
+                                            className={
+                                                link.statusCode >= 300 && link.statusCode < 400
+                                                ? 'warning-background'
+                                                : link.statusCode >= 400
+                                                    ? 'error-background'
+                                                    : ''
+                                            }
+                                            style={{ textAlign: 'center' }}
+                                        >{link.statusCode}</td>
                                         <td>
                                             <Link href={link.url} target="_blank">{link.url}</Link>
                                         </td>
@@ -486,15 +495,17 @@ export default function ClientOnPageChecker() {
                                             <Link href={link.finalUrl} target="_blank">{link.finalUrl}</Link>
                                         </td>
                                         <td>
-                                            {link.redirectChain && link.redirectChain.length > 1
-                                                ? link.redirectChain.map((r, idx) => (
-                                                    <div key={idx}>
-                                                        <Link href={r.url} target="_blank">{r.url}</Link> ({r.statusCode})
-                                                        {idx < link.redirectChain.length - 1 ? " → " : ""}
-                                                    </div>
-                                                ))
-                                                : "—"
-                                            }
+                                            <ol>
+                                                {link.redirectChain && link.redirectChain.length > 1
+                                                    ? link.redirectChain.map((r, idx) => (
+                                                        <li key={idx}>
+                                                            <Link href={r.url} target="_blank">{r.url}</Link> ({r.statusCode})
+                                                            {idx < link.redirectChain.length - 1 ? " → " : ""}
+                                                        </li>
+                                                    ))
+                                                    : "—"
+                                                }
+                                            </ol>
                                         </td>
                                     </tr>
                                 ))}

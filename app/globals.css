@@ -26,12 +26,21 @@ img {
     max-width: 100%;
 }
 
-.error {
-    color: var(--red);
+.error-text {
+    color: var(--error);
 }
 
-.warning {
+.error-background {
+    background-color: var(--error);
+    color: var(--white);
+}
+
+.warning-text {
     color: var(--warning);
+}
+
+.warning-background {
+    background-color: var(--warning);
 }
 
 .success {
