@@ -16,7 +16,7 @@ export default function ClientOnPageChecker() {
     const [metaRobotsTag, setMetaRobotsTag] = useState(null);
     const [canonicalUrl, setCanonicalUrl] = useState(null);
     const [metaTitles, setMetaTitles] = useState(null);
-    const [metaDescription, setMetaDescription] = useState(null);
+    const [metaDescriptions, setMetaDescriptions] = useState(null);
     const [h1s, setH1s] = useState(null);
     const [h2s, setH2s] = useState(null);
     const [h3s, setH3s] = useState(null);
@@ -34,7 +34,7 @@ export default function ClientOnPageChecker() {
         setMetaRobotsTag(null);
         setCanonicalUrl(null);
         setMetaTitles(null);
-        setMetaDescription(null);
+        setMetaDescriptions(null);
         setH1s(null);
         setH2s(null);
         setH3s(null);
@@ -80,7 +80,7 @@ export default function ClientOnPageChecker() {
                 setMetaRobotsTag(data.metaRobotsTag);
                 setCanonicalUrl(data.canonicalUrl);
                 setMetaTitles(data.metaTitles);
-                setMetaDescription(data.metaDescription);
+                setMetaDescriptions(data.metaDescriptions);
                 setH1s(data.h1s);
                 setH2s(data.h2s);
                 setH3s(data.h3s);
@@ -246,26 +246,38 @@ export default function ClientOnPageChecker() {
                 </section>
             }
 
-            {metaDescription === null
+            {metaDescriptions === null
                 ? null
                 : <section>
                     <h2>Meta Description</h2>
-                    {metaDescription
-                        ? <table>
+                    {metaDescriptions.length === 0
+                        ? <p className="error">No meta descriptions found.</p>
+                        : <>
+                            {metaDescriptions.length > 1
+                                ? <p className="warning">Multiple meta descriptions found.</p>
+                                : null
+                            }
+                            <table>
                                 <thead>
                                     <tr>
+                                        <th scope="col" style={{ textAlign: 'center' }}>#</th>
                                         <th scope="col" style={{ textAlign: 'left' }}>Text</th>
                                         <th scope="col" style={{ textAlign: 'center' }}>Length</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(metaDescription)}</td>
-                                        <td style={{ textAlign: 'center' }} className={metaDescription.length > 160 ? 'error' : null}>{metaDescription.length}</td>
-                                    </tr>
+                                    {metaDescriptions.map((metaDescription, i) => {
+                                        return (
+                                            <tr key={i}>
+                                                <td style={{ textAlign: 'center' }}>{i + 1}</td>
+                                                <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(metaDescription)}</td>
+                                                <td style={{ textAlign: 'center' }} className={metaDescription.length > 160 ? 'error' : null}>{metaDescription.length}</td>
+                                            </tr>
+                                        )
+                                    })}
                                 </tbody>
                             </table>
-                        : <p className="error">The meta description tag does not exist or is empty.</p>
+                        </>
                     }
                 </section>
             }
@@ -495,7 +507,7 @@ export default function ClientOnPageChecker() {
             {images === null
                 ? null
                 : <section>
-                    <h2>Imagest</h2>
+                    <h2>Images</h2>
                     <table>
                         <thead>
                             <tr>
