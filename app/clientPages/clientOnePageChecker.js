@@ -137,7 +137,7 @@ export default function ClientOnPageChecker() {
             {statusCode === null || statusCode === undefined
                 ? null
                 : <section>
-                    <h2>URL</h2>
+                    <h2>Analysed URL</h2>
                      <Link href={analysedUrl} target="_blank">{analysedUrl}</Link>
                 </section>
             }
