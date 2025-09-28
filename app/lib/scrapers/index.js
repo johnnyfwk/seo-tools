@@ -13,6 +13,6 @@ export async function scrapeWithCheerio(html, pageUrl) {
         ...scrapeHeadings($),
         ...scrapeCanonical($),
         ...await scrapePageLinks($, pageUrl),
-        images: await scrapeImages($),
+        images: await scrapeImages($, pageUrl),
     }
 }
