@@ -525,34 +525,37 @@ export default function ClientOnPageChecker() {
                 ? null
                 : <section>
                     <h2>Images</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style={{ textAlign: 'center' }}>#</th>
-                                <th style={{ textAlign: 'left' }}>Image Preview</th>
-                                <th style={{ textAlign: 'left' }}>Alt Text</th>
-                                <th style={{ textAlign: 'left' }}>Source URL</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {images.map((image, i) => {
-                                return (
-                                    <tr key={i}>
-                                        <td style={{ textAlign: 'center' }}>{i + 1}</td>
-                                        <td>
-                                            <img
-                                                src={image.src || null}
-                                                alt={image.alt || ""}
-                                                style={{ height: "100px", width: "auto", maxWidth: "100px" }} 
-                                            />
-                                        </td>
-                                        <td>{image.alt}</td>
-                                        <td><Link href={image.src} target="_blank">{image.src}</Link></td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
+                    {!images.length
+                        ? "No images found"
+                        : <table>
+                            <thead>
+                                <tr>
+                                    <th style={{ textAlign: 'center' }}>#</th>
+                                    <th style={{ textAlign: 'left' }}>Image Preview</th>
+                                    <th style={{ textAlign: 'left' }}>Alt Text</th>
+                                    <th style={{ textAlign: 'left' }}>Source URL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {images.map((image, i) => {
+                                    return (
+                                        <tr key={i}>
+                                            <td style={{ textAlign: 'center' }}>{i + 1}</td>
+                                            <td>
+                                                <img
+                                                    src={image.src || null}
+                                                    alt={image.alt || ""}
+                                                    style={{ height: "100px", width: "auto", maxWidth: "100px" }} 
+                                                />
+                                            </td>
+                                            <td>{image.alt}</td>
+                                            <td><Link href={image.src} target="_blank">{image.src}</Link></td>
+                                        </tr>
+                                    )
+                                })}
+                            </tbody>
+                        </table>
+                    }
                 </section>
             }
         </>
