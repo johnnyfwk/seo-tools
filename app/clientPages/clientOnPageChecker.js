@@ -13,6 +13,7 @@ export default function ClientOnPageChecker() {
     const [enteredUrlStatusCode, setEnteredUrlStatusCode] = useState(null);
     const [finalUrl, setFinalUrl] = useState(null);
     const [redirectChain, setRedirectChain] = useState(null);
+    const [robotsTxt, setRobotsTxt] = useState(null);
     const [metaRobotsTag, setMetaRobotsTag] = useState(null);
     const [canonicalUrl, setCanonicalUrl] = useState(null);
     const [metaTitles, setMetaTitles] = useState(null);
@@ -31,6 +32,7 @@ export default function ClientOnPageChecker() {
         setEnteredUrlStatusCode(null);
         setFinalUrl(null);
         setRedirectChain(null);
+        setRobotsTxt(null);
         setMetaRobotsTag(null);
         setCanonicalUrl(null);
         setMetaTitles(null);
@@ -73,6 +75,7 @@ export default function ClientOnPageChecker() {
             console.log(data);
 
             setEnteredUrlStatusCode(data.enteredUrlStatusCode);
+            setRobotsTxt(data.robotsCheck);
 
             if (data.error) {
                 setError(data.error);
@@ -163,6 +166,15 @@ export default function ClientOnPageChecker() {
                     <h2>Status Code</h2>
                     <p>{enteredUrlStatusCode}</p>
                 </section>
+            }
+
+            {robotsTxt
+                ? <section>
+                    <h2>Robots.txt</h2>
+                    <p><Link href={robotsTxt.robotsUrl} target="_blank">{robotsTxt.robotsUrl}</Link></p>
+                    <p>{robotsTxt.reason}</p>
+                </section>
+                : null
             }
 
             {metaRobotsTag

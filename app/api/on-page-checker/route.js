@@ -1,4 +1,5 @@
 import { scrapeWithCheerio } from '@/app/lib/scrapers';
+import { checkRobotsTxt } from '@/app/lib/scrapers/robotsTxt';
 
 async function fetchRedirectChain(url) {
     const chain = [];
@@ -41,6 +42,8 @@ export async function POST(req) {
         const finalUrl = finalEntry.url || url;
         const finalStatusCode = finalEntry.statusCode || null;
 
+        const robotsCheck = await checkRobotsTxt(finalUrl, '*');
+
         let scraped = {};
 
         // 3. Only scrape if the final status is 200
@@ -71,6 +74,7 @@ export async function POST(req) {
                 finalUrl,        // last URL after redirects
                 finalStatusCode,     // last status
                 redirectChain,   // full chain with {url, statusCode}
+                robotsCheck,
                 ...scraped,
             }),
             {
