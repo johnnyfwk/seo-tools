@@ -89,9 +89,15 @@ export default function ClientOnPageChecker() {
                 setH6s(data.h6s);
                 setPageLinks(data.pageLinks);
                 setImages(data.images);
-            } else {
+            } else if (data.enteredUrlStatusCode >= 300 && data.enteredUrlStatusCode < 400) {
                 setFinalUrl(data.finalUrl);
                 setRedirectChain(data.redirectChain);
+            } else if (data.enteredUrlStatusCode >= 400 && data.enteredUrlStatusCode < 600) {
+                setFinalUrl(data.finalUrl);
+            } else {
+                // Unexpected status code (outside 200–599 range)
+                console.warn("Unhandled status code:", data.enteredUrlStatusCode);
+                setFinalUrl(data.finalUrl);
             }
 
             setIsCheckingPage(false);
@@ -146,7 +152,7 @@ export default function ClientOnPageChecker() {
             {enteredUrlStatusCode === null || enteredUrlStatusCode === undefined
                 ? null
                 : <section>
-                    <h2>URL Entered</h2>
+                    <h2>URL</h2>
                     <Link href={analysedUrl} target="_blank">{analysedUrl}</Link>
                 </section>
             }
@@ -297,7 +303,7 @@ export default function ClientOnPageChecker() {
                                 <thead>
                                     <tr>
                                         <th scope="col" style={{ textAlign: 'center' }}>#</th>
-                                        <th scope="col" style={{ textAlign: 'left' }}>H1</th>
+                                        <th scope="col" style={{ textAlign: 'left' }}>Text</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -326,7 +332,7 @@ export default function ClientOnPageChecker() {
                             <thead>
                                 <tr>
                                     <th scope="col" style={{ textAlign: 'center' }}>#</th>
-                                    <th scope="col" style={{ textAlign: 'left' }}>H2</th>
+                                    <th scope="col" style={{ textAlign: 'left' }}>Text</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -354,7 +360,7 @@ export default function ClientOnPageChecker() {
                             <thead>
                                 <tr>
                                     <th scope="col" style={{ textAlign: 'center' }}>#</th>
-                                    <th scope="col" style={{ textAlign: 'left' }}>H3</th>
+                                    <th scope="col" style={{ textAlign: 'left' }}>Text</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -382,7 +388,7 @@ export default function ClientOnPageChecker() {
                             <thead>
                                 <tr>
                                     <th scope="col" style={{ textAlign: 'center' }}>#</th>
-                                    <th scope="col" style={{ textAlign: 'left' }}>H4</th>
+                                    <th scope="col" style={{ textAlign: 'left' }}>Text</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -410,7 +416,7 @@ export default function ClientOnPageChecker() {
                             <thead>
                                 <tr>
                                     <th scope="col" style={{ textAlign: 'center' }}>#</th>
-                                    <th scope="col" style={{ textAlign: 'left' }}>H5</th>
+                                    <th scope="col" style={{ textAlign: 'left' }}>Text</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -438,7 +444,7 @@ export default function ClientOnPageChecker() {
                             <thead>
                                 <tr>
                                     <th scope="col" style={{ textAlign: 'center' }}>#</th>
-                                    <th scope="col" style={{ textAlign: 'left' }}>H6</th>
+                                    <th scope="col" style={{ textAlign: 'left' }}>Text</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -535,8 +541,8 @@ export default function ClientOnPageChecker() {
                                         <td style={{ textAlign: 'center' }}>{i + 1}</td>
                                         <td>
                                             <img
-                                                src={image.src}
-                                                alt={image.alt}
+                                                src={image.src || null}
+                                                alt={image.alt || ""}
                                                 style={{ height: "100px", width: "auto", maxWidth: "100px" }} 
                                             />
                                         </td>
