@@ -29,6 +29,17 @@ export default function ClientOnPageChecker() {
     const [pageLinks, setPageLinks] = useState(null);
     const [images, setImages] = useState(null);
 
+    function normalizeUrl(url) {
+        try {
+            const u = new URL(url);
+            // Ensure pathname ends with "/" if it's empty
+            if (!u.pathname || u.pathname === "") u.pathname = "/";
+            return u.href;
+        } catch {
+            return url;
+        }
+    }
+
     async function handleCheckPage() {
         setError(null);
         setIsUrlIndexable(null);
@@ -107,37 +118,50 @@ export default function ClientOnPageChecker() {
                 setFinalUrl(data.finalUrl);
             }
 
-            if (data.metaRobotsTag?.includes("noindex")) {
+            const entered = normalizeUrl(data.enteredUrl);
+            const canonical = normalizeUrl(data.canonicalUrl);
+
+            if (data.robotsCheck && !data.robotsCheck.allowed) {
+                setIsUrlIndexable(false);
+                setIndexabilityMessage(data.robotsCheck.reason || "Blocked by robots.txt.");
+            } 
+            else if (data.metaRobotsTag?.includes("noindex")) {
                 setIsUrlIndexable(false);
                 setIndexabilityMessage("The meta robots tag is set to 'noindex'.");
-            } else if (data.enteredUrlStatusCode === 200 && data.enteredUrl === data.canonicalUrl) {
-                setIsUrlIndexable(true);
-                setIndexabilityMessage("This URL can be indexed in search engines.");
-            } else if (data.enteredUrlStatusCode === 200 && data.enteredUrl !== data.canonicalUrl) {
-                setIsUrlIndexable(false);
-                setIndexabilityMessage("URL does not match its canonical URL, so this URL may not be indexed. Canonical URL may be indexed.");
-            } else if (data.robotsCheck && !data.robotsCheck.allowed) {
-                setIsUrlIndexable(false);
-                setIndexabilityMessage(data.robotsCheck.reason);
-            } else if (data.enteredUrlStatusCode >= 300 && data.enteredUrlStatusCode < 400) {
+            } 
+            else if (data.enteredUrlStatusCode >= 300 && data.enteredUrlStatusCode < 400) {
                 setIsUrlIndexable(false);
                 setIndexabilityMessage("URL redirects to another URL.");
-            } else if (data.enteredUrlStatusCode === 404) {
+            } 
+            else if (data.enteredUrlStatusCode === 404) {
                 setIsUrlIndexable(false);
                 setIndexabilityMessage("URL does not exist (404).");
-            } else if (data.enteredUrlStatusCode >= 400 && data.enteredUrlStatusCode < 500) {
+            } 
+            else if (data.enteredUrlStatusCode >= 400 && data.enteredUrlStatusCode < 500) {
                 setIsUrlIndexable(false);
                 setIndexabilityMessage(`Client error (${data.enteredUrlStatusCode}). URL is not indexable.`);
-            } else if (data.enteredUrlStatusCode >= 500 && data.enteredUrlStatusCode < 600) {
+            } 
+            else if (data.enteredUrlStatusCode >= 500 && data.enteredUrlStatusCode < 600) {
                 setIsUrlIndexable(false);
                 setIndexabilityMessage(`Server error (${data.enteredUrlStatusCode}). URL is not indexable.`);
-            } else if (data.enteredUrlStatusCode >= 100 && data.enteredUrlStatusCode < 200) {
+            } 
+            else if (data.enteredUrlStatusCode >= 100 && data.enteredUrlStatusCode < 200) {
                 setIsUrlIndexable(false);
                 setIndexabilityMessage(`Informational response (${data.enteredUrlStatusCode}). URL is not indexable.`);
-            } else if (data.enteredUrlStatusCode === 204) {
+            } 
+            else if (data.enteredUrlStatusCode === 204) {
                 setIsUrlIndexable(false);
                 setIndexabilityMessage("No content (204). Nothing to index.");
-            } else {
+            } 
+            else if (canonical && entered !== canonical) {
+                setIsUrlIndexable(false);
+                setIndexabilityMessage("Canonical URL points elsewhere. This URL may not be indexed; canonical may be.");
+            } 
+            else if (data.enteredUrlStatusCode === 200) {
+                setIsUrlIndexable(true);
+                setIndexabilityMessage("This URL can be indexed in search engines.");
+            } 
+            else {
                 setIsUrlIndexable(false);
                 setIndexabilityMessage(`Unhandled status code (${data.enteredUrlStatusCode}). Assuming not indexable.`);
             }
@@ -211,7 +235,7 @@ export default function ClientOnPageChecker() {
                 </section>
             }
 
-            {robotsTxt
+            {robotsTxt?.robotsUrl
                 ? <section>
                     <h2>Robots.txt</h2>
                     <p style={{ marginBottom: '10px'}}>
