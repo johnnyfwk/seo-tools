@@ -48,12 +48,20 @@ function parseRobotsTxt(content) {
 // Convert robots.txt path rule → regex
 function ruleToRegex(rule) {
     if (rule === '') return null; // empty disallow = allow all
+
     let regex = rule
-        .replace(/[-/\\^$+?.()|[\]{}]/g, '\\$&') // escape regex special chars
-        .replace(/\\\*/g, '.*');                 // wildcard * → .*
-    if (regex.endsWith('\\$')) {
-        regex = regex.slice(0, -2) + '$';        // handle $ end anchor
+        // Escape regex special characters EXCEPT "*"
+        .replace(/([.+?^=!:${}()|[\]\\])/g, '\\$1')
+        // Convert * to .*
+        .replace(/\*/g, '.*');
+
+    // Handle $ anchor at end
+    if (regex.endsWith('$')) {
+        // Already valid
+    } else if (regex.endsWith('\\$')) {
+        regex = regex.slice(0, -2) + '$';
     }
+
     return new RegExp(`^${regex}`);
 }
 
