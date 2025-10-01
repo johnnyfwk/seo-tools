@@ -171,7 +171,9 @@ export default function ClientOnPageChecker() {
             {robotsTxt
                 ? <section>
                     <h2>Robots.txt</h2>
-                    <p><Link href={robotsTxt.robotsUrl} target="_blank">{robotsTxt.robotsUrl}</Link></p>
+                    <p style={{ marginBottom: '10px'}}>
+                        <Link href={robotsTxt.robotsUrl} target="_blank">{robotsTxt.robotsUrl}</Link>
+                    </p>
                     <p>{robotsTxt.reason}</p>
                 </section>
                 : null
