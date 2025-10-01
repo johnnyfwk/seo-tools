@@ -4,12 +4,14 @@ import Link from "next/link";
 import * as utils from '@/app/lib/utils';
 
 export default function ClientOnPageChecker() {
-    const [InputUrl, setInputUrl] = useState("");
+    const [inputUrl, setInputUrl] = useState("");
     const [analysedUrl, setAnalysedUrl] = useState("");
 
     const [isCheckingPage, setIsCheckingPage] = useState(false);
     const [error, setError] = useState(null);
 
+    const [isUrlIndexable, setIsUrlIndexable] = useState(null);
+    const [indexabilityMessage, setIndexabilityMessage] = useState(null);
     const [enteredUrlStatusCode, setEnteredUrlStatusCode] = useState(null);
     const [finalUrl, setFinalUrl] = useState(null);
     const [redirectChain, setRedirectChain] = useState(null);
@@ -29,6 +31,8 @@ export default function ClientOnPageChecker() {
 
     async function handleCheckPage() {
         setError(null);
+        setIsUrlIndexable(null);
+        setIndexabilityMessage(null);
         setEnteredUrlStatusCode(null);
         setFinalUrl(null);
         setRedirectChain(null);
@@ -46,7 +50,7 @@ export default function ClientOnPageChecker() {
         setPageLinks(null);
         setImages(null);
 
-        let input = InputUrl.trim();
+        let input = inputUrl.trim();
 
         if (!input.startsWith("http://") && !input.startsWith("https://")) {
             input = "https://" + input;
@@ -103,6 +107,41 @@ export default function ClientOnPageChecker() {
                 setFinalUrl(data.finalUrl);
             }
 
+            if (data.metaRobotsTag?.includes("noindex")) {
+                setIsUrlIndexable(false);
+                setIndexabilityMessage("The meta robots tag is set to 'noindex'.");
+            } else if (data.enteredUrlStatusCode === 200 && data.enteredUrl === data.canonicalUrl) {
+                setIsUrlIndexable(true);
+                setIndexabilityMessage("This URL can be indexed in search engines.");
+            } else if (data.enteredUrlStatusCode === 200 && data.enteredUrl !== data.canonicalUrl) {
+                setIsUrlIndexable(false);
+                setIndexabilityMessage("URL does not match its canonical URL, so this URL may not be indexed. Canonical URL may be indexed.");
+            } else if (data.robotsCheck && !data.robotsCheck.allowed) {
+                setIsUrlIndexable(false);
+                setIndexabilityMessage(data.robotsCheck.reason);
+            } else if (data.enteredUrlStatusCode >= 300 && data.enteredUrlStatusCode < 400) {
+                setIsUrlIndexable(false);
+                setIndexabilityMessage("URL redirects to another URL.");
+            } else if (data.enteredUrlStatusCode === 404) {
+                setIsUrlIndexable(false);
+                setIndexabilityMessage("URL does not exist (404).");
+            } else if (data.enteredUrlStatusCode >= 400 && data.enteredUrlStatusCode < 500) {
+                setIsUrlIndexable(false);
+                setIndexabilityMessage(`Client error (${data.enteredUrlStatusCode}). URL is not indexable.`);
+            } else if (data.enteredUrlStatusCode >= 500 && data.enteredUrlStatusCode < 600) {
+                setIsUrlIndexable(false);
+                setIndexabilityMessage(`Server error (${data.enteredUrlStatusCode}). URL is not indexable.`);
+            } else if (data.enteredUrlStatusCode >= 100 && data.enteredUrlStatusCode < 200) {
+                setIsUrlIndexable(false);
+                setIndexabilityMessage(`Informational response (${data.enteredUrlStatusCode}). URL is not indexable.`);
+            } else if (data.enteredUrlStatusCode === 204) {
+                setIsUrlIndexable(false);
+                setIndexabilityMessage("No content (204). Nothing to index.");
+            } else {
+                setIsUrlIndexable(false);
+                setIndexabilityMessage(`Unhandled status code (${data.enteredUrlStatusCode}). Assuming not indexable.`);
+            }
+
             setIsCheckingPage(false);
         } catch (err) {
             setError("Something went wrong.");
@@ -129,7 +168,7 @@ export default function ClientOnPageChecker() {
                         type="url"
                         name="url"
                         id="url"
-                        value={InputUrl}
+                        value={inputUrl}
                         onChange={(e) => setInputUrl(e.target.value)}
                         placeholder="https://example.com"
                         required
@@ -142,7 +181,7 @@ export default function ClientOnPageChecker() {
                     <input
                         type="submit"
                         value={isCheckingPage ? "Fetching data..." : "Check Page"}
-                        disabled={!InputUrl || isCheckingPage}
+                        disabled={!inputUrl || isCheckingPage}
                     />
                 </form>
 
@@ -160,11 +199,15 @@ export default function ClientOnPageChecker() {
                 </section>
             }
 
-            {enteredUrlStatusCode === null || enteredUrlStatusCode === undefined
+            {isUrlIndexable === null
                 ? null
                 : <section>
-                    <h2>Status Code</h2>
-                    <p>{enteredUrlStatusCode}</p>
+                    <h2>Is the URL indexable?
+                        <span
+                            className={isUrlIndexable ? "success-text" : "error-text"}
+                        >{isUrlIndexable ? " Yes" : " No"}</span>
+                    </h2>
+                    <p>{indexabilityMessage}</p>
                 </section>
             }
 
@@ -177,6 +220,14 @@ export default function ClientOnPageChecker() {
                     <p>{robotsTxt.reason}</p>
                 </section>
                 : null
+            }
+
+            {enteredUrlStatusCode === null || enteredUrlStatusCode === undefined
+                ? null
+                : <section>
+                    <h2>Status Code</h2>
+                    <p>{enteredUrlStatusCode}</p>
+                </section>
             }
 
             {metaRobotsTag
@@ -559,6 +610,7 @@ export default function ClientOnPageChecker() {
                                                 <img
                                                     src={image.src || null}
                                                     alt={image.alt || ""}
+                                                    loading="lazy"
                                                     style={{ height: "100px", width: "auto", maxWidth: "100px" }} 
                                                 />
                                             </td>
