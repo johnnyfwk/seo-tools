@@ -43,7 +43,12 @@ img {
     background-color: var(--warning);
 }
 
-.success {
+.success-background {
+    background-color: var(--success);
+    color: var(--black);
+}
+
+.success-text {
     color: var(--success);
 }
 
