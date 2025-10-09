@@ -708,7 +708,7 @@ export default function ClientOnPageChecker() {
                                                     src={image.src || null}
                                                     alt={image.alt || ""}
                                                     loading="lazy"
-                                                    style={{ height: "100px", width: "auto", maxWidth: "100px" }} 
+                                                    style={{ minWidth: "150px" }}
                                                 />
                                             </td>
                                             <td>{image.alt}</td>
