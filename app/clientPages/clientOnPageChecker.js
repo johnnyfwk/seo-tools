@@ -32,12 +32,12 @@ export default function ClientOnPageChecker() {
 
     function normalizeUrl(url) {
         try {
-            const u = new URL(url);
+            const u = new URL(url.trim().toLowerCase());
             // Ensure pathname ends with "/" if it's empty
             if (!u.pathname || u.pathname === "") u.pathname = "/";
             return u.href;
         } catch {
-            return url;
+            return url.trim();
         }
     }
 
@@ -122,16 +122,27 @@ export default function ClientOnPageChecker() {
             }
 
             const entered = normalizeUrl(data.enteredUrl);
-            const canonical = normalizeUrl(data.canonicalUrl);
+
+            // Safely resolve canonical relative to entered URL (only here)
+            let canonical;
+            try {
+                canonical = data.canonicalUrl ? new URL(data.canonicalUrl, entered).href : null;
+            } catch {
+                canonical = null;
+            }
 
             if (data.robotsCheck && !data.robotsCheck.allowed) {
                 setIsUrlIndexable(false);
                 setIndexabilityMessage(data.robotsCheck.reason || "Blocked by robots.txt.");
             } 
-            else if (data.metaRobotsTag?.includes("noindex")) {
+            else if (data.metaRobotsTag?.toLowerCase().includes("noindex")) {
                 setIsUrlIndexable(false);
                 setIndexabilityMessage("The meta robots tag is set to 'noindex'.");
             } 
+            else if (data.xRobotsTag?.toLowerCase().includes("noindex")) {
+                setIsUrlIndexable(false);
+                setIndexabilityMessage("The X-Robots-Tag header is set to 'noindex'.");
+            }
             else if (data.enteredUrlStatusCode >= 300 && data.enteredUrlStatusCode < 400) {
                 setIsUrlIndexable(false);
                 setIndexabilityMessage("URL redirects to another URL.");
@@ -156,9 +167,9 @@ export default function ClientOnPageChecker() {
                 setIsUrlIndexable(false);
                 setIndexabilityMessage("No content (204). Nothing to index.");
             } 
-            else if (canonical && entered !== canonical) {
+            else if (canonical && entered.trim().replace(/\/$/, '') !== canonical.trim().replace(/\/$/, '')) {
                 setIsUrlIndexable(false);
-                setIndexabilityMessage("Canonical URL points elsewhere. This URL may not be indexed; canonical may be.");
+                setIndexabilityMessage("Canonical URL points to a different page. Search engines may index the canonical URL instead of this one.");
             } 
             else if (data.enteredUrlStatusCode === 200) {
                 setIsUrlIndexable(true);
@@ -166,7 +177,7 @@ export default function ClientOnPageChecker() {
             } 
             else {
                 setIsUrlIndexable(false);
-                setIndexabilityMessage(`Unhandled status code (${data.enteredUrlStatusCode}). Assuming not indexable.`);
+                setIndexabilityMessage(`Unhandled status code (${data.enteredUrlStatusCode ?? 'unknown'}). Assuming not indexable.`);
             }
 
             setIsCheckingPage(false);
