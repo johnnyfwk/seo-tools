@@ -18,6 +18,29 @@ export async function scrapePageLinks($, pageUrl) {
         }
     }).filter(Boolean);
 
+    // ✅ Separate internal and external links
+    const normalizeHostname = (hostname) => hostname.replace(/^www\./, '').toLowerCase();
+
+    const baseHost = normalizeHostname(base.hostname);
+
+    const internalLinks = resolvedLinks.filter(link => {
+        try {
+            const host = normalizeHostname(new URL(link.url).hostname);
+            return host === baseHost;
+        } catch {
+            return false;
+        }
+    });
+
+    const externalLinks = resolvedLinks.filter(link => {
+        try {
+            const host = normalizeHostname(new URL(link.url).hostname);
+            return host !== baseHost;
+        } catch {
+            return false;
+        }
+    });
+
     // Helper function to follow redirects manually and build the chain
     async function fetchWithRedirectChain(url) {
         const chain = [];
@@ -38,8 +61,7 @@ export async function scrapePageLinks($, pageUrl) {
                 chain.push({ url: currentUrl, statusCode });
 
                 if (location) {
-                    const nextUrl = new URL(location, currentUrl).href;
-                    currentUrl = nextUrl;
+                    currentUrl = new URL(location, currentUrl).href;
                 } else {
                     currentUrl = null; // no more redirects
                 }
@@ -53,21 +75,33 @@ export async function scrapePageLinks($, pageUrl) {
     }
 
     // Fetch status code and final URL for each link
-    const results = await Promise.all(
-        resolvedLinks.map(async link => {
-            const redirectChain = await fetchWithRedirectChain(link.url);
-            const finalUrl = redirectChain[redirectChain.length - 1]?.url || link.url;
-            const originalStatus = redirectChain[0]?.statusCode || null; // status of the original URL
+    async function processLinks(links) {
+        return Promise.all(
+            links.map(async link => {
+                const redirectChain = await fetchWithRedirectChain(link.url);
+                const finalUrl = redirectChain[redirectChain.length - 1]?.url || link.url;
+                const originalStatus = redirectChain[0]?.statusCode || null;
 
-            return {
-                url: link.url,          // original link
-                anchor: link.anchor,
-                statusCode: originalStatus, // final status code
-                finalUrl,               // final destination URL
-                redirectChain           // array of {url, statusCode}
-            };
-        })
-    );
+                return {
+                    url: link.url,
+                    anchor: link.anchor,
+                    statusCode: originalStatus,
+                    finalUrl,
+                    redirectChain,
+                };
+            })
+        );
+    }
 
-    return { pageLinks: results };
+    // Process internal and external separately (if needed)
+    const [processedInternal, processedExternal] = await Promise.all([
+        processLinks(internalLinks),
+        processLinks(externalLinks),
+    ]);
+
+    // Return both sets clearly
+    return {
+        internalLinks: processedInternal,
+        externalLinks: processedExternal,
+    };
 }

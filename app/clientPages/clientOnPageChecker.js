@@ -26,7 +26,8 @@ export default function ClientOnPageChecker() {
     const [h4s, setH4s] = useState(null);
     const [h5s, setH5s] = useState(null);
     const [h6s, setH6s] = useState(null);
-    const [pageLinks, setPageLinks] = useState(null);
+    const [internalLinks, setInternalLinks] = useState(null);
+    const [externalLinks, setExternalLinks] = useState(null);
     const [images, setImages] = useState(null);
 
     function normalizeUrl(url) {
@@ -58,7 +59,8 @@ export default function ClientOnPageChecker() {
         setH4s(null);
         setH5s(null);
         setH6s(null);
-        setPageLinks(null);
+        setInternalLinks(null);
+        setExternalLinks(null);
         setImages(null);
 
         let input = inputUrl.trim();
@@ -105,7 +107,8 @@ export default function ClientOnPageChecker() {
                 setH4s(data.h4s);
                 setH5s(data.h5s);
                 setH6s(data.h6s);
-                setPageLinks(data.pageLinks);
+                setInternalLinks(data.internalLinks);
+                setExternalLinks(data.externalLinks);
                 setImages(data.images);
             } else if (data.enteredUrlStatusCode >= 300 && data.enteredUrlStatusCode < 400) {
                 setFinalUrl(data.finalUrl);
@@ -551,12 +554,12 @@ export default function ClientOnPageChecker() {
                 </section>
             }
 
-            {pageLinks === null
+            {internalLinks === null
                 ? null
                 : <section>
-                    <h2>Page Links  ({pageLinks.length})</h2>
-                    {pageLinks.length === 0
-                        ? <p>No links found on this page.</p>
+                    <h2>Internal Links ({internalLinks.length})</h2>
+                    {internalLinks.length === 0
+                        ? <p>No internal links found on this page.</p>
                         : <table>
                             <thead>
                                 <tr>
@@ -569,7 +572,66 @@ export default function ClientOnPageChecker() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {pageLinks.map((link, i) => (
+                                {internalLinks.map((link, i) => (
+                                    <tr key={i}>
+                                        <td style={{ textAlign: 'center' }}>{i + 1}</td>
+                                        <td>{link.anchor || "(no text)"}</td>
+                                        <td
+                                            className={
+                                                link.statusCode >= 300 && link.statusCode < 400
+                                                ? 'warning-background'
+                                                : link.statusCode >= 400
+                                                    ? 'error-background'
+                                                    : ''
+                                            }
+                                            style={{ textAlign: 'center' }}
+                                        >{link.statusCode}</td>
+                                        <td>
+                                            <Link href={link.url} target="_blank">{link.url}</Link>
+                                        </td>
+                                        <td>
+                                            <Link href={link.finalUrl} target="_blank">{link.finalUrl}</Link>
+                                        </td>
+                                        <td>
+                                            <ol>
+                                                {link.redirectChain && link.redirectChain.length > 1
+                                                    ? link.redirectChain.map((r, idx) => (
+                                                        <li key={idx}>
+                                                            <Link href={r.url} target="_blank">{r.url}</Link> ({r.statusCode})
+                                                            {idx < link.redirectChain.length - 1 ? " → " : ""}
+                                                        </li>
+                                                    ))
+                                                    : "—"
+                                                }
+                                            </ol>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    }
+                </section>
+            }
+
+            {externalLinks === null
+                ? null
+                : <section>
+                    <h2>External Links ({externalLinks.length})</h2>
+                    {externalLinks.length === 0
+                        ? <p>No external links found on this page.</p>
+                        : <table>
+                            <thead>
+                                <tr>
+                                    <th style={{ textAlign: 'center' }}>#</th>
+                                    <th style={{ textAlign: 'left' }}>Anchor Text</th>
+                                    <th style={{ textAlign: 'center' }}>Status Code</th>
+                                    <th style={{ textAlign: 'left' }}>Link URL</th>
+                                    <th style={{ textAlign: 'left' }}>Final URL</th>
+                                    <th style={{ textAlign: 'left' }}>Redirect Chain</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {externalLinks.map((link, i) => (
                                     <tr key={i}>
                                         <td style={{ textAlign: 'center' }}>{i + 1}</td>
                                         <td>{link.anchor || "(no text)"}</td>
