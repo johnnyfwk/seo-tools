@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import * as utils from '@/app/lib/utils';
+import JsonLdViewer from "../components/jsonTree";
 
 export default function ClientOnPageChecker() {
     const [inputUrl, setInputUrl] = useState("");
@@ -29,6 +30,7 @@ export default function ClientOnPageChecker() {
     const [internalLinks, setInternalLinks] = useState(null);
     const [externalLinks, setExternalLinks] = useState(null);
     const [images, setImages] = useState(null);
+    const [jsonLdSchemas, setJsonLdSchemas] = useState(null);
 
     function normalizeUrl(url) {
         try {
@@ -62,6 +64,7 @@ export default function ClientOnPageChecker() {
         setInternalLinks(null);
         setExternalLinks(null);
         setImages(null);
+        setJsonLdSchemas(null);
 
         let input = inputUrl.trim();
 
@@ -74,6 +77,7 @@ export default function ClientOnPageChecker() {
         try {
             validatedUrl = new URL(input);
         } catch (err) {
+            console.error(err);
             setError("Please enter a valid URL (must start with http:// or https://).");
             return;
         }
@@ -87,6 +91,12 @@ export default function ClientOnPageChecker() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ url: validatedUrl.href }),
             });
+
+            if (!res.ok) {
+                setError(`Request failed: ${res.status}`);
+                setIsCheckingPage(false);
+                return;
+            }
 
             const data = await res.json();
             console.log(data);
@@ -110,6 +120,16 @@ export default function ClientOnPageChecker() {
                 setInternalLinks(data.internalLinks);
                 setExternalLinks(data.externalLinks);
                 setImages(data.images);
+
+                const filteredjsonLdSchemas = data.schemas.filter(item => item.format.toLowerCase() === "json-ld");
+                const resolvedJsonLdSchemas  = filteredjsonLdSchemas.flatMap(item => {
+                    if (item.raw["@graph"]) {
+                        return item.raw["@graph"]; // Yoast / multiple schemas
+                    } else {
+                        return [item.raw]; // single schema
+                    }
+                });
+                setJsonLdSchemas(resolvedJsonLdSchemas);
             } else if (data.enteredUrlStatusCode >= 300 && data.enteredUrlStatusCode < 400) {
                 setFinalUrl(data.finalUrl);
                 setRedirectChain(data.redirectChain);
@@ -182,6 +202,7 @@ export default function ClientOnPageChecker() {
 
             setIsCheckingPage(false);
         } catch (err) {
+            console.error(err)
             setError("Something went wrong.");
             setIsCheckingPage(false);
         }
@@ -705,7 +726,7 @@ export default function ClientOnPageChecker() {
                                             <td style={{ textAlign: 'center' }}>{i + 1}</td>
                                             <td>
                                                 <img
-                                                    src={image.src || null}
+                                                    src={image.src || undefined}
                                                     alt={image.alt || ""}
                                                     loading="lazy"
                                                     style={{ width: "100%", minWidth: "100px", maxWidth: "250px" }}
@@ -718,6 +739,17 @@ export default function ClientOnPageChecker() {
                                 })}
                             </tbody>
                         </table>
+                    }
+                </section>
+            }
+
+            {jsonLdSchemas === null
+                ? null
+                : <section>
+                    <h2>Schema Markup</h2>
+                    {!jsonLdSchemas.length
+                        ? <p>No schema markup found.</p>
+                        : <JsonLdViewer jsonLdSchemas={jsonLdSchemas} />
                     }
                 </section>
             }
