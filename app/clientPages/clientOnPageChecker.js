@@ -31,6 +31,7 @@ export default function ClientOnPageChecker() {
     const [externalLinks, setExternalLinks] = useState(null);
     const [images, setImages] = useState(null);
     const [jsonLdSchemas, setJsonLdSchemas] = useState(null);
+    console.log("jsonLdSchemas:", jsonLdSchemas)
 
     function normalizeUrl(url) {
         try {
@@ -99,7 +100,7 @@ export default function ClientOnPageChecker() {
             }
 
             const data = await res.json();
-            console.log(data);
+            // console.log(data);
 
             setEnteredUrlStatusCode(data.enteredUrlStatusCode);
             setRobotsTxt(data.robotsCheck);
