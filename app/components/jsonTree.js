@@ -44,10 +44,31 @@ export default function JsonLdViewer({ jsonLdSchemas }) {
 
     return (
         <div>
+            <h3>Types Implemented:</h3>
+
+            <ul style= {{ marginBottom: "10px"}}>
+                {jsonLdSchemas.map((schema, index) => (
+                    <li key={index}>
+                        <a href={`#schema-${schema["@type"]}`}>
+                            {schema["@type"]}
+                        </a>
+                    </li>
+                ))}
+            </ul>
+
             {jsonLdSchemas.map((schema, index) => (
-                <div key={index} style={{ marginBottom: "2rem", border: "1px solid #ccc", padding: "1rem", borderRadius: "8px" }}>
-                <h3>Type: {schema["@type"] || "Unknown"}</h3>
-                <JsonTree data={schema} />
+                <div
+                    key={index}
+                    style={{
+                        marginBottom: "2rem",
+                        border: "1px solid #ccc",
+                        padding: "1rem",
+                        borderRadius: "8px"
+                    }}
+                    id={`schema-${schema["@type"]}`}
+                >
+                    <h3>Type: {schema["@type"] || "Unknown"}</h3>
+                    <JsonTree data={schema} />
                 </div>
             ))}
         </div>
