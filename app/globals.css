@@ -100,6 +100,10 @@ ol {
     padding-left: 2rem;
 }
 
+li {
+    margin-left: 1rem;
+}
+
 input[type='url'] {
     padding: 10px;
 }
