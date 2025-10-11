@@ -1,8 +1,9 @@
 'use client';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import * as utils from '@/app/lib/utils';
 import JsonLdViewer from "../components/jsonTree";
+import BackToTopButton from "../components/backToTopButton";
 
 export default function ClientOnPageChecker() {
     const [inputUrl, setInputUrl] = useState("");
@@ -273,8 +274,16 @@ export default function ClientOnPageChecker() {
                 </section>
             }
 
+            {enteredUrlStatusCode === null || enteredUrlStatusCode === undefined
+                ? null
+                : <section id="on-page-checker-status-code">
+                    <h2>Status Code</h2>
+                    <p>{enteredUrlStatusCode}</p>
+                </section>
+            }
+
             {robotsTxt?.robotsUrl
-                ? <section>
+                ? <section id="on-page-checker-robots-txt">
                     <h2>Robots.txt</h2>
                     <p style={{ marginBottom: '10px'}}>
                         <Link href={robotsTxt.robotsUrl} target="_blank">{robotsTxt.robotsUrl}</Link>
@@ -284,16 +293,8 @@ export default function ClientOnPageChecker() {
                 : null
             }
 
-            {enteredUrlStatusCode === null || enteredUrlStatusCode === undefined
-                ? null
-                : <section>
-                    <h2>Status Code</h2>
-                    <p>{enteredUrlStatusCode}</p>
-                </section>
-            }
-
             {metaRobotsTag
-                ? <section>
+                ? <section id="on-page-checker-meta-robots">
                     <h2>Meta Robots</h2>
                     <p>{metaRobotsTag}</p>
                 </section>
@@ -301,7 +302,7 @@ export default function ClientOnPageChecker() {
             }
 
             {canonicalUrl
-                ? <section>
+                ? <section id="on-page-checker-canonical-url">
                     <h2>Canonical URL</h2>
                     <Link href={canonicalUrl} target="_blank">{canonicalUrl}</Link>
                 </section>
@@ -309,7 +310,7 @@ export default function ClientOnPageChecker() {
             }
 
             {finalUrl
-                ? <section>
+                ? <section id="on-page-checker-final-url">
                     <h2>Final URL</h2>
                     <p><Link href={finalUrl} target="_blank">{finalUrl}</Link></p>
                 </section>
@@ -317,7 +318,7 @@ export default function ClientOnPageChecker() {
             }
 
             {redirectChain
-                ? <section>
+                ? <section id="on-page-checker-redirect-chain">
                     <h2>Redirect Chain</h2>
                     <table>
                         <thead>
@@ -343,9 +344,32 @@ export default function ClientOnPageChecker() {
                 : null
             }
 
+            {enteredUrlStatusCode === 200
+                ? <section>
+                    <h2>Contents</h2>
+                    <ul>
+                        {metaTitles && (<li><Link href="#on-page-checker-meta-titles">Meta Title</Link></li>)}
+                        {metaDescriptions && (<li><Link href="#on-page-checker-meta-description">Meta Description</Link></li>)}
+                        {h1s && (<li><Link href="#on-page-checker-h1s">H1s</Link></li>)}
+                        {h2s && (<li><Link href="#on-page-checker-h2s">H2s</Link></li>)}
+                        {h3s && (<li><Link href="#on-page-checker-h3s">H3s</Link></li>)}
+                        {h4s && (<li><Link href="#on-page-checker-h4s">H4s</Link></li>)}
+                        {h5s && (<li><Link href="#on-page-checker-h5s">H5s</Link></li>)}
+                        {h6s && (<li><Link href="#on-page-checker-h6s">H6s</Link></li>)}
+                        {internalLinks && (<li><Link href="#on-page-checker-internal-links">Internal Links</Link></li>)}
+                        {externalLinks && (<li><Link href="#on-page-checker-external-links">External Links</Link></li>)}
+                        {images && (<li><Link href="#on-page-checker-images">Images</Link></li>)}
+                        {jsonLdSchemas && (<li><Link href="#on-page-checker-schema-markup">Schema Markup</Link></li>)}
+                        {hreflangs && (<li><Link href="#on-page-checker-hreflang">Hreflang</Link></li>)}
+                        {redirectChain && (<li><Link href="#on-page-checker-redirect-chain">Redirect Chain</Link></li>)}
+                    </ul>
+                </section>
+                : null
+            }
+
             {metaTitles === null
                 ? null
-                : <section>
+                : <section id="on-page-checker-meta-titles">
                     <h2>Meta Title</h2>
                     {metaTitles.length === 0
                         ? <p className="error-text">No &lt;title&gt; tag found.</p>
@@ -381,7 +405,7 @@ export default function ClientOnPageChecker() {
 
             {metaDescriptions === null
                 ? null
-                : <section>
+                : <section id="on-page-checker-meta-description">
                     <h2>Meta Description</h2>
                     {metaDescriptions.length === 0
                         ? <p className="error-text">No meta descriptions found.</p>
@@ -417,7 +441,7 @@ export default function ClientOnPageChecker() {
 
             {h1s === null
                 ? null
-                : <section>
+                : <section id="on-page-checker-h1s">
                     <h2>H1 Tags ({h1s.length})</h2>
                     {h1s.length === 0
                         ? <p className="error-text">No &lt;h1&gt; tag found.</p>
@@ -451,7 +475,7 @@ export default function ClientOnPageChecker() {
 
             {h2s === null
                 ? null
-                : <section>
+                : <section id="on-page-checker-h2s">
                     <h2>H2 Tags ({h2s.length})</h2>
                     {h2s.length === 0
                         ? <p>No &lt;H2&gt; tags found.</p>
@@ -479,7 +503,7 @@ export default function ClientOnPageChecker() {
 
             {h3s === null
                 ? null
-                : <section>
+                : <section id="on-page-checker-h3s">
                     <h2>H3 Tags ({h3s.length})</h2>
                     {h3s.length === 0
                         ? <p>No &lt;H3&gt; tags found.</p>
@@ -507,7 +531,7 @@ export default function ClientOnPageChecker() {
 
             {h4s === null
                 ? null
-                : <section>
+                : <section id="on-page-checker-h4s">
                     <h2>H4 Tags ({h4s.length})</h2>
                     {h4s.length === 0
                         ? <p>No &lt;H4&gt; tags found.</p>
@@ -535,7 +559,7 @@ export default function ClientOnPageChecker() {
 
             {h5s === null
                 ? null
-                : <section>
+                : <section id="on-page-checker-h5s">
                     <h2>H5 Tags ({h5s.length})</h2>
                     {h5s.length === 0
                         ? <p>No &lt;H5&gt; tags found.</p>
@@ -563,7 +587,7 @@ export default function ClientOnPageChecker() {
 
             {h6s === null
                 ? null
-                : <section>
+                : <section id="on-page-checker-h6s">
                     <h2>H6 Tags ({h6s.length})</h2>
                     {h6s.length === 0
                         ? <p>No &lt;H6&gt; tags found.</p>
@@ -591,7 +615,7 @@ export default function ClientOnPageChecker() {
 
             {internalLinks === null
                 ? null
-                : <section>
+                : <section id="on-page-checker-internal-links">
                     <h2>Internal Links ({internalLinks.length})</h2>
                     {internalLinks.length === 0
                         ? <p>No internal links found on this page.</p>
@@ -650,7 +674,7 @@ export default function ClientOnPageChecker() {
 
             {externalLinks === null
                 ? null
-                : <section>
+                : <section id="on-page-checker-external-links">
                     <h2>External Links ({externalLinks.length})</h2>
                     {externalLinks.length === 0
                         ? <p>No external links found on this page.</p>
@@ -709,7 +733,7 @@ export default function ClientOnPageChecker() {
 
             {images === null
                 ? null
-                : <section>
+                : <section id="on-page-checker-images">
                     <h2>Images ({images.length || 0})</h2>
                     {!images.length
                         ? "No images found"
@@ -748,7 +772,7 @@ export default function ClientOnPageChecker() {
 
             {jsonLdSchemas === null
                 ? null
-                : <section>
+                : <section id="on-page-checker-schema-markup">
                     <h2>Schema Markup ({jsonLdSchemas.length || 0})</h2>
                     {!jsonLdSchemas.length
                         ? <p>No schema markup found.</p>
@@ -759,7 +783,7 @@ export default function ClientOnPageChecker() {
 
             {hreflangs === null
                 ? null
-                : <section>
+                : <section id="on-page-checker-hreflang">
                     <h2>Hreflang ({hreflangs.length || 0})</h2>
                     {!hreflangs.length
                         ? <p>No hreflang found.</p>
@@ -790,6 +814,8 @@ export default function ClientOnPageChecker() {
                     }
                 </section>
             }
+
+            <BackToTopButton />
         </>
     )
 }
