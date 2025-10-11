@@ -5,8 +5,9 @@ import { scrapeCanonical } from './canonical';
 import { scrapePageLinks } from './pageLinks';
 import { scrapeImages } from './images';
 import { scrapeSchema } from './schema';
+import { scrapeHreflang } from './hreflang';
 
-export async function scrapeWithCheerio(html, pageUrl) {
+export async function scrapeWithCheerio(html, pageUrl,  headers = {}) {
     const $ = cheerio.load(html);
 
     return {
@@ -16,5 +17,6 @@ export async function scrapeWithCheerio(html, pageUrl) {
         ...await scrapePageLinks($, pageUrl),
         images: await scrapeImages($, pageUrl),
         ...scrapeSchema($),
+        ...scrapeHreflang($, headers),
     }
 }

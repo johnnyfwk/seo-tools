@@ -66,7 +66,7 @@ export function scrapeSchema($) {
     });
 
     return {
-        schemas,
+        schemas: schemas.length ? schemas : [],
         types: Array.from(typesUsed),
     };
 }
