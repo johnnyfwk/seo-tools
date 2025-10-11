@@ -60,7 +60,8 @@ export async function POST(req) {
 
                 if (response.ok) {
                     const html = await response.text();
-                    scraped = await scrapeWithCheerio(html, finalUrl);
+                    const headersObj = Object.fromEntries(response.headers.entries()); // convert Headers to plain object
+                    scraped = await scrapeWithCheerio(html, finalUrl, headersObj);
                 }
             } catch (err) {
                 console.error(`Failed to fetch HTML for ${finalUrl}:`, err.message);

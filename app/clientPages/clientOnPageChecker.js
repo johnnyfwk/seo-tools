@@ -31,7 +31,7 @@ export default function ClientOnPageChecker() {
     const [externalLinks, setExternalLinks] = useState(null);
     const [images, setImages] = useState(null);
     const [jsonLdSchemas, setJsonLdSchemas] = useState(null);
-    console.log("jsonLdSchemas:", jsonLdSchemas)
+    const [hreflangs, setHreflangs] = useState(null);
 
     function normalizeUrl(url) {
         try {
@@ -66,6 +66,7 @@ export default function ClientOnPageChecker() {
         setExternalLinks(null);
         setImages(null);
         setJsonLdSchemas(null);
+        setHreflangs(null);
 
         let input = inputUrl.trim();
 
@@ -100,7 +101,7 @@ export default function ClientOnPageChecker() {
             }
 
             const data = await res.json();
-            // console.log(data);
+            console.log(data);
 
             setEnteredUrlStatusCode(data.enteredUrlStatusCode);
             setRobotsTxt(data.robotsCheck);
@@ -131,6 +132,7 @@ export default function ClientOnPageChecker() {
                     }
                 });
                 setJsonLdSchemas(resolvedJsonLdSchemas);
+                setHreflangs(data.hreflangs);
             } else if (data.enteredUrlStatusCode >= 300 && data.enteredUrlStatusCode < 400) {
                 setFinalUrl(data.finalUrl);
                 setRedirectChain(data.redirectChain);
@@ -708,7 +710,7 @@ export default function ClientOnPageChecker() {
             {images === null
                 ? null
                 : <section>
-                    <h2>Images</h2>
+                    <h2>Images ({images.length || 0})</h2>
                     {!images.length
                         ? "No images found"
                         : <table>
@@ -733,7 +735,7 @@ export default function ClientOnPageChecker() {
                                                     style={{ width: "100%", minWidth: "100px", maxWidth: "250px" }}
                                                 />
                                             </td>
-                                            <td>{image.alt}</td>
+                                            <td className={!image.alt ? "error-background" : undefined}>{image.alt}</td>
                                             <td><Link href={image.src} target="_blank">{image.src}</Link></td>
                                         </tr>
                                     )
@@ -747,10 +749,44 @@ export default function ClientOnPageChecker() {
             {jsonLdSchemas === null
                 ? null
                 : <section>
-                    <h2>Schema Markup</h2>
+                    <h2>Schema Markup ({jsonLdSchemas.length || 0})</h2>
                     {!jsonLdSchemas.length
                         ? <p>No schema markup found.</p>
                         : <JsonLdViewer jsonLdSchemas={jsonLdSchemas} />
+                    }
+                </section>
+            }
+
+            {hreflangs === null
+                ? null
+                : <section>
+                    <h2>Hreflang ({hreflangs.length || 0})</h2>
+                    {!hreflangs.length
+                        ? <p>No hreflang found.</p>
+                        : <table>
+                            <thead>
+                                <tr>
+                                    <th style={{ textAlign: 'center' }}>Source</th>
+                                    <th style={{ textAlign: 'center' }}>Is Valid?</th>
+                                    <th style={{ textAlign: 'center' }}>Rel</th>
+                                    <th style={{ textAlign: 'center' }}>Hreflang</th>
+                                    <th style={{ textAlign: 'left' }}>URL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {hreflangs.map((hreflang, index) => {
+                                    return (
+                                        <tr key={index}>
+                                            <td style={{ textAlign: 'center' }}>{hreflang.source}</td>
+                                            <td style={{ textAlign: 'center' }} className={!hreflang.isValid ? "error-background" : undefined}>{hreflang.isValid ? "Yes" : "No"}</td>
+                                            <td style={{ textAlign: 'center' }}>{hreflang.rel}</td>
+                                            <td style={{ textAlign: 'center' }}>{hreflang.hreflang}</td>
+                                            <td style={{ textAlign: 'left' }}>{hreflang.url}</td>
+                                        </tr>
+                                    )
+                                })}
+                            </tbody>
+                        </table>
                     }
                 </section>
             }
