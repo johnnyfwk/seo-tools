@@ -17,6 +17,7 @@ export default function ClientOnPageChecker() {
     const [enteredUrlStatusCode, setEnteredUrlStatusCode] = useState(null);
     const [finalUrl, setFinalUrl] = useState(null);
     const [redirectChain, setRedirectChain] = useState(null);
+    const [isRedirectedToHttps, setIsRedirectedToHttps] = useState(null);
     const [robotsTxt, setRobotsTxt] = useState(null);
     const [metaRobotsTag, setMetaRobotsTag] = useState(null);
     const [canonicalUrl, setCanonicalUrl] = useState(null);
@@ -52,6 +53,7 @@ export default function ClientOnPageChecker() {
         setEnteredUrlStatusCode(null);
         setFinalUrl(null);
         setRedirectChain(null);
+        setIsRedirectedToHttps(null);
         setRobotsTxt(null);
         setMetaRobotsTag(null);
         setCanonicalUrl(null);
@@ -71,8 +73,8 @@ export default function ClientOnPageChecker() {
 
         let input = inputUrl.trim();
 
-        if (!input.startsWith("http://") && !input.startsWith("https://")) {
-            input = "https://" + input;
+        if (!/^https?:\/\//i.test(input)) {
+            input = 'http://' + input; // prepend protocol if missing
         }
 
         // Validate URL
@@ -81,7 +83,7 @@ export default function ClientOnPageChecker() {
             validatedUrl = new URL(input);
         } catch (err) {
             console.error(err);
-            setError("Please enter a valid URL (must start with http:// or https://).");
+            setError("Please enter a valid URL (starting with http:// or https://).");
             return;
         }
 
@@ -105,11 +107,11 @@ export default function ClientOnPageChecker() {
             console.log(data);
 
             setEnteredUrlStatusCode(data.enteredUrlStatusCode);
-            setRobotsTxt(data.robotsCheck);
 
             if (data.error) {
                 setError(data.error);
             } else if (data.enteredUrlStatusCode === 200) {
+                setRobotsTxt(data.robotsCheck);
                 setMetaRobotsTag(data.metaRobotsTag);
                 setCanonicalUrl(data.canonicalUrl);
                 setMetaTitles(data.metaTitles);
@@ -137,6 +139,7 @@ export default function ClientOnPageChecker() {
             } else if (data.enteredUrlStatusCode >= 300 && data.enteredUrlStatusCode < 400) {
                 setFinalUrl(data.finalUrl);
                 setRedirectChain(data.redirectChain);
+                setIsRedirectedToHttps(data.redirectsToHttps);
             } else if (data.enteredUrlStatusCode >= 400 && data.enteredUrlStatusCode < 600) {
                 setFinalUrl(data.finalUrl);
             } else {
@@ -161,7 +164,7 @@ export default function ClientOnPageChecker() {
             } 
             else if (data.metaRobotsTag?.toLowerCase().includes("noindex")) {
                 setIsUrlIndexable(false);
-                setIndexabilityMessage("The meta robots tag is set to 'noindex'.");
+                setIndexabilityMessage("The Meta Robots Tag is set to 'noindex'.");
             } 
             else if (data.xRobotsTag?.toLowerCase().includes("noindex")) {
                 setIsUrlIndexable(false);
@@ -193,11 +196,11 @@ export default function ClientOnPageChecker() {
             } 
             else if (canonical && entered.trim().replace(/\/$/, '') !== canonical.trim().replace(/\/$/, '')) {
                 setIsUrlIndexable(false);
-                setIndexabilityMessage("Canonical URL points to a different page. Search engines may index the canonical URL instead of this one.");
+                setIndexabilityMessage("Canonical URL points to a different page. Search engines may index the canonical URL instead of the entered URL.");
             } 
             else if (data.enteredUrlStatusCode === 200) {
                 setIsUrlIndexable(true);
-                setIndexabilityMessage("This URL can be indexed in search engines.");
+                setIndexabilityMessage("URL can be indexed in search engines.");
             } 
             else {
                 setIsUrlIndexable(false);
@@ -228,15 +231,15 @@ export default function ClientOnPageChecker() {
                     <br />
 
                     <input
-                        type="url"
+                        type="text"
                         name="url"
                         id="url"
                         value={inputUrl}
                         onChange={(e) => setInputUrl(e.target.value)}
-                        placeholder="https://example.com"
+                        placeholder="https://example.com or http://example.com"
                         required
                         disabled={isCheckingPage}
-                        style={{width: '100%'}}
+                        style={{width: '100%', padding: "10px"}}
                     />
 
                     <br />
@@ -254,9 +257,38 @@ export default function ClientOnPageChecker() {
                 }
             </section>
 
+            {enteredUrlStatusCode === 200
+                ? <section>
+                    <h2>Contents</h2>
+                    <ul>
+                        {isUrlIndexable && (<li><Link href="#on-page-checker-url-is-indexable">URL is Indexable?</Link></li>)}
+                        {enteredUrlStatusCode && (<li><Link href="#on-page-checker-status-code">Status Code</Link></li>)}
+                        {robotsTxt && (<li><Link href="#on-page-checker-robots-txt">Robots.txt</Link></li>)}
+                        {metaRobotsTag && (<li><Link href="#on-page-checker-meta-robots-tag">Meta Robots Tag</Link></li>)}
+                        {canonicalUrl && (<li><Link href="#on-page-checker-canonical-url">Canonical URL</Link></li>)}
+
+                        {metaTitles && (<li><Link href="#on-page-checker-meta-titles">Meta Title</Link></li>)}
+                        {metaDescriptions && (<li><Link href="#on-page-checker-meta-description">Meta Description</Link></li>)}
+                        {h1s && (<li><Link href="#on-page-checker-h1s">H1s</Link></li>)}
+                        {h2s && (<li><Link href="#on-page-checker-h2s">H2s</Link></li>)}
+                        {h3s && (<li><Link href="#on-page-checker-h3s">H3s</Link></li>)}
+                        {h4s && (<li><Link href="#on-page-checker-h4s">H4s</Link></li>)}
+                        {h5s && (<li><Link href="#on-page-checker-h5s">H5s</Link></li>)}
+                        {h6s && (<li><Link href="#on-page-checker-h6s">H6s</Link></li>)}
+                        {internalLinks && (<li><Link href="#on-page-checker-internal-links">Internal Links</Link></li>)}
+                        {externalLinks && (<li><Link href="#on-page-checker-external-links">External Links</Link></li>)}
+                        {images && (<li><Link href="#on-page-checker-images">Images</Link></li>)}
+                        {jsonLdSchemas && (<li><Link href="#on-page-checker-schema-markup">Schema Markup</Link></li>)}
+                        {hreflangs && (<li><Link href="#on-page-checker-hreflang">Hreflang</Link></li>)}
+                        {redirectChain && (<li><Link href="#on-page-checker-redirect-chain">Redirect Chain</Link></li>)}
+                    </ul>
+                </section>
+                : null
+            }
+
             {enteredUrlStatusCode === null || enteredUrlStatusCode === undefined
                 ? null
-                : <section>
+                : <section id="on-page-checker-status-code">
                     <h2>URL</h2>
                     <Link href={analysedUrl} target="_blank">{analysedUrl}</Link>
                 </section>
@@ -264,12 +296,8 @@ export default function ClientOnPageChecker() {
 
             {isUrlIndexable === null
                 ? null
-                : <section>
-                    <h2>Is the URL indexable?
-                        <span
-                            className={isUrlIndexable ? "success-text" : "error-text"}
-                        >{isUrlIndexable ? " Yes" : " No"}</span>
-                    </h2>
+                : <section id="on-page-checker-url-is-indexable">
+                    <h2>URL is indexable? <span className={isUrlIndexable ? "success-text" : "error-text"}>{isUrlIndexable ? "Yes" : "No"}</span></h2>
                     <p>{indexabilityMessage}</p>
                 </section>
             }
@@ -277,25 +305,34 @@ export default function ClientOnPageChecker() {
             {enteredUrlStatusCode === null || enteredUrlStatusCode === undefined
                 ? null
                 : <section id="on-page-checker-status-code">
-                    <h2>Status Code</h2>
-                    <p>{enteredUrlStatusCode}</p>
+                    <h2>Status Code: <span className={enteredUrlStatusCode === 200 ? "success-text" : enteredUrlStatusCode >= 300 && enteredUrlStatusCode < 400 ? "warning-text" : "error-text"}>{enteredUrlStatusCode}</span></h2>
                 </section>
             }
 
             {robotsTxt?.robotsUrl
                 ? <section id="on-page-checker-robots-txt">
-                    <h2>Robots.txt</h2>
+                    <h2>URL allowed by Robots.txt? <span className={robotsTxt.allowed ? "success-text" : "error-text"}>{robotsTxt.allowed ? "Yes" : "No"}</span></h2>
                     <p style={{ marginBottom: '10px'}}>
                         <Link href={robotsTxt.robotsUrl} target="_blank">{robotsTxt.robotsUrl}</Link>
                     </p>
-                    <p>{robotsTxt.reason}</p>
                 </section>
                 : null
             }
 
             {metaRobotsTag
-                ? <section id="on-page-checker-meta-robots">
-                    <h2>Meta Robots</h2>
+                ? <section id="on-page-checker-meta-robots-tag">
+                    <h2>
+                        Meta Robots Tag allows indexing?{" "}
+                        <span
+                            className={
+                            metaRobotsTag.toLowerCase().includes("noindex")
+                                ? "warning-text"   // orange/yellow for noindex
+                                : "success-text"   // green for index/follow or unspecified
+                            }
+                        >
+                            {metaRobotsTag.toLowerCase().includes("noindex") ? "No" : "Yes"}
+                        </span>
+                    </h2>
                     <p>{metaRobotsTag}</p>
                 </section>
                 : null
@@ -303,8 +340,16 @@ export default function ClientOnPageChecker() {
 
             {canonicalUrl
                 ? <section id="on-page-checker-canonical-url">
-                    <h2>Canonical URL</h2>
+                    <h2>Canonical URL points to itself? <span className={analysedUrl.replace(/\/$/, '') === canonicalUrl.replace(/\/$/, '') ? "success-text" : "warning-text"}>{analysedUrl.replace(/\/$/, '') === canonicalUrl.replace(/\/$/, '') ? "Yes" : "No"}</span></h2>
                     <Link href={canonicalUrl} target="_blank">{canonicalUrl}</Link>
+                </section>
+                : null
+            }
+
+            {isRedirectedToHttps
+                ? <section>
+                    <h2>HTTP redirects to HTTPS? <span className={isRedirectedToHttps ? "success-text" : "error-text"}>{isRedirectedToHttps ? "Yes" : "No"}</span></h2>
+                    <p>URL redirects to <Link href={redirectChain[1].url} target="_blank">{redirectChain[1].url}</Link>.</p>
                 </section>
                 : null
             }
@@ -340,29 +385,6 @@ export default function ClientOnPageChecker() {
                             })}
                         </tbody>
                     </table>
-                </section>
-                : null
-            }
-
-            {enteredUrlStatusCode === 200
-                ? <section>
-                    <h2>Contents</h2>
-                    <ul>
-                        {metaTitles && (<li><Link href="#on-page-checker-meta-titles">Meta Title</Link></li>)}
-                        {metaDescriptions && (<li><Link href="#on-page-checker-meta-description">Meta Description</Link></li>)}
-                        {h1s && (<li><Link href="#on-page-checker-h1s">H1s</Link></li>)}
-                        {h2s && (<li><Link href="#on-page-checker-h2s">H2s</Link></li>)}
-                        {h3s && (<li><Link href="#on-page-checker-h3s">H3s</Link></li>)}
-                        {h4s && (<li><Link href="#on-page-checker-h4s">H4s</Link></li>)}
-                        {h5s && (<li><Link href="#on-page-checker-h5s">H5s</Link></li>)}
-                        {h6s && (<li><Link href="#on-page-checker-h6s">H6s</Link></li>)}
-                        {internalLinks && (<li><Link href="#on-page-checker-internal-links">Internal Links</Link></li>)}
-                        {externalLinks && (<li><Link href="#on-page-checker-external-links">External Links</Link></li>)}
-                        {images && (<li><Link href="#on-page-checker-images">Images</Link></li>)}
-                        {jsonLdSchemas && (<li><Link href="#on-page-checker-schema-markup">Schema Markup</Link></li>)}
-                        {hreflangs && (<li><Link href="#on-page-checker-hreflang">Hreflang</Link></li>)}
-                        {redirectChain && (<li><Link href="#on-page-checker-redirect-chain">Redirect Chain</Link></li>)}
-                    </ul>
                 </section>
                 : null
             }
@@ -794,7 +816,7 @@ export default function ClientOnPageChecker() {
                                     <th style={{ textAlign: 'center' }}>Hreflang</th>
                                     <th style={{ textAlign: 'left' }}>URL</th>
                                     <th style={{ textAlign: 'center' }}>Status Code</th>
-                                    <th style={{ textAlign: 'center' }}>Is the URL Indexable?</th>
+                                    <th style={{ textAlign: 'center' }}>URL is Indexable?</th>
                                     <th style={{ textAlign: 'left' }}>Final URL</th>
                                     
                                 </tr>
