@@ -1,9 +1,8 @@
 'use client';
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import * as utils from '@/app/lib/utils';
 import JsonLdViewer from "../components/jsonTree";
-import BackToTopButton from "../components/backToTopButton";
 
 export default function ClientOnPageChecker() {
     const [inputUrl, setInputUrl] = useState("");
@@ -846,8 +845,6 @@ export default function ClientOnPageChecker() {
                     }
                 </section>
             }
-
-            <BackToTopButton />
         </>
     )
 }
