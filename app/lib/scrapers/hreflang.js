@@ -63,8 +63,14 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
                 const html = await response.text();
                 const $page = cheerio.load(html);
 
+                // Extract canonical
                 const canonical = scrapeCanonical($page).canonicalUrl || absoluteUrl;
-                isIndexable = canonical === absoluteUrl;
+
+                // Extract meta robots
+                const metaRobots = $page('meta[name="robots"]').attr('content') || '';
+                const isNoindex = metaRobots.toLowerCase().includes('noindex');
+
+                isIndexable = !isNoindex && (canonical === absoluteUrl || canonical === '');
             }
 
             results.push({
