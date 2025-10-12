@@ -9,6 +9,7 @@ export async function scrapePageLinks($, pageUrl) {
     // Resolve relative URLs to absolute
     const base = new URL(pageUrl);
 
+    // Resolve relative URLs to absolute
     const resolvedLinks = links.map(link => {
         try {
             const url = new URL(link.href, base);
@@ -26,7 +27,7 @@ export async function scrapePageLinks($, pageUrl) {
     const internalLinks = resolvedLinks.filter(link => {
         try {
             const host = normalizeHostname(new URL(link.url).hostname);
-            return host === baseHost;
+            return host === baseHost || host.endsWith(`.${baseHost}`);
         } catch {
             return false;
         }
@@ -35,7 +36,7 @@ export async function scrapePageLinks($, pageUrl) {
     const externalLinks = resolvedLinks.filter(link => {
         try {
             const host = normalizeHostname(new URL(link.url).hostname);
-            return host !== baseHost;
+            return !(host === baseHost || host.endsWith(`.${baseHost}`));
         } catch {
             return false;
         }
@@ -45,7 +46,6 @@ export async function scrapePageLinks($, pageUrl) {
     async function fetchWithRedirectChain(url) {
         const chain = [];
         let currentUrl = url;
-        let statusCode = null;
 
         while (currentUrl) {
             try {
@@ -54,17 +54,11 @@ export async function scrapePageLinks($, pageUrl) {
                     redirect: 'manual', // stop automatic redirect
                 });
 
-                statusCode = response.status;
-
-                // If redirect, get the Location header
-                const location = response.headers.get('location');
+                const statusCode = response.status;
                 chain.push({ url: currentUrl, statusCode });
 
-                if (location) {
-                    currentUrl = new URL(location, currentUrl).href;
-                } else {
-                    currentUrl = null; // no more redirects
-                }
+                const location = response.headers.get('location');
+                currentUrl = location ? new URL(location, currentUrl).href : null;
             } catch (err) {
                 chain.push({ url: currentUrl, statusCode: "Could not fetch status code" });
                 currentUrl = null;
@@ -80,12 +74,11 @@ export async function scrapePageLinks($, pageUrl) {
             links.map(async link => {
                 const redirectChain = await fetchWithRedirectChain(link.url);
                 const finalUrl = redirectChain[redirectChain.length - 1]?.url || link.url;
-                const originalStatus = redirectChain[0]?.statusCode || null;
+                const statusCode = redirectChain[0]?.statusCode || null;
 
                 return {
-                    url: link.url,
-                    anchor: link.anchor,
-                    statusCode: originalStatus,
+                    ...link,
+                    statusCode,
                     finalUrl,
                     redirectChain,
                 };

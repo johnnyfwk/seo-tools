@@ -357,7 +357,7 @@ export default function ClientOnPageChecker() {
             {finalUrl
                 ? <section id="on-page-checker-final-url">
                     <h2>Final URL</h2>
-                    <p><Link href={finalUrl} target="_blank">{finalUrl}</Link></p>
+                    <p><Link href={finalUrl} target="_blank">{finalUrl}</Link> ({redirectChain[redirectChain.length - 1].statusCode})</p>
                 </section>
                 : null
             }
@@ -377,9 +377,9 @@ export default function ClientOnPageChecker() {
                             {redirectChain.map((redirect, i) => {
                                 return (
                                     <tr key={i}>
-                                        <td>{i + 1}</td>
-                                        <td><Link href={redirect.url}>{redirect.url}</Link></td>
-                                        <td>{redirect.statusCode}</td>
+                                        <td style={{ textAlign: 'center' }}>{i + 1}</td>
+                                        <td style={{ textAlign: 'left' }}><Link href={redirect.url}>{redirect.url}</Link></td>
+                                        <td style={{ textAlign: 'center' }}>{redirect.statusCode}</td>
                                     </tr>
                                 )
                             })}
