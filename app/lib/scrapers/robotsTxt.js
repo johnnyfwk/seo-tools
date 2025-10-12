@@ -101,7 +101,9 @@ async function checkRobotsTxt(url, userAgent = '*') {
     return {
         allowed,
         robotsUrl: robots.robotsUrl,
-        reason: allowed ? 'Allowed by robots.txt' : 'Blocked from crawling by robots.txt (not indexable via content)'
+        reason: allowed
+            ? 'URL allowed by robots.txt'
+            : 'URL blocked from crawling by robots.txt (not indexable via content)'
     };
 }
 

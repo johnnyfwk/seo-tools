@@ -24,7 +24,13 @@ async function fetchRedirectChain(url) {
 
 export async function POST(req) {
     try {
-        const { url } = await req.json();
+        // const { url } = await req.json();
+        let { url } = await req.json();
+        url = url.trim();
+
+        if (!/^https?:\/\//i.test(url)) {
+            url = 'http://' + url; // fallback if user types "example.com"
+        }
 
         if (!url) {
             return new Response(
@@ -33,8 +39,18 @@ export async function POST(req) {
             );
         }
 
+        try {
+            new URL(url);
+        } catch {
+            return new Response(JSON.stringify({ error: 'Invalid URL.' }), { status: 400 });
+        }
+
         // 1. Build the redirect chain
         const redirectChain = await fetchRedirectChain(url);
+
+        const firstRedirectUrl = redirectChain[0]?.url || '';
+        const secondRedirectUrl = redirectChain[1]?.url || '';
+        const redirectsToHttps = firstRedirectUrl.startsWith('http://') && secondRedirectUrl?.startsWith('https://');
 
         // 2. Identify entered status + final URL
         const enteredUrlStatusCode = redirectChain[0]?.statusCode || null;
@@ -75,6 +91,7 @@ export async function POST(req) {
                 finalUrl,        // last URL after redirects
                 finalStatusCode,     // last status
                 redirectChain,   // full chain with {url, statusCode}
+                redirectsToHttps,
                 robotsCheck,
                 ...scraped,
             }),
