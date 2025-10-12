@@ -10,6 +10,8 @@ import { scrapeHreflang } from './hreflang';
 export async function scrapeWithCheerio(html, pageUrl,  headers = {}) {
     const $ = cheerio.load(html);
 
+    const hreflangResult = await scrapeHreflang($, pageUrl, headers);
+
     return {
         ...scrapeMeta($),
         ...scrapeHeadings($),
@@ -17,6 +19,6 @@ export async function scrapeWithCheerio(html, pageUrl,  headers = {}) {
         ...await scrapePageLinks($, pageUrl),
         images: await scrapeImages($, pageUrl),
         ...scrapeSchema($),
-        ...scrapeHreflang($, headers),
+        ...hreflangResult,
     }
 }

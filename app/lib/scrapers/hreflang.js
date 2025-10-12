@@ -1,42 +1,24 @@
-export function scrapeHreflang($, headers = {}) {
+import * as cheerio from 'cheerio';
+import { scrapeCanonical } from './canonical';
+
+export async function scrapeHreflang($, pageUrl, headers = {}) {
     const hreflangs = [];
 
-    // 1️⃣ <link> tags — correct implementation
+    // 1️⃣ Collect <link hreflang>
     $('link[hreflang]').each((i, el) => {
+        const href = $(el).attr('href')?.trim();
+        const hreflang = $(el).attr('hreflang')?.trim();
+
         hreflangs.push({
             source: '<link>',
-            rel: $(el).attr('rel') || null,
-            hreflang: $(el).attr('hreflang')?.trim() || null,
-            url: $(el).attr('href')?.trim() || null,
-            isValid: !!$(el).attr('href') && !!$(el).attr('hreflang'),
+            hreflang,
+            url: href,
+            statusCode: null,
+            isIndexable: null,
         });
     });
 
-    // 2️⃣ <a hreflang> — often incorrect but worth noting
-    $('a[hreflang]').each((i, el) => {
-        hreflangs.push({
-            source: '<a>',
-            rel: $(el).attr('rel') || null,
-            hreflang: $(el).attr('hreflang')?.trim() || null,
-            url: $(el).attr('href')?.trim() || null,
-            isValid: false, // not a valid hreflang location
-        });
-    });
-
-    // 3️⃣ <meta name="hreflang"> — unusual but possible
-    $('meta[name="hreflang"]').each((i, el) => {
-        hreflangs.push({
-            source: '<meta>',
-            rel: null,
-            hreflang: $(el).attr('content')?.trim() || null,
-            url: null,
-            isValid: false, // invalid location
-        });
-    });
-
-    // 4️⃣ HTTP headers (if passed from fetch)
-    // Example header:
-    // Link: <https://example.com/en-gb/>; rel="alternate"; hreflang="en-gb"
+    // 2️⃣ Collect hreflangs from HTTP headers (if any)
     const linkHeader = headers['link'] || headers['Link'];
     if (linkHeader) {
         const matches = linkHeader.matchAll(
@@ -45,14 +27,61 @@ export function scrapeHreflang($, headers = {}) {
         for (const match of matches) {
             hreflangs.push({
                 source: 'HTTP header',
-                rel: 'alternate',
                 hreflang: match[2].toLowerCase(),
                 url: match[1],
-                isValid: true,
+                statusCode: null,
+                isIndexable: null,
             });
         }
     }
 
-    // 5️⃣ Return *everything* — even duplicates and malformed entries
-    return { hreflangs };
+    const results = [];
+
+    // 3️⃣ Fetch each hreflang URL
+    for (const item of hreflangs) {
+        if (!item.url) {
+            results.push(item);
+            continue;
+        }
+
+        try {
+            const absoluteUrl = new URL(item.url, pageUrl).href;
+
+            const response = await fetch(absoluteUrl, {
+                method: 'GET',
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (compatible; SEO-Crawler/1.0)',
+                },
+                redirect: 'manual', // do not follow redirects
+            });
+
+            const statusCode = response.status;
+            let isIndexable = null;
+
+            // 4️⃣ Only check indexability if status is 200
+            if (statusCode === 200) {
+                const html = await response.text();
+                const $page = cheerio.load(html);
+
+                const canonical = scrapeCanonical($page).canonicalUrl || absoluteUrl;
+                isIndexable = canonical === absoluteUrl;
+            }
+
+            results.push({
+                ...item,
+                statusCode,
+                finalUrl: absoluteUrl,
+                isIndexable,
+            });
+        } catch (err) {
+            results.push({
+                ...item,
+                statusCode: 'Error',
+                finalUrl: item.url,
+                isIndexable: null,
+            });
+        }
+    }
+
+    return { hreflangs: results };
 }

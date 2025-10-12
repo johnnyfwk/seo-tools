@@ -624,8 +624,8 @@ export default function ClientOnPageChecker() {
                                 <tr>
                                     <th style={{ textAlign: 'center' }}>#</th>
                                     <th style={{ textAlign: 'left' }}>Anchor Text</th>
-                                    <th style={{ textAlign: 'center' }}>Status Code</th>
                                     <th style={{ textAlign: 'left' }}>Link URL</th>
+                                    <th style={{ textAlign: 'center' }}>Status Code</th>
                                     <th style={{ textAlign: 'left' }}>Final URL</th>
                                     <th style={{ textAlign: 'left' }}>Redirect Chain</th>
                                 </tr>
@@ -635,6 +635,9 @@ export default function ClientOnPageChecker() {
                                     <tr key={i}>
                                         <td style={{ textAlign: 'center' }}>{i + 1}</td>
                                         <td>{link.anchor || "(no text)"}</td>
+                                        <td>
+                                            <Link href={link.url} target="_blank">{link.url}</Link>
+                                        </td>
                                         <td
                                             className={
                                                 link.statusCode >= 300 && link.statusCode < 400
@@ -645,9 +648,6 @@ export default function ClientOnPageChecker() {
                                             }
                                             style={{ textAlign: 'center' }}
                                         >{link.statusCode}</td>
-                                        <td>
-                                            <Link href={link.url} target="_blank">{link.url}</Link>
-                                        </td>
                                         <td>
                                             <Link href={link.finalUrl} target="_blank">{link.finalUrl}</Link>
                                         </td>
@@ -683,8 +683,8 @@ export default function ClientOnPageChecker() {
                                 <tr>
                                     <th style={{ textAlign: 'center' }}>#</th>
                                     <th style={{ textAlign: 'left' }}>Anchor Text</th>
-                                    <th style={{ textAlign: 'center' }}>Status Code</th>
                                     <th style={{ textAlign: 'left' }}>Link URL</th>
+                                    <th style={{ textAlign: 'center' }}>Status Code</th>
                                     <th style={{ textAlign: 'left' }}>Final URL</th>
                                     <th style={{ textAlign: 'left' }}>Redirect Chain</th>
                                 </tr>
@@ -694,6 +694,9 @@ export default function ClientOnPageChecker() {
                                     <tr key={i}>
                                         <td style={{ textAlign: 'center' }}>{i + 1}</td>
                                         <td>{link.anchor || "(no text)"}</td>
+                                        <td>
+                                            <Link href={link.url} target="_blank">{link.url}</Link>
+                                        </td>
                                         <td
                                             className={
                                                 link.statusCode >= 300 && link.statusCode < 400
@@ -704,9 +707,6 @@ export default function ClientOnPageChecker() {
                                             }
                                             style={{ textAlign: 'center' }}
                                         >{link.statusCode}</td>
-                                        <td>
-                                            <Link href={link.url} target="_blank">{link.url}</Link>
-                                        </td>
                                         <td>
                                             <Link href={link.finalUrl} target="_blank">{link.finalUrl}</Link>
                                         </td>
@@ -784,17 +784,19 @@ export default function ClientOnPageChecker() {
             {hreflangs === null
                 ? null
                 : <section id="on-page-checker-hreflang">
-                    <h2>Hreflang ({hreflangs.length || 0})</h2>
-                    {!hreflangs.length
+                    <h2>Hreflang ({hreflangs?.length || 0})</h2>
+                    {!hreflangs?.length
                         ? <p>No hreflang found.</p>
                         : <table>
                             <thead>
                                 <tr>
                                     <th style={{ textAlign: 'center' }}>Source</th>
-                                    <th style={{ textAlign: 'center' }}>Is Valid?</th>
-                                    <th style={{ textAlign: 'center' }}>Rel</th>
                                     <th style={{ textAlign: 'center' }}>Hreflang</th>
                                     <th style={{ textAlign: 'left' }}>URL</th>
+                                    <th style={{ textAlign: 'center' }}>Status Code</th>
+                                    <th style={{ textAlign: 'center' }}>Is the URL Indexable?</th>
+                                    <th style={{ textAlign: 'left' }}>Final URL</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody>
@@ -802,10 +804,18 @@ export default function ClientOnPageChecker() {
                                     return (
                                         <tr key={index}>
                                             <td style={{ textAlign: 'center' }}>{hreflang.source}</td>
-                                            <td style={{ textAlign: 'center' }} className={!hreflang.isValid ? "error-background" : undefined}>{hreflang.isValid ? "Yes" : "No"}</td>
-                                            <td style={{ textAlign: 'center' }}>{hreflang.rel}</td>
                                             <td style={{ textAlign: 'center' }}>{hreflang.hreflang}</td>
-                                            <td style={{ textAlign: 'left' }}>{hreflang.url}</td>
+                                            <td style={{ textAlign: 'left' }}>
+                                                <Link href={hreflang.url} target="_blank">{hreflang.url}</Link>
+                                            </td>
+                                            <td style={{ textAlign: 'center' }}>{hreflang.statusCode}</td>
+                                            <td
+                                                style={{ textAlign: 'center' }}
+                                                className={!hreflang.isIndexable ? "error-background" : undefined }
+                                            >{hreflang.isIndexable ? "Yes" : "No"}</td>
+                                            <td style={{ textAlign: 'left' }}>
+                                                <Link href={hreflang.finalUrl} target="_blank">{hreflang.finalUrl}</Link>
+                                            </td>
                                         </tr>
                                     )
                                 })}
