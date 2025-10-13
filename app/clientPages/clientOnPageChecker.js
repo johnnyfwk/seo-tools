@@ -655,20 +655,30 @@ export default function ClientOnPageChecker() {
                                 {internalLinks.map((link, i) => (
                                     <tr key={i}>
                                         <td style={{ textAlign: 'center' }}>{i + 1}</td>
-                                        <td>{link.anchor || "(no text)"}</td>
+                                        <td>
+                                            {link.anchor?.type === 'image' ? (
+                                                <img 
+                                                    src={link.anchor.src} 
+                                                    alt={link.anchor.alt || 'Image link'} 
+                                                    style={{ minWidth: "100px", maxWidth: "100px" }}
+                                                />
+                                            ) : (
+                                                link.anchor?.text || "(no text)"
+                                            )}
+                                        </td>
                                         <td>
                                             <Link href={link.url} target="_blank">{link.url}</Link>
                                         </td>
                                         <td
                                             className={
                                                 link.statusCode >= 300 && link.statusCode < 400
-                                                ? 'warning-background'
-                                                : link.statusCode >= 400
-                                                    ? 'error-background'
-                                                    : ''
-                                            }
-                                            style={{ textAlign: 'center' }}
-                                        >{link.statusCode}</td>
+                                                    ? 'warning-background'
+                                                    : link.statusCode >= 400
+                                                        ? 'error-background'
+                                                        : ''
+                                                }
+                                                style={{ textAlign: 'center' }}
+                                            >{link.statusCode}</td>
                                         <td>
                                             <Link href={link.finalUrl} target="_blank">{link.finalUrl}</Link>
                                         </td>
@@ -714,7 +724,17 @@ export default function ClientOnPageChecker() {
                                 {externalLinks.map((link, i) => (
                                     <tr key={i}>
                                         <td style={{ textAlign: 'center' }}>{i + 1}</td>
-                                        <td>{link.anchor || "(no text)"}</td>
+                                        <td>
+                                            {link.anchor?.type === 'image' ? (
+                                                <img 
+                                                    src={link.anchor.src} 
+                                                    alt={link.anchor.alt || 'Image link'} 
+                                                    style={{ minWidth: "100px", maxWidth: "100px" }}
+                                                    />
+                                                ) : (
+                                                    link.anchor?.text || "(no text)"
+                                                )}
+                                            </td>
                                         <td>
                                             <Link href={link.url} target="_blank">{link.url}</Link>
                                         </td>
@@ -777,7 +797,7 @@ export default function ClientOnPageChecker() {
                                                     src={image.src || undefined}
                                                     alt={image.alt || ""}
                                                     loading="lazy"
-                                                    style={{ width: "100%", minWidth: "100px", maxWidth: "250px" }}
+                                                    style={{ minWidth: "100px", maxWidth: "100px" }}
                                                 />
                                             </td>
                                             <td className={!image.alt ? "error-background" : undefined}>{image.alt}</td>

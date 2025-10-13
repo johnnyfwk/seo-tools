@@ -1,13 +1,56 @@
 export async function scrapePageLinks($, pageUrl) {
-    const links = $('a[href]')
-        .map((i, element) => ({
-            href: $(element).attr('href'),
-            anchor: $(element).text().trim(),
-        }))
-        .get();
-
     // Resolve relative URLs to absolute
     const base = new URL(pageUrl);
+
+    const links = $('a[href]')
+        .map((i, element) => {
+            const href = $(element).attr('href');
+            const anchorText = $(element).text().trim();
+
+            // Skip if no href
+            if (!href) return null;
+
+            // Detect if link is an image file
+            const isImageHref = /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(href);
+
+            // Detect if the <a> contains an <img>
+            const innerImg = $(element).find('img').first();
+            const innerImgSrcRaw = innerImg.attr('src');
+            const innerImgAlt = innerImg.attr('alt') || "Image link";
+
+            let resolvedHref, resolvedImgSrc = null;
+
+            try {
+                resolvedHref = new URL(href, base).href;
+            } catch {
+                resolvedHref = href;
+            }
+
+            if (innerImgSrcRaw) {
+                try {
+                    // Resolve relative to the link itself if href is absolute
+                    const linkBase = new URL(href, base);
+                    resolvedImgSrc = new URL(innerImgSrcRaw, linkBase).href;
+                } catch {
+                    resolvedImgSrc = innerImgSrcRaw;
+                }
+            }
+
+            let anchor;
+            if (resolvedImgSrc) {
+                anchor = { type: 'image', src: resolvedImgSrc, alt: innerImgAlt };
+            } else if (isImageHref) {
+                anchor = { type: 'image', src: resolvedHref, alt: innerImgAlt };
+            } else if (anchorText) {
+                anchor = { type: 'text', text: anchorText };
+            } else {
+                anchor = { type: 'text', text: "(no text)" };
+            }
+
+            return { href: resolvedHref, anchor };
+        })
+        .get()
+        .filter(Boolean);
 
     // Resolve relative URLs to absolute
     const resolvedLinks = links.map(link => {
@@ -97,4 +140,12 @@ export async function scrapePageLinks($, pageUrl) {
         internalLinks: processedInternal,
         externalLinks: processedExternal,
     };
+}
+
+// Helper
+function isInternal(url, base) {
+    const normalize = (h) => h.replace(/^www\./, '').toLowerCase();
+    const host = normalize(new URL(url).hostname);
+    const baseHost = normalize(base.hostname);
+    return host === baseHost || host.endsWith(`.${baseHost}`);
 }
