@@ -33,6 +33,7 @@ export default function ClientOnPageChecker() {
     const [images, setImages] = useState(null);
     const [jsonLdSchemas, setJsonLdSchemas] = useState(null);
     const [hreflangs, setHreflangs] = useState(null);
+    const [openGraphTags, setOpenGraphTags] = useState(null);
 
     function normalizeUrl(url) {
         try {
@@ -69,6 +70,7 @@ export default function ClientOnPageChecker() {
         setImages(null);
         setJsonLdSchemas(null);
         setHreflangs(null);
+        setOpenGraphTags(null);
 
         let input = inputUrl.trim();
 
@@ -124,7 +126,6 @@ export default function ClientOnPageChecker() {
                 setInternalLinks(data.internalLinks);
                 setExternalLinks(data.externalLinks);
                 setImages(data.images);
-
                 const filteredjsonLdSchemas = data.schemas.filter(item => item.format.toLowerCase() === "json-ld");
                 const resolvedJsonLdSchemas  = filteredjsonLdSchemas.flatMap(item => {
                     if (item.raw["@graph"]) {
@@ -135,6 +136,7 @@ export default function ClientOnPageChecker() {
                 });
                 setJsonLdSchemas(resolvedJsonLdSchemas);
                 setHreflangs(data.hreflangs);
+                setOpenGraphTags(data.openGraphTags);
             } else if (data.enteredUrlStatusCode >= 300 && data.enteredUrlStatusCode < 400) {
                 setFinalUrl(data.finalUrl);
                 setRedirectChain(data.redirectChain);
@@ -265,7 +267,6 @@ export default function ClientOnPageChecker() {
                         {robotsTxt && (<li><Link href="#on-page-checker-robots-txt">Robots.txt</Link></li>)}
                         {metaRobotsTag && (<li><Link href="#on-page-checker-meta-robots-tag">Meta Robots Tag</Link></li>)}
                         {canonicalUrl && (<li><Link href="#on-page-checker-canonical-url">Canonical URL</Link></li>)}
-
                         {metaTitles && (<li><Link href="#on-page-checker-meta-titles">Meta Title</Link></li>)}
                         {metaDescriptions && (<li><Link href="#on-page-checker-meta-description">Meta Description</Link></li>)}
                         {h1s && (<li><Link href="#on-page-checker-h1s">H1s</Link></li>)}
@@ -280,6 +281,7 @@ export default function ClientOnPageChecker() {
                         {jsonLdSchemas && (<li><Link href="#on-page-checker-schema-markup">Schema Markup</Link></li>)}
                         {hreflangs && (<li><Link href="#on-page-checker-hreflang">Hreflang</Link></li>)}
                         {redirectChain && (<li><Link href="#on-page-checker-redirect-chain">Redirect Chain</Link></li>)}
+                        {openGraphTags && (<li><Link href="#on-page-checker-open-graph-tags">Open Graph Tags</Link></li>)}
                     </ul>
                 </section>
                 : null
@@ -339,7 +341,7 @@ export default function ClientOnPageChecker() {
 
             {canonicalUrl
                 ? <section id="on-page-checker-canonical-url">
-                    <h2>Canonical URL points to itself? <span className={analysedUrl.replace(/\/$/, '') === canonicalUrl.replace(/\/$/, '') ? "success-text" : "warning-text"}>{analysedUrl.replace(/\/$/, '') === canonicalUrl.replace(/\/$/, '') ? "Yes" : "No"}</span></h2>
+                    <h2>URL has a self-referencing Canonical URL? <span className={analysedUrl.replace(/\/$/, '') === canonicalUrl.replace(/\/$/, '') ? "success-text" : "warning-text"}>{analysedUrl.replace(/\/$/, '') === canonicalUrl.replace(/\/$/, '') ? "Yes" : "No"}</span></h2>
                     <Link href={canonicalUrl} target="_blank">{canonicalUrl}</Link>
                 </section>
                 : null
@@ -863,6 +865,136 @@ export default function ClientOnPageChecker() {
                             </tbody>
                         </table>
                     }
+                </section>
+            }
+
+            {openGraphTags === null
+                ? null
+                : <section id="on-page-checker-open-graph-tags">
+                    <h2>Open Graph Tags</h2>
+
+                    {openGraphTags.missingTags.length ? (
+                        <div>
+                            <h3>Missing Tags:</h3>
+                            <ul>
+                                {openGraphTags.missingTags.map((tag, index) => (
+                                    <li key={index}>{tag}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    ) : null}
+
+                    {/* Only show table if any real OG tag (not empty or null) exists */}
+                    {[
+                        openGraphTags.siteName,
+                        openGraphTags.url,
+                        openGraphTags.isOgUrlIndexable,
+                        openGraphTags.ogUrlStatusCode,
+                        openGraphTags.ogUrlFinalUrl,
+                        openGraphTags.title,
+                        openGraphTags.description,
+                        openGraphTags.type,
+                        openGraphTags.image,
+                        openGraphTags.locale,
+                        openGraphTags.audio,
+                        openGraphTags.video,
+                        openGraphTags.determiner
+                    ].some(value => value && value !== '') && (
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style={{ textAlign: 'left' }}>Tag</th>
+                                    <th style={{ textAlign: 'left' }}>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {openGraphTags.siteName && (
+                                    <tr>
+                                        <td><strong>Site Name</strong></td>
+                                        <td>{openGraphTags.siteName}</td>
+                                    </tr>
+                                )}
+                                {openGraphTags.url && (
+                                    <tr>
+                                        <td><strong>URL</strong></td>
+                                        <td><Link href={openGraphTags.url} target="_blank">{openGraphTags.url}</Link></td>
+                                    </tr>
+                                )}
+                                {openGraphTags.isOgUrlIndexable !== '' && (
+                                    <tr>
+                                        <td><strong>Is URL Indexable?</strong></td>
+                                        <td>{openGraphTags.isOgUrlIndexable ? "Yes" : "No"}</td>
+                                    </tr>
+                                )}
+                                {openGraphTags.ogUrlStatusCode && (
+                                    <tr>
+                                        <td><strong>Status Code</strong></td>
+                                        <td>{openGraphTags.ogUrlStatusCode}</td>
+                                    </tr>
+                                )}
+                                {openGraphTags.ogUrlFinalUrl && (
+                                    <tr>
+                                        <td><strong>Final URL</strong></td>
+                                        <td><Link href={openGraphTags.ogUrlFinalUrl} target="_blank">{openGraphTags.ogUrlFinalUrl}</Link></td>
+                                    </tr>
+                                )}
+                                {openGraphTags.title && (
+                                    <tr>
+                                        <td><strong>Title</strong></td>
+                                        <td>{openGraphTags.title}</td>
+                                    </tr>
+                                )}
+                                {openGraphTags.description && (
+                                    <tr>
+                                        <td><strong>Description</strong></td>
+                                        <td>{openGraphTags.description}</td>
+                                    </tr>
+                                )}
+                                {openGraphTags.type && (
+                                    <tr>
+                                        <td><strong>Type</strong></td>
+                                        <td>{openGraphTags.type}</td>
+                                    </tr>
+                                )}
+                                {openGraphTags.image && (
+                                    <tr>
+                                        <td><strong>Image</strong></td>
+                                        <td>
+                                            <img
+                                                src={openGraphTags.image || undefined}
+                                                alt="Open Graph Tag Image"
+                                                style={{ minWidth: "100px", maxWidth: "200px" }}
+                                            />
+                                        </td>
+                                    </tr>
+                                )}
+                                {openGraphTags.locale && (
+                                    <tr>
+                                        <td><strong>Locale</strong></td>
+                                        <td>{openGraphTags.locale}</td>
+                                    </tr>
+                                )}
+                                {openGraphTags.audio && (
+                                    <tr>
+                                        <td><strong>Audio</strong></td>
+                                        <td>{openGraphTags.audio}</td>
+                                    </tr>
+                                )}
+                                {openGraphTags.video && (
+                                    <tr>
+                                        <td><strong>Video</strong></td>
+                                        <td>{openGraphTags.video}</td>
+                                    </tr>
+                                )}
+                                {openGraphTags.determiner && (
+                                    <tr>
+                                        <td><strong>Determiner</strong></td>
+                                        <td>{openGraphTags.determiner}</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    )}
                 </section>
             }
         </>
