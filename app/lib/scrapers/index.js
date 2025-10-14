@@ -6,11 +6,13 @@ import { scrapePageLinks } from './pageLinks';
 import { scrapeImages } from './images';
 import { scrapeSchema } from './schema';
 import { scrapeHreflang } from './hreflang';
+import { scrapeOpenGraphTags } from './openGraph';
 
 export async function scrapeWithCheerio(html, pageUrl,  headers = {}) {
     const $ = cheerio.load(html);
 
     const hreflangResult = await scrapeHreflang($, pageUrl, headers);
+    const openGraph = await scrapeOpenGraphTags($, pageUrl);
 
     return {
         ...scrapeMeta($),
@@ -20,5 +22,6 @@ export async function scrapeWithCheerio(html, pageUrl,  headers = {}) {
         images: await scrapeImages($, pageUrl),
         ...scrapeSchema($),
         ...hreflangResult,
+        ...openGraph,
     }
 }
