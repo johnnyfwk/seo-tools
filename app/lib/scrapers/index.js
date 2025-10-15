@@ -8,6 +8,7 @@ import { scrapeSchema } from './schema';
 import { scrapeHreflang } from './hreflang';
 import { scrapeOpenGraphTags } from './openGraph';
 import { scrapeHtmlLangAttribute } from './htmlLang';
+import { scrapeViewport } from './viewport';
 
 export async function scrapeWithCheerio(html, pageUrl,  headers = {}) {
     const $ = cheerio.load(html);
@@ -25,5 +26,6 @@ export async function scrapeWithCheerio(html, pageUrl,  headers = {}) {
         ...hreflangResult,
         ...openGraph,
         ...scrapeHtmlLangAttribute($),
+        ...scrapeViewport($),
     }
 }
