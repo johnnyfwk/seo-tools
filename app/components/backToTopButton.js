@@ -14,7 +14,7 @@ export default function BackToTopButton() {
     }, []);
 
     const scrollToTop = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0 });
     };
 
     if (!visible) return null;

@@ -10,7 +10,7 @@ export async function scrapeOpenGraphTags($, pageUrl) {
         video: '',
         locale: '',
         determiner: '',
-        ogUrlStatusCode: '',
+        ogUrlStatusCode: null,
         ogUrlFinalUrl: '',
         isOgUrlIndexable: ''
     };
@@ -34,10 +34,10 @@ export async function scrapeOpenGraphTags($, pageUrl) {
     if (ogUrl) {
         async function fetchOgUrlStatus(url) {
             let currentUrl = url;
-            let ogUrlStatusCode = '';
+            let ogUrlStatusCode = null;
             let ogUrlFinalUrl = url;
             let xRobots = '';
-            let isOgUrlIndexable = '';
+            let isOgUrlIndexable = null;
 
             while (currentUrl) {
                 try {
@@ -46,7 +46,7 @@ export async function scrapeOpenGraphTags($, pageUrl) {
                     redirect: 'manual',
                 });
 
-                ogUrlStatusCode = String(response.status);
+                ogUrlStatusCode = response.status;
                 xRobots = response.headers.get('x-robots-tag') || '';
                 const location = response.headers.get('location');
                 if (location) {
