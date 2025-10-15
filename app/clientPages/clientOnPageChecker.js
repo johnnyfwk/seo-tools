@@ -35,6 +35,7 @@ export default function ClientOnPageChecker() {
     const [hreflangs, setHreflangs] = useState(null);
     const [openGraphTags, setOpenGraphTags] = useState(null);
     const [htmlLang, setHtmlLang] = useState(null);
+    const [viewport, setViewport] = useState(null);
 
     function normalizeUrl(url) {
         try {
@@ -84,6 +85,7 @@ export default function ClientOnPageChecker() {
         setHreflangs(null);
         setOpenGraphTags(null);
         setHtmlLang(null);
+        setViewport(null);
 
         let input = inputUrl.trim();
 
@@ -151,6 +153,7 @@ export default function ClientOnPageChecker() {
                 setHreflangs(data.hreflangs);
                 setOpenGraphTags(data.openGraphTags);
                 setHtmlLang(data.htmlLangAttribute);
+                setViewport(data.viewport);
             } else if (data.enteredUrlStatusCode >= 300 && data.enteredUrlStatusCode < 400) {
                 setFinalUrl(data.finalUrl);
                 setRedirectChain(data.redirectChain);
@@ -282,6 +285,7 @@ export default function ClientOnPageChecker() {
                         {metaRobotsTag && (<li><Link href="#on-page-checker-meta-robots-tag">Meta Robots Tag</Link></li>)}
                         {canonicalUrl && (<li><Link href="#on-page-checker-canonical-url">Canonical URL</Link></li>)}
                         {htmlLang && (<li><Link href="#on-page-checker-html-language-attribute">HTML Language Attribute</Link></li>)}
+                        {viewport && (<li><Link href="#on-page-checker-html-viewport">Viewport</Link></li>)}
                         {metaTitles && (<li><Link href="#on-page-checker-meta-titles">Meta Title</Link></li>)}
                         {metaDescriptions && (<li><Link href="#on-page-checker-meta-description">Meta Description</Link></li>)}
                         {h1s && (<li><Link href="#on-page-checker-h1s">H1s</Link></li>)}
@@ -342,8 +346,8 @@ export default function ClientOnPageChecker() {
                         <span
                             className={
                             metaRobotsTag.toLowerCase().includes("noindex")
-                                ? "warning-text"   // orange/yellow for noindex
-                                : "success-text"   // green for index/follow or unspecified
+                                ? "warning-text"
+                                : "success-text"
                             }
                         >
                             {metaRobotsTag.toLowerCase().includes("noindex") ? "No" : "Yes"}
@@ -412,6 +416,33 @@ export default function ClientOnPageChecker() {
                     {htmlLang
                         ? <p>{htmlLang}</p>
                         : <p>No HTML language attribute found.</p>
+                    }
+                </section>
+            }
+
+            {viewport === null
+                ? null
+                : <section id="on-page-checker-html-viewport">
+                    <h2>Viewport</h2>
+
+                    {viewport
+                        ? <p><code>{viewport}</code></p>
+                        : <p>No meta viewport tag found.</p>
+                    }
+
+                    {viewport && viewport.includes("width=") && viewport.includes("initial-scale=")
+                        ? <p>Viewport tag has both <em>width</em> and <em>initial-scale</em> properties.</p>
+                        : null
+                    }
+
+                    {viewport && !viewport.includes("width=")
+                        ? <p className="error-text">Viewport tag missing <em>width</em> property.</p>
+                        : null
+                    }
+
+                    {viewport && !viewport.includes("initial-scale=")
+                        ? <p className="error-text">Viewport tag missing <em>initial-scale</em> property.</p>
+                        : null
                     }
                 </section>
             }
