@@ -34,12 +34,24 @@ export default function ClientOnPageChecker() {
     const [jsonLdSchemas, setJsonLdSchemas] = useState(null);
     const [hreflangs, setHreflangs] = useState(null);
     const [openGraphTags, setOpenGraphTags] = useState(null);
+    const [htmlLang, setHtmlLang] = useState(null);
 
     function normalizeUrl(url) {
         try {
-            const u = new URL(url.trim().toLowerCase());
-            // Ensure pathname ends with "/" if it's empty
-            if (!u.pathname || u.pathname === "") u.pathname = "/";
+            const u = new URL(url.trim());
+
+            // Lowercase hostname (domains are case-insensitive)
+            u.hostname = u.hostname.toLowerCase();
+
+            // Remove hash (#fragment) and query parameters (?utm= etc.)
+            u.hash = "";
+            u.search = "";
+
+            // Remove trailing slash unless it's the root
+            if (u.pathname.endsWith("/") && u.pathname !== "/") {
+                u.pathname = u.pathname.slice(0, -1);
+            }
+
             return u.href;
         } catch {
             return url.trim();
@@ -71,6 +83,7 @@ export default function ClientOnPageChecker() {
         setJsonLdSchemas(null);
         setHreflangs(null);
         setOpenGraphTags(null);
+        setHtmlLang(null);
 
         let input = inputUrl.trim();
 
@@ -137,6 +150,7 @@ export default function ClientOnPageChecker() {
                 setJsonLdSchemas(resolvedJsonLdSchemas);
                 setHreflangs(data.hreflangs);
                 setOpenGraphTags(data.openGraphTags);
+                setHtmlLang(data.htmlLangAttribute);
             } else if (data.enteredUrlStatusCode >= 300 && data.enteredUrlStatusCode < 400) {
                 setFinalUrl(data.finalUrl);
                 setRedirectChain(data.redirectChain);
@@ -195,7 +209,7 @@ export default function ClientOnPageChecker() {
                 setIsUrlIndexable(false);
                 setIndexabilityMessage("No content (204). Nothing to index.");
             } 
-            else if (canonical && entered.trim().replace(/\/$/, '') !== canonical.trim().replace(/\/$/, '')) {
+            else if (canonical && normalizeUrl(entered) !== normalizeUrl(canonical)) {
                 setIsUrlIndexable(false);
                 setIndexabilityMessage("Canonical URL points to a different page. Search engines may index the canonical URL instead of the entered URL.");
             } 
@@ -267,6 +281,7 @@ export default function ClientOnPageChecker() {
                         {robotsTxt && (<li><Link href="#on-page-checker-robots-txt">Robots.txt</Link></li>)}
                         {metaRobotsTag && (<li><Link href="#on-page-checker-meta-robots-tag">Meta Robots Tag</Link></li>)}
                         {canonicalUrl && (<li><Link href="#on-page-checker-canonical-url">Canonical URL</Link></li>)}
+                        {htmlLang && (<li><Link href="#on-page-checker-html-language-attribute">HTML Language Attribute</Link></li>)}
                         {metaTitles && (<li><Link href="#on-page-checker-meta-titles">Meta Title</Link></li>)}
                         {metaDescriptions && (<li><Link href="#on-page-checker-meta-description">Meta Description</Link></li>)}
                         {h1s && (<li><Link href="#on-page-checker-h1s">H1s</Link></li>)}
@@ -390,6 +405,17 @@ export default function ClientOnPageChecker() {
                 : null
             }
 
+            {htmlLang === null
+                ? null
+                : <section id="on-page-checker-html-language-attribute">
+                    <h2>HTML Language Attribute</h2>
+                    {htmlLang
+                        ? <p>{htmlLang}</p>
+                        : <p>No HTML language attribute found.</p>
+                    }
+                </section>
+            }
+
             {metaTitles === null
                 ? null
                 : <section id="on-page-checker-meta-titles">
@@ -431,7 +457,7 @@ export default function ClientOnPageChecker() {
                 : <section id="on-page-checker-meta-description">
                     <h2>Meta Description</h2>
                     {metaDescriptions.length === 0
-                        ? <p className="error-text">No meta descriptions found.</p>
+                        ? <p className="error-text">No meta description found.</p>
                         : <>
                             {metaDescriptions.length > 1
                                 ? <p className="warning-text">Multiple meta descriptions found.</p>
