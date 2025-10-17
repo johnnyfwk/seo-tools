@@ -1,0 +1,42 @@
+import Link from "next/link";
+
+export default function Images({ images }) {
+    return (
+        <section id="images">
+            <h2>Images ({images.length || 0})</h2>
+
+            {!images.length
+                ? "No images found"
+                : <table>
+                    <thead>
+                        <tr>
+                            <th style={{ textAlign: 'center' }}>#</th>
+                            <th style={{ textAlign: 'left' }}>Image Preview</th>
+                            <th style={{ textAlign: 'left' }}>Alt Text</th>
+                            <th style={{ textAlign: 'left' }}>Source URL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {images.map((image, i) => {
+                            return (
+                                <tr key={i}>
+                                    <td style={{ textAlign: 'center' }}>{i + 1}</td>
+                                    <td>
+                                        <img
+                                            src={image.src || undefined}
+                                            alt={image.alt || ""}
+                                            loading="lazy"
+                                            style={{ minWidth: "100px", maxWidth: "100px" }}
+                                        />
+                                    </td>
+                                    <td className={!image.alt ? "error-background" : undefined}>{image.alt}</td>
+                                    <td><Link href={image.src} target="_blank">{image.src}</Link></td>
+                                </tr>
+                            )
+                        })}
+                    </tbody>
+                </table>
+            }
+        </section>
+    )
+}

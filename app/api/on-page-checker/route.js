@@ -56,7 +56,7 @@ export async function POST(req) {
         const enteredUrlStatusCode = redirectChain[0]?.statusCode || null;
         const finalEntry = redirectChain[redirectChain.length - 1] || {};
         const finalUrl = finalEntry.url || url;
-        const finalStatusCode = finalEntry.statusCode || null;
+        const finalUrlStatusCode = finalEntry.statusCode || null;
 
         const robotsCheck = await checkRobotsTxt(finalUrl, '*');
 
@@ -89,7 +89,7 @@ export async function POST(req) {
                 enteredUrl: url,
                 enteredUrlStatusCode,   // status of the URL the user typed
                 finalUrl,        // last URL after redirects
-                finalStatusCode,     // last status
+                finalUrlStatusCode,     // last status
                 redirectChain,   // full chain with {url, statusCode}
                 redirectsToHttps,
                 robotsCheck,
