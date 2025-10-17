@@ -37,8 +37,8 @@ function JsonTree({ data, level = 0 }) {
 }
 
 // Component to render all JSON-LD schemas
-export default function JsonLdViewer({ jsonLdSchemas }) {
-    if (!jsonLdSchemas || jsonLdSchemas.length === 0) {
+export default function JsonLdViewer({ schemaMarkup }) {
+    if (!schemaMarkup || schemaMarkup.length === 0) {
         return <p>No JSON-LD schemas found on this page.</p>;
     }
 
@@ -47,7 +47,7 @@ export default function JsonLdViewer({ jsonLdSchemas }) {
             <h3>Types Implemented:</h3>
 
             <ul style= {{ marginBottom: "10px"}}>
-                {jsonLdSchemas.map((schema, index) => (
+                {schemaMarkup.map((schema, index) => (
                     <li key={index}>
                         <a href={`#schema-${schema["@type"]}`}>
                             {schema["@type"]}
@@ -56,7 +56,7 @@ export default function JsonLdViewer({ jsonLdSchemas }) {
                 ))}
             </ul>
 
-            {jsonLdSchemas.map((schema, index) => (
+            {schemaMarkup.map((schema, index) => (
                 <div
                     key={index}
                     style={{

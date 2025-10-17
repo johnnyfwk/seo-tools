@@ -3,10 +3,29 @@ import { useState } from "react";
 import Link from "next/link";
 import * as utils from '@/app/lib/utils';
 import JsonLdViewer from "../components/jsonTree";
+import RobotsTxt from "../components/robotsTxt";
+import MetaRobotsTag from "../components/metaRobotsTag";
+import CanonicalUrl from "../components/canonicalUrl";
+import HttpRedirectsToHttps from "../components/httpRedirectsToHttps";
+import RedirectChain from "../components/redirectChain";
+import UrlIndexability from "../components/UrlIndexability";
+import StatusCode from "../components/statusCode";
+import FinalUrl from "../components/finalUrl";
+import HtmlLanguageAttribute from "../components/htmlLanguageAttribute";
+import Viewport from "../components/viewport";
+import MetaTitle from "../components/metaTitle";
+import MetaDescription from "../components/metaDescription";
+import Headings from "../components/headings";
+import InternalLinks from "../components/internalLinks";
+import ExternalLinks from "../components/externalLinks";
+import Images from "../components/images";
+import SchemaMarkup from "../components/schemaMarkup";
+import Hreflang from "../components/hreflang";
+import OpenGraphTags from "../components/openGraphTags";
 
 export default function ClientOnPageChecker() {
     const [inputUrl, setInputUrl] = useState("");
-    const [analysedUrl, setAnalysedUrl] = useState("");
+    const [enteredUrl, setEnteredUrl] = useState("");
 
     const [isCheckingPage, setIsCheckingPage] = useState(false);
     const [error, setError] = useState(null);
@@ -15,13 +34,14 @@ export default function ClientOnPageChecker() {
     const [indexabilityMessage, setIndexabilityMessage] = useState(null);
     const [enteredUrlStatusCode, setEnteredUrlStatusCode] = useState(null);
     const [finalUrl, setFinalUrl] = useState(null);
+    const [finalUrlStatusCode, setFinalUrlStatusCode] = useState(null);
     const [redirectChain, setRedirectChain] = useState(null);
     const [isRedirectedToHttps, setIsRedirectedToHttps] = useState(null);
     const [robotsTxt, setRobotsTxt] = useState(null);
     const [metaRobotsTag, setMetaRobotsTag] = useState(null);
     const [canonicalUrl, setCanonicalUrl] = useState(null);
-    const [metaTitles, setMetaTitles] = useState(null);
-    const [metaDescriptions, setMetaDescriptions] = useState(null);
+    const [metaTitle, setMetaTitle] = useState(null);
+    const [metaDescription, setMetaDescription] = useState(null);
     const [h1s, setH1s] = useState(null);
     const [h2s, setH2s] = useState(null);
     const [h3s, setH3s] = useState(null);
@@ -31,10 +51,10 @@ export default function ClientOnPageChecker() {
     const [internalLinks, setInternalLinks] = useState(null);
     const [externalLinks, setExternalLinks] = useState(null);
     const [images, setImages] = useState(null);
-    const [jsonLdSchemas, setJsonLdSchemas] = useState(null);
-    const [hreflangs, setHreflangs] = useState(null);
+    const [schemaMarkup, setSchemaMarkup] = useState(null);
+    const [hreflang, setHreflang] = useState(null);
     const [openGraphTags, setOpenGraphTags] = useState(null);
-    const [htmlLang, setHtmlLang] = useState(null);
+    const [htmlLanguageAttribute, setHtmlLanguageAttribute] = useState(null);
     const [viewport, setViewport] = useState(null);
 
     function normalizeUrl(url) {
@@ -65,13 +85,14 @@ export default function ClientOnPageChecker() {
         setIndexabilityMessage(null);
         setEnteredUrlStatusCode(null);
         setFinalUrl(null);
+        setFinalUrlStatusCode(null);
         setRedirectChain(null);
         setIsRedirectedToHttps(null);
         setRobotsTxt(null);
         setMetaRobotsTag(null);
         setCanonicalUrl(null);
-        setMetaTitles(null);
-        setMetaDescriptions(null);
+        setMetaTitle(null);
+        setMetaDescription(null);
         setH1s(null);
         setH2s(null);
         setH3s(null);
@@ -81,10 +102,10 @@ export default function ClientOnPageChecker() {
         setInternalLinks(null);
         setExternalLinks(null);
         setImages(null);
-        setJsonLdSchemas(null);
-        setHreflangs(null);
+        setSchemaMarkup(null);
+        setHreflang(null);
         setOpenGraphTags(null);
-        setHtmlLang(null);
+        setHtmlLanguageAttribute(null);
         setViewport(null);
 
         let input = inputUrl.trim();
@@ -104,7 +125,7 @@ export default function ClientOnPageChecker() {
         }
 
         setIsCheckingPage(true);
-        setAnalysedUrl(validatedUrl.href);
+        setEnteredUrl(validatedUrl.href);
 
         try {
             const res = await fetch('/api/on-page-checker', {
@@ -130,8 +151,8 @@ export default function ClientOnPageChecker() {
                 setRobotsTxt(data.robotsCheck);
                 setMetaRobotsTag(data.metaRobotsTag);
                 setCanonicalUrl(data.canonicalUrl);
-                setMetaTitles(data.metaTitles);
-                setMetaDescriptions(data.metaDescriptions);
+                setMetaTitle(data.metaTitle);
+                setMetaDescription(data.metaDescription);
                 setH1s(data.h1s);
                 setH2s(data.h2s);
                 setH3s(data.h3s);
@@ -149,13 +170,14 @@ export default function ClientOnPageChecker() {
                         return [item.raw]; // single schema
                     }
                 });
-                setJsonLdSchemas(resolvedJsonLdSchemas);
-                setHreflangs(data.hreflangs);
+                setSchemaMarkup(resolvedJsonLdSchemas);
+                setHreflang(data.hreflang);
                 setOpenGraphTags(data.openGraphTags);
-                setHtmlLang(data.htmlLangAttribute);
+                setHtmlLanguageAttribute(data.htmlLanguageAttribute);
                 setViewport(data.viewport);
             } else if (data.enteredUrlStatusCode >= 300 && data.enteredUrlStatusCode < 400) {
                 setFinalUrl(data.finalUrl);
+                setFinalUrlStatusCode(data.finalUrlStatusCode);
                 setRedirectChain(data.redirectChain);
                 setIsRedirectedToHttps(data.redirectsToHttps);
             } else if (data.enteredUrlStatusCode >= 400 && data.enteredUrlStatusCode < 600) {
@@ -279,28 +301,28 @@ export default function ClientOnPageChecker() {
                 ? <section>
                     <h2>Contents</h2>
                     <ul>
-                        {isUrlIndexable && (<li><Link href="#on-page-checker-url-is-indexable">URL is Indexable?</Link></li>)}
-                        {enteredUrlStatusCode && (<li><Link href="#on-page-checker-status-code">Status Code</Link></li>)}
-                        {robotsTxt && (<li><Link href="#on-page-checker-robots-txt">Robots.txt</Link></li>)}
-                        {metaRobotsTag && (<li><Link href="#on-page-checker-meta-robots-tag">Meta Robots Tag</Link></li>)}
-                        {canonicalUrl && (<li><Link href="#on-page-checker-canonical-url">Canonical URL</Link></li>)}
-                        {htmlLang && (<li><Link href="#on-page-checker-html-language-attribute">HTML Language Attribute</Link></li>)}
-                        {viewport && (<li><Link href="#on-page-checker-html-viewport">Viewport</Link></li>)}
-                        {metaTitles && (<li><Link href="#on-page-checker-meta-titles">Meta Title</Link></li>)}
-                        {metaDescriptions && (<li><Link href="#on-page-checker-meta-description">Meta Description</Link></li>)}
-                        {h1s && (<li><Link href="#on-page-checker-h1s">H1s</Link></li>)}
-                        {h2s && (<li><Link href="#on-page-checker-h2s">H2s</Link></li>)}
-                        {h3s && (<li><Link href="#on-page-checker-h3s">H3s</Link></li>)}
-                        {h4s && (<li><Link href="#on-page-checker-h4s">H4s</Link></li>)}
-                        {h5s && (<li><Link href="#on-page-checker-h5s">H5s</Link></li>)}
-                        {h6s && (<li><Link href="#on-page-checker-h6s">H6s</Link></li>)}
-                        {internalLinks && (<li><Link href="#on-page-checker-internal-links">Internal Links</Link></li>)}
-                        {externalLinks && (<li><Link href="#on-page-checker-external-links">External Links</Link></li>)}
-                        {images && (<li><Link href="#on-page-checker-images">Images</Link></li>)}
-                        {jsonLdSchemas && (<li><Link href="#on-page-checker-schema-markup">Schema Markup</Link></li>)}
-                        {hreflangs && (<li><Link href="#on-page-checker-hreflang">Hreflang</Link></li>)}
-                        {redirectChain && (<li><Link href="#on-page-checker-redirect-chain">Redirect Chain</Link></li>)}
-                        {openGraphTags && (<li><Link href="#on-page-checker-open-graph-tags">Open Graph Tags</Link></li>)}
+                        {isUrlIndexable && (<li><Link href="#is-url-indexable">URL is Indexable?</Link></li>)}
+                        {enteredUrlStatusCode && (<li><Link href="#status-code">Status Code</Link></li>)}
+                        {robotsTxt && (<li><Link href="#robots-txt">Robots.txt</Link></li>)}
+                        {metaRobotsTag && (<li><Link href="#meta-robots-tag">Meta Robots Tag</Link></li>)}
+                        {canonicalUrl && (<li><Link href="#canonical-url">Canonical URL</Link></li>)}
+                        {htmlLanguageAttribute && (<li><Link href="#html-language-attribute">HTML Language Attribute</Link></li>)}
+                        {viewport && (<li><Link href="#html-viewport">Viewport</Link></li>)}
+                        {metaTitle && (<li><Link href="#meta-titles">Meta Title</Link></li>)}
+                        {metaDescription && (<li><Link href="#meta-description">Meta Description</Link></li>)}
+                        {h1s && (<li><Link href="#h1s">H1s</Link></li>)}
+                        {h2s && (<li><Link href="#h2s">H2s</Link></li>)}
+                        {h3s && (<li><Link href="#h3s">H3s</Link></li>)}
+                        {h4s && (<li><Link href="#h4s">H4s</Link></li>)}
+                        {h5s && (<li><Link href="#h5s">H5s</Link></li>)}
+                        {h6s && (<li><Link href="#h6s">H6s</Link></li>)}
+                        {internalLinks && (<li><Link href="#internal-links">Internal Links</Link></li>)}
+                        {externalLinks && (<li><Link href="#external-links">External Links</Link></li>)}
+                        {images && (<li><Link href="#images">Images</Link></li>)}
+                        {schemaMarkup && (<li><Link href="#schema-markup">Schema Markup</Link></li>)}
+                        {hreflang && (<li><Link href="#hreflang">Hreflang</Link></li>)}
+                        {redirectChain && (<li><Link href="#redirect-chain">Redirect Chain</Link></li>)}
+                        {openGraphTags && (<li><Link href="#open-graph-tags">Open Graph Tags</Link></li>)}
                     </ul>
                 </section>
                 : null
@@ -308,707 +330,121 @@ export default function ClientOnPageChecker() {
 
             {enteredUrlStatusCode === null || enteredUrlStatusCode === undefined
                 ? null
-                : <section id="on-page-checker-status-code">
+                : <section id="status-code">
                     <h2>URL</h2>
-                    <Link href={analysedUrl} target="_blank">{analysedUrl}</Link>
+                    <Link href={enteredUrl} target="_blank">{enteredUrl}</Link>
                 </section>
             }
 
             {isUrlIndexable === null
                 ? null
-                : <section id="on-page-checker-url-is-indexable">
-                    <h2>URL is indexable? <span className={isUrlIndexable ? "success-text" : "error-text"}>{isUrlIndexable ? "Yes" : "No"}</span></h2>
-                    <p>{indexabilityMessage}</p>
-                </section>
+                : <UrlIndexability
+                    isUrlIndexable={isUrlIndexable}
+                    indexabilityMessage={indexabilityMessage}
+                />
             }
 
             {enteredUrlStatusCode === null || enteredUrlStatusCode === undefined
                 ? null
-                : <section id="on-page-checker-status-code">
-                    <h2>Status Code: <span className={enteredUrlStatusCode === 200 ? "success-text" : enteredUrlStatusCode >= 300 && enteredUrlStatusCode < 400 ? "warning-text" : "error-text"}>{enteredUrlStatusCode}</span></h2>
-                </section>
+                : <StatusCode enteredUrlStatusCode={enteredUrlStatusCode} />
             }
 
             {robotsTxt?.robotsUrl
-                ? <section id="on-page-checker-robots-txt">
-                    <h2>URL allowed by Robots.txt? <span className={robotsTxt.allowed ? "success-text" : "error-text"}>{robotsTxt.allowed ? "Yes" : "No"}</span></h2>
-                    <p style={{ marginBottom: '10px'}}>
-                        <Link href={robotsTxt.robotsUrl} target="_blank">{robotsTxt.robotsUrl}</Link>
-                    </p>
-                </section>
+                ? <RobotsTxt robotsTxt={robotsTxt} />
                 : null
             }
 
             {metaRobotsTag
-                ? <section id="on-page-checker-meta-robots-tag">
-                    <h2>
-                        Meta Robots Tag allows indexing?{" "}
-                        <span
-                            className={
-                            metaRobotsTag.toLowerCase().includes("noindex")
-                                ? "warning-text"
-                                : "success-text"
-                            }
-                        >
-                            {metaRobotsTag.toLowerCase().includes("noindex") ? "No" : "Yes"}
-                        </span>
-                    </h2>
-                    <p>{metaRobotsTag}</p>
-                </section>
+                ? <MetaRobotsTag metaRobotsTag={metaRobotsTag} />
                 : null
             }
 
             {canonicalUrl
-                ? <section id="on-page-checker-canonical-url">
-                    <h2>URL has a self-referencing Canonical URL? <span className={analysedUrl.replace(/\/$/, '') === canonicalUrl.replace(/\/$/, '') ? "success-text" : "warning-text"}>{analysedUrl.replace(/\/$/, '') === canonicalUrl.replace(/\/$/, '') ? "Yes" : "No"}</span></h2>
-                    <Link href={canonicalUrl} target="_blank">{canonicalUrl}</Link>
-                </section>
+                ? <CanonicalUrl
+                    enteredUrl={enteredUrl}
+                    canonicalUrl={canonicalUrl}
+                />
                 : null
             }
 
             {isRedirectedToHttps
-                ? <section>
-                    <h2>HTTP redirects to HTTPS? <span className={isRedirectedToHttps ? "success-text" : "error-text"}>{isRedirectedToHttps ? "Yes" : "No"}</span></h2>
-                    <p>URL redirects to <Link href={redirectChain[1].url} target="_blank">{redirectChain[1].url}</Link>.</p>
-                </section>
+                ? <HttpRedirectsToHttps
+                    isRedirectedToHttps={isRedirectedToHttps}
+                    redirectChain={redirectChain}
+                />
                 : null
             }
 
             {finalUrl
-                ? <section id="on-page-checker-final-url">
-                    <h2>Final URL</h2>
-                    <p><Link href={finalUrl} target="_blank">{finalUrl}</Link> ({redirectChain[redirectChain.length - 1].statusCode})</p>
-                </section>
+                ? <FinalUrl
+                    finalUrl={finalUrl}
+                    finalUrlStatusCode={finalUrlStatusCode}
+                />
                 : null
             }
 
             {redirectChain
-                ? <section id="on-page-checker-redirect-chain">
-                    <h2>Redirect Chain</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style={{ textAlign: 'center' }}>#</th>
-                                <th style={{ textAlign: 'left' }}>URL</th>
-                                <th style={{ textAlign: 'center' }}>Status Code</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {redirectChain.map((redirect, i) => {
-                                return (
-                                    <tr key={i}>
-                                        <td style={{ textAlign: 'center' }}>{i + 1}</td>
-                                        <td style={{ textAlign: 'left' }}><Link href={redirect.url}>{redirect.url}</Link></td>
-                                        <td style={{ textAlign: 'center' }}>{redirect.statusCode}</td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
-                </section>
+                ? <RedirectChain redirectChain={redirectChain} />
                 : null
             }
 
-            {htmlLang === null
+            {htmlLanguageAttribute === null
                 ? null
-                : <section id="on-page-checker-html-language-attribute">
-                    <h2>HTML Language Attribute</h2>
-                    {htmlLang
-                        ? <p>{htmlLang}</p>
-                        : <p>No HTML language attribute found.</p>
-                    }
-                </section>
+                : <HtmlLanguageAttribute htmlLanguageAttribute={htmlLanguageAttribute} />
             }
 
             {viewport === null
                 ? null
-                : <section id="on-page-checker-html-viewport">
-                    <h2>Viewport</h2>
-
-                    {viewport
-                        ? <p><code>{viewport}</code></p>
-                        : <p>No meta viewport tag found.</p>
-                    }
-
-                    {viewport && viewport.includes("width=") && viewport.includes("initial-scale=")
-                        ? <p>Viewport tag has both <em>width</em> and <em>initial-scale</em> properties.</p>
-                        : null
-                    }
-
-                    {viewport && !viewport.includes("width=")
-                        ? <p className="error-text">Viewport tag missing <em>width</em> property.</p>
-                        : null
-                    }
-
-                    {viewport && !viewport.includes("initial-scale=")
-                        ? <p className="error-text">Viewport tag missing <em>initial-scale</em> property.</p>
-                        : null
-                    }
-                </section>
+                : <Viewport viewport={viewport} />
             }
 
-            {metaTitles === null
+            {metaTitle === null
                 ? null
-                : <section id="on-page-checker-meta-titles">
-                    <h2>Meta Title</h2>
-                    {metaTitles.length === 0
-                        ? <p className="error-text">No &lt;title&gt; tag found.</p>
-                        : <>
-                            {metaTitles.length > 1
-                                ? <p className="error-text">Multiple &lt;title&gt; tags found.</p>
-                                : null
-                            }
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th scope="col" style={{ textAlign: 'center' }}>#</th>
-                                        <th scope="col" style={{ textAlign: 'left' }}>Text</th>
-                                        <th scope="col" style={{ textAlign: 'center' }}>Length</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {metaTitles.map((metaTitle, i) => {
-                                        return (
-                                            <tr key={i}>
-                                                <td style={{ textAlign: 'center' }}>{i + 1}</td>
-                                                <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(metaTitle)}</td>
-                                                <td style={{ textAlign: 'center' }} className={metaTitle.length > 60 ? 'error-background' : null}>{metaTitle.length}</td>
-                                            </tr>
-                                        )
-                                    })}
-                                </tbody>
-                            </table>
-                        </>
-                    }
-                </section>
+                : <MetaTitle metaTitle={metaTitle} />
             }
 
-            {metaDescriptions === null
+            {metaDescription === null
                 ? null
-                : <section id="on-page-checker-meta-description">
-                    <h2>Meta Description</h2>
-                    {metaDescriptions.length === 0
-                        ? <p className="error-text">No meta description found.</p>
-                        : <>
-                            {metaDescriptions.length > 1
-                                ? <p className="warning-text">Multiple meta descriptions found.</p>
-                                : null
-                            }
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th scope="col" style={{ textAlign: 'center' }}>#</th>
-                                        <th scope="col" style={{ textAlign: 'left' }}>Text</th>
-                                        <th scope="col" style={{ textAlign: 'center' }}>Length</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {metaDescriptions.map((metaDescription, i) => {
-                                        return (
-                                            <tr key={i}>
-                                                <td style={{ textAlign: 'center' }}>{i + 1}</td>
-                                                <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(metaDescription)}</td>
-                                                <td style={{ textAlign: 'center' }} className={metaDescription.length > 160 ? 'error-background' : null}>{metaDescription.length}</td>
-                                            </tr>
-                                        )
-                                    })}
-                                </tbody>
-                            </table>
-                        </>
-                    }
-                </section>
+                : <MetaDescription metaDescription={metaDescription} />
             }
 
-            {h1s === null
-                ? null
-                : <section id="on-page-checker-h1s">
-                    <h2>H1 Tags ({h1s.length})</h2>
-                    {h1s.length === 0
-                        ? <p className="error-text">No &lt;h1&gt; tag found.</p>
-                        : <>
-                            {h1s.length > 1
-                                ? <p className="warning-text">Multiple &lt;H1&gt; tags found.</p>
-                                : null
-                            }
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th scope="col" style={{ textAlign: 'center' }}>#</th>
-                                        <th scope="col" style={{ textAlign: 'left' }}>Text</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {h1s.map((h1, i) => {
-                                        return (
-                                            <tr key={i}>
-                                                <td style={{ textAlign: 'center' }}>{i + 1}</td>
-                                                <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(h1)}</td>
-                                            </tr>
-                                        )
-                                    })}
-                                </tbody>
-                            </table>
-                        </>
-                    }
-                </section>
-            }
-
-            {h2s === null
-                ? null
-                : <section id="on-page-checker-h2s">
-                    <h2>H2 Tags ({h2s.length})</h2>
-                    {h2s.length === 0
-                        ? <p>No &lt;H2&gt; tags found.</p>
-                        : <table>
-                            <thead>
-                                <tr>
-                                    <th scope="col" style={{ textAlign: 'center' }}>#</th>
-                                    <th scope="col" style={{ textAlign: 'left' }}>Text</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {h2s.map((h2, i) => {
-                                    return (
-                                        <tr key={i}>
-                                            <td style={{ textAlign: 'center' }}>{i + 1}</td>
-                                            <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(h2)}</td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    }
-                </section>
-            }
-
-            {h3s === null
-                ? null
-                : <section id="on-page-checker-h3s">
-                    <h2>H3 Tags ({h3s.length})</h2>
-                    {h3s.length === 0
-                        ? <p>No &lt;H3&gt; tags found.</p>
-                        : <table>
-                            <thead>
-                                <tr>
-                                    <th scope="col" style={{ textAlign: 'center' }}>#</th>
-                                    <th scope="col" style={{ textAlign: 'left' }}>Text</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {h3s.map((h3, i) => {
-                                    return (
-                                        <tr key={i}>
-                                            <td style={{ textAlign: 'center' }}>{i + 1}</td>
-                                            <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(h3)}</td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    }
-                </section>
-            }
-
-            {h4s === null
-                ? null
-                : <section id="on-page-checker-h4s">
-                    <h2>H4 Tags ({h4s.length})</h2>
-                    {h4s.length === 0
-                        ? <p>No &lt;H4&gt; tags found.</p>
-                        : <table>
-                            <thead>
-                                <tr>
-                                    <th scope="col" style={{ textAlign: 'center' }}>#</th>
-                                    <th scope="col" style={{ textAlign: 'left' }}>Text</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {h4s.map((h4, i) => {
-                                    return (
-                                        <tr key={i}>
-                                            <td style={{ textAlign: 'center' }}>{i + 1}</td>
-                                            <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(h4)}</td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    }
-                </section>
-            }
-
-            {h5s === null
-                ? null
-                : <section id="on-page-checker-h5s">
-                    <h2>H5 Tags ({h5s.length})</h2>
-                    {h5s.length === 0
-                        ? <p>No &lt;H5&gt; tags found.</p>
-                        : <table>
-                            <thead>
-                                <tr>
-                                    <th scope="col" style={{ textAlign: 'center' }}>#</th>
-                                    <th scope="col" style={{ textAlign: 'left' }}>Text</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {h5s.map((h5, i) => {
-                                    return (
-                                        <tr key={i}>
-                                            <td style={{ textAlign: 'center' }}>{i + 1}</td>
-                                            <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(h5)}</td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    }
-                </section>
-            }
-
-            {h6s === null
-                ? null
-                : <section id="on-page-checker-h6s">
-                    <h2>H6 Tags ({h6s.length})</h2>
-                    {h6s.length === 0
-                        ? <p>No &lt;H6&gt; tags found.</p>
-                        : <table>
-                            <thead>
-                                <tr>
-                                    <th scope="col" style={{ textAlign: 'center' }}>#</th>
-                                    <th scope="col" style={{ textAlign: 'left' }}>Text</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {h6s.map((h6, i) => {
-                                    return (
-                                        <tr key={i}>
-                                            <td style={{ textAlign: 'center' }}>{i + 1}</td>
-                                            <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(h6)}</td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    }
-                </section>
-            }
+            <Headings
+                h1s={h1s}
+                h2s={h2s}
+                h3s={h3s}
+                h4s={h4s}
+                h5s={h5s}
+                h6s={h6s}
+            />
 
             {internalLinks === null
                 ? null
-                : <section id="on-page-checker-internal-links">
-                    <h2>Internal Links ({internalLinks.length})</h2>
-                    {internalLinks.length === 0
-                        ? <p>No internal links found on this page.</p>
-                        : <table>
-                            <thead>
-                                <tr>
-                                    <th style={{ textAlign: 'center' }}>#</th>
-                                    <th style={{ textAlign: 'left' }}>Anchor Text</th>
-                                    <th style={{ textAlign: 'left' }}>Link URL</th>
-                                    <th style={{ textAlign: 'center' }}>Status Code</th>
-                                    <th style={{ textAlign: 'left' }}>Final URL</th>
-                                    <th style={{ textAlign: 'left' }}>Redirect Chain</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {internalLinks.map((link, i) => (
-                                    <tr key={i}>
-                                        <td style={{ textAlign: 'center' }}>{i + 1}</td>
-                                        <td>
-                                            {link.anchor?.type === 'image' ? (
-                                                <img 
-                                                    src={link.anchor.src} 
-                                                    alt={link.anchor.alt || 'Image link'} 
-                                                    style={{ minWidth: "100px", maxWidth: "100px" }}
-                                                />
-                                            ) : (
-                                                link.anchor?.text || "(no text)"
-                                            )}
-                                        </td>
-                                        <td>
-                                            <Link href={link.url} target="_blank">{link.url}</Link>
-                                        </td>
-                                        <td
-                                            className={
-                                                link.statusCode >= 300 && link.statusCode < 400
-                                                    ? 'warning-background'
-                                                    : link.statusCode >= 400
-                                                        ? 'error-background'
-                                                        : ''
-                                                }
-                                                style={{ textAlign: 'center' }}
-                                            >{link.statusCode}</td>
-                                        <td>
-                                            <Link href={link.finalUrl} target="_blank">{link.finalUrl}</Link>
-                                        </td>
-                                        <td>
-                                            <ol>
-                                                {link.redirectChain && link.redirectChain.length > 1
-                                                    ? link.redirectChain.map((r, idx) => (
-                                                        <li key={idx}>
-                                                            <Link href={r.url} target="_blank">{r.url}</Link> ({r.statusCode})
-                                                            {idx < link.redirectChain.length - 1 ? " → " : ""}
-                                                        </li>
-                                                    ))
-                                                    : "—"
-                                                }
-                                            </ol>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    }
-                </section>
+                : <InternalLinks internalLinks={internalLinks} />
             }
 
             {externalLinks === null
                 ? null
-                : <section id="on-page-checker-external-links">
-                    <h2>External Links ({externalLinks.length})</h2>
-                    {externalLinks.length === 0
-                        ? <p>No external links found on this page.</p>
-                        : <table>
-                            <thead>
-                                <tr>
-                                    <th style={{ textAlign: 'center' }}>#</th>
-                                    <th style={{ textAlign: 'left' }}>Anchor Text</th>
-                                    <th style={{ textAlign: 'left' }}>Link URL</th>
-                                    <th style={{ textAlign: 'center' }}>Status Code</th>
-                                    <th style={{ textAlign: 'left' }}>Final URL</th>
-                                    <th style={{ textAlign: 'left' }}>Redirect Chain</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {externalLinks.map((link, i) => (
-                                    <tr key={i}>
-                                        <td style={{ textAlign: 'center' }}>{i + 1}</td>
-                                        <td>
-                                            {link.anchor?.type === 'image' ? (
-                                                <img 
-                                                    src={link.anchor.src} 
-                                                    alt={link.anchor.alt || 'Image link'} 
-                                                    style={{ minWidth: "100px", maxWidth: "100px" }}
-                                                    />
-                                                ) : (
-                                                    link.anchor?.text || "(no text)"
-                                                )}
-                                            </td>
-                                        <td>
-                                            <Link href={link.url} target="_blank">{link.url}</Link>
-                                        </td>
-                                        <td
-                                            className={
-                                                link.statusCode >= 300 && link.statusCode < 400
-                                                ? 'warning-background'
-                                                : link.statusCode >= 400
-                                                    ? 'error-background'
-                                                    : ''
-                                            }
-                                            style={{ textAlign: 'center' }}
-                                        >{link.statusCode}</td>
-                                        <td>
-                                            <Link href={link.finalUrl} target="_blank">{link.finalUrl}</Link>
-                                        </td>
-                                        <td>
-                                            <ol>
-                                                {link.redirectChain && link.redirectChain.length > 1
-                                                    ? link.redirectChain.map((r, idx) => (
-                                                        <li key={idx}>
-                                                            <Link href={r.url} target="_blank">{r.url}</Link> ({r.statusCode})
-                                                            {idx < link.redirectChain.length - 1 ? " → " : ""}
-                                                        </li>
-                                                    ))
-                                                    : "—"
-                                                }
-                                            </ol>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    }
-                </section>
+                : <ExternalLinks externalLinks={externalLinks} />
             }
 
             {images === null
                 ? null
-                : <section id="on-page-checker-images">
-                    <h2>Images ({images.length || 0})</h2>
-                    {!images.length
-                        ? "No images found"
-                        : <table>
-                            <thead>
-                                <tr>
-                                    <th style={{ textAlign: 'center' }}>#</th>
-                                    <th style={{ textAlign: 'left' }}>Image Preview</th>
-                                    <th style={{ textAlign: 'left' }}>Alt Text</th>
-                                    <th style={{ textAlign: 'left' }}>Source URL</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {images.map((image, i) => {
-                                    return (
-                                        <tr key={i}>
-                                            <td style={{ textAlign: 'center' }}>{i + 1}</td>
-                                            <td>
-                                                <img
-                                                    src={image.src || undefined}
-                                                    alt={image.alt || ""}
-                                                    loading="lazy"
-                                                    style={{ minWidth: "100px", maxWidth: "100px" }}
-                                                />
-                                            </td>
-                                            <td className={!image.alt ? "error-background" : undefined}>{image.alt}</td>
-                                            <td><Link href={image.src} target="_blank">{image.src}</Link></td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    }
-                </section>
+                : <Images images={images} />
             }
 
-            {jsonLdSchemas === null
+            {schemaMarkup === null
                 ? null
-                : <section id="on-page-checker-schema-markup">
-                    <h2>Schema Markup ({jsonLdSchemas.length || 0})</h2>
-                    {!jsonLdSchemas.length
-                        ? <p>No schema markup found.</p>
-                        : <JsonLdViewer jsonLdSchemas={jsonLdSchemas} />
-                    }
-                </section>
+                : <SchemaMarkup schemaMarkup={schemaMarkup} />
             }
 
-            {hreflangs === null
+            {hreflang === null
                 ? null
-                : <section id="on-page-checker-hreflang">
-                    <h2>Hreflang ({hreflangs?.length || 0})</h2>
-                    {!hreflangs?.length
-                        ? <p>No hreflang found.</p>
-                        : <table>
-                            <thead>
-                                <tr>
-                                    <th style={{ textAlign: 'center' }}>Source</th>
-                                    <th style={{ textAlign: 'center' }}>Hreflang</th>
-                                    <th style={{ textAlign: 'left' }}>URL</th>
-                                    <th style={{ textAlign: 'center' }}>Status Code</th>
-                                    <th style={{ textAlign: 'center' }}>URL is Indexable?</th>
-                                    <th style={{ textAlign: 'left' }}>Final URL</th>
-                                    
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {hreflangs.map((hreflang, index) => {
-                                    return (
-                                        <tr key={index}>
-                                            <td style={{ textAlign: 'center' }}>{hreflang.source}</td>
-                                            <td style={{ textAlign: 'center' }}>{hreflang.hreflang}</td>
-                                            <td style={{ textAlign: 'left' }}>
-                                                <Link href={hreflang.url} target="_blank">{hreflang.url}</Link>
-                                            </td>
-                                            <td style={{ textAlign: 'center' }}>{hreflang.statusCode}</td>
-                                            <td
-                                                style={{ textAlign: 'center' }}
-                                                className={!hreflang.isIndexable ? "error-background" : undefined }
-                                            >{hreflang.isIndexable ? "Yes" : "No"}</td>
-                                            <td style={{ textAlign: 'left' }}>
-                                                <Link href={hreflang.finalUrl} target="_blank">{hreflang.finalUrl}</Link>
-                                            </td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    }
-                </section>
+                : <Hreflang hreflang={hreflang} />
             }
 
             {openGraphTags === null
                 ? null
-                : <section id="on-page-checker-open-graph-tags">
-                    <h2>Open Graph Tags</h2>
-
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style={{ textAlign: 'left' }}>Tag</th>
-                                <th style={{ textAlign: 'left' }}>Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Site Name</strong></td>
-                                <td className={!openGraphTags.siteName ? "warning-background" : undefined}>{openGraphTags.siteName}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>URL</strong></td>
-                                <td className={!openGraphTags.url ? "warning-background" : undefined}>
-                                    <Link href={openGraphTags.url} target="_blank">{openGraphTags.url}</Link>
-                                </td>
-                            </tr>
-                            {openGraphTags.url
-                                ? <>
-                                    <tr>
-                                        <td><strong>Is URL Indexable?</strong></td>
-                                        <td className={!openGraphTags.isOgUrlIndexable ? "error-background" : undefined}>{openGraphTags.isOgUrlIndexable ? "Yes" : "No"}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Status Code</strong></td>
-                                        <td className={openGraphTags.ogUrlStatusCode !== 200 ? "error-background" : undefined}>{openGraphTags.ogUrlStatusCode}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Final URL</strong></td>
-                                        <td><Link href={openGraphTags.ogUrlFinalUrl} target="_blank">{openGraphTags.ogUrlFinalUrl}</Link></td>
-                                    </tr>
-                                </>
-                                : null
-                            }
-                            <tr>
-                                <td><strong>Title</strong></td>
-                                <td className={!openGraphTags.title ? "warning-background" : undefined}>{openGraphTags.title}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Description</strong></td>
-                                <td className={!openGraphTags.description ? "warning-background" : undefined}>{openGraphTags.description}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Type</strong></td>
-                                <td className={!openGraphTags.type ? "warning-background" : undefined}>{openGraphTags.type}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Image</strong></td>
-                                <td  className={!openGraphTags.image ? "warning-background" : undefined}>
-                                    {openGraphTags.image
-                                        ? <img
-                                            src={openGraphTags.image || undefined}
-                                            alt="Open Graph Tag Image"
-                                            style={{ minWidth: "100px", maxWidth: "200px" }}
-                                        />
-                                        : null
-                                    }
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>Locale</strong></td>
-                                <td className={!openGraphTags.locale ? "warning-background" : undefined}>{openGraphTags.locale}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Audio</strong></td>
-                                <td className={!openGraphTags.audio ? "warning-background" : undefined}>{openGraphTags.audio}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Video</strong></td>
-                                <td className={!openGraphTags.video ? "warning-background" : undefined}>{openGraphTags.video}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Determiner</strong></td>
-                                <td className={!openGraphTags.determiner ? "warning-background" : undefined}>{openGraphTags.determiner}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </section>
+                : <OpenGraphTags openGraphTags={openGraphTags} />
             }
         </>
     )

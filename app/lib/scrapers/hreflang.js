@@ -89,5 +89,5 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
         }
     }
 
-    return { hreflangs: results };
+    return { hreflang: results };
 }
