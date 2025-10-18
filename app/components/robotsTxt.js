@@ -5,7 +5,7 @@ export default function RobotsTxt({ robotsTxt }) {
         <section id="robots-txt">
             <h2>URL allowed by Robots.txt? <span className={robotsTxt.allowed ? "success-text" : "error-text"}>{robotsTxt.allowed ? "Yes" : "No"}</span></h2>
             <p style={{ marginBottom: '10px'}}>
-                <Link href={robotsTxt.robotsUrl} target="_blank">{robotsTxt.robotsUrl}</Link>
+                <Link href={robotsTxt.url} target="_blank">{robotsTxt.url}</Link>
             </p>
         </section>
     )
