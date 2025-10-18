@@ -20,6 +20,7 @@ import Images from "../components/images";
 import SchemaMarkup from "../components/schemaMarkup";
 import Hreflang from "../components/hreflang";
 import OpenGraphTags from "../components/openGraphTags";
+import * as utils from '@/app/lib/utils';
 
 export default function ClientOnPageChecker() {
     const [inputUrl, setInputUrl] = useState("");
@@ -28,45 +29,6 @@ export default function ClientOnPageChecker() {
     const [error, setError] = useState(null);
 
     const [pageData, setPageData] = useState({});
-
-    function normalizeUrl(url) {
-        try {
-            const u = new URL(url.trim());
-
-            // Lowercase hostname (domains are case-insensitive)
-            u.hostname = u.hostname.toLowerCase();
-
-            // Remove hash (#fragment) and query parameters (?utm= etc.)
-            u.hash = "";
-            u.search = "";
-
-            // Remove trailing slash unless it's the root
-            if (u.pathname.endsWith("/") && u.pathname !== "/") {
-                u.pathname = u.pathname.slice(0, -1);
-            }
-
-            return u.href;
-        } catch {
-            return url.trim();
-        }
-    }
-
-    // NEW: normalizer that PRESERVES the query/search for canonical comparison
-    function normalizeUrlKeepSearch(url) {
-        try {
-            const u = new URL(url.trim());
-            u.hostname = u.hostname.toLowerCase();
-            u.hash = ""; // keep search but remove fragment
-            // leave u.search intact (do NOT clear)
-            if (u.pathname.endsWith("/") && u.pathname !== "/") {
-                u.pathname = u.pathname.slice(0, -1);
-            }
-            // return full href including search
-            return u.href;
-        } catch {
-            return url.trim();
-        }
-    }
 
     async function handleCheckPage() {
         setError(null);
@@ -190,7 +152,7 @@ export default function ClientOnPageChecker() {
                 console.warn("Unhandled status code:", data.enteredUrlStatusCode);
             }
 
-            const entered = normalizeUrl(data.enteredUrl);
+            const entered = utils.normaliseUrl(data.enteredUrl);
 
             // Safely resolve canonical relative to entered URL (only here)
             let canonical;
@@ -284,7 +246,7 @@ export default function ClientOnPageChecker() {
             } 
             else if (
                 canonical &&
-                normalizeUrlKeepSearch(data.enteredUrl) !== normalizeUrlKeepSearch(canonical)
+                utils.normaliseUrlKeepSearch(data.enteredUrl) !== utils.normaliseUrlKeepSearch(canonical)
             ) {
                 setPageData((currentPageData) => {
                     return {
