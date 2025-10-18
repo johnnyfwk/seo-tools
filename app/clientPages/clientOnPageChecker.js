@@ -1,8 +1,6 @@
 'use client';
 import { useState } from "react";
 import Link from "next/link";
-import * as utils from '@/app/lib/utils';
-import JsonLdViewer from "../components/jsonTree";
 import RobotsTxt from "../components/robotsTxt";
 import MetaRobotsTag from "../components/metaRobotsTag";
 import CanonicalUrl from "../components/canonicalUrl";
@@ -25,37 +23,11 @@ import OpenGraphTags from "../components/openGraphTags";
 
 export default function ClientOnPageChecker() {
     const [inputUrl, setInputUrl] = useState("");
-    const [enteredUrl, setEnteredUrl] = useState("");
 
     const [isCheckingPage, setIsCheckingPage] = useState(false);
     const [error, setError] = useState(null);
 
-    const [isUrlIndexable, setIsUrlIndexable] = useState(null);
-    const [indexabilityMessage, setIndexabilityMessage] = useState(null);
-    const [enteredUrlStatusCode, setEnteredUrlStatusCode] = useState(null);
-    const [finalUrl, setFinalUrl] = useState(null);
-    const [finalUrlStatusCode, setFinalUrlStatusCode] = useState(null);
-    const [redirectChain, setRedirectChain] = useState(null);
-    const [isRedirectedToHttps, setIsRedirectedToHttps] = useState(null);
-    const [robotsTxt, setRobotsTxt] = useState(null);
-    const [metaRobotsTag, setMetaRobotsTag] = useState(null);
-    const [canonicalUrl, setCanonicalUrl] = useState(null);
-    const [metaTitle, setMetaTitle] = useState(null);
-    const [metaDescription, setMetaDescription] = useState(null);
-    const [h1s, setH1s] = useState(null);
-    const [h2s, setH2s] = useState(null);
-    const [h3s, setH3s] = useState(null);
-    const [h4s, setH4s] = useState(null);
-    const [h5s, setH5s] = useState(null);
-    const [h6s, setH6s] = useState(null);
-    const [internalLinks, setInternalLinks] = useState(null);
-    const [externalLinks, setExternalLinks] = useState(null);
-    const [images, setImages] = useState(null);
-    const [schemaMarkup, setSchemaMarkup] = useState(null);
-    const [hreflang, setHreflang] = useState(null);
-    const [openGraphTags, setOpenGraphTags] = useState(null);
-    const [htmlLanguageAttribute, setHtmlLanguageAttribute] = useState(null);
-    const [viewport, setViewport] = useState(null);
+    const [pageData, setPageData] = useState({});
 
     function normalizeUrl(url) {
         try {
@@ -81,32 +53,31 @@ export default function ClientOnPageChecker() {
 
     async function handleCheckPage() {
         setError(null);
-        setIsUrlIndexable(null);
-        setIndexabilityMessage(null);
-        setEnteredUrlStatusCode(null);
-        setFinalUrl(null);
-        setFinalUrlStatusCode(null);
-        setRedirectChain(null);
-        setIsRedirectedToHttps(null);
-        setRobotsTxt(null);
-        setMetaRobotsTag(null);
-        setCanonicalUrl(null);
-        setMetaTitle(null);
-        setMetaDescription(null);
-        setH1s(null);
-        setH2s(null);
-        setH3s(null);
-        setH4s(null);
-        setH5s(null);
-        setH6s(null);
-        setInternalLinks(null);
-        setExternalLinks(null);
-        setImages(null);
-        setSchemaMarkup(null);
-        setHreflang(null);
-        setOpenGraphTags(null);
-        setHtmlLanguageAttribute(null);
-        setViewport(null);
+
+        setPageData({
+            enteredUrl: null,
+            isUrlIndexable: null,
+            indexabilityMessage: null,
+            enteredUrlStatusCode: null,
+            redirectChain: null,
+            httpRedirectsToHttps: null,
+            finalUrl: null,
+            finalUrlStatusCode: null,
+            robotsTxt: null,
+            metaRobotsTag: null,
+            canonicalUrl: null,
+            metaTitle: null,
+            metaDescription: null,
+            headings: null,
+            internalLinks: null,
+            externalLinks: null,
+            images: null,
+            schemaMarkup: null,
+            hreflang: null,
+            openGraphTags: null,
+            htmlLanguageAttribute: null,
+            viewport: null,
+        })
 
         let input = inputUrl.trim();
 
@@ -125,7 +96,7 @@ export default function ClientOnPageChecker() {
         }
 
         setIsCheckingPage(true);
-        setEnteredUrl(validatedUrl.href);
+        setPageData({ enteredUrl: validatedUrl.href })
 
         try {
             const res = await fetch('/api/on-page-checker', {
@@ -141,27 +112,18 @@ export default function ClientOnPageChecker() {
             }
 
             const data = await res.json();
-            console.log(data);
+            // console.log("Data:", data);
 
-            setEnteredUrlStatusCode(data.enteredUrlStatusCode);
+            setPageData((currentPageData) => {
+                return {
+                    ...currentPageData,
+                    enteredUrlStatusCode: data.enteredUrlStatusCode
+                }                
+            });
 
             if (data.error) {
                 setError(data.error);
             } else if (data.enteredUrlStatusCode === 200) {
-                setRobotsTxt(data.robotsCheck);
-                setMetaRobotsTag(data.metaRobotsTag);
-                setCanonicalUrl(data.canonicalUrl);
-                setMetaTitle(data.metaTitle);
-                setMetaDescription(data.metaDescription);
-                setH1s(data.h1s);
-                setH2s(data.h2s);
-                setH3s(data.h3s);
-                setH4s(data.h4s);
-                setH5s(data.h5s);
-                setH6s(data.h6s);
-                setInternalLinks(data.internalLinks);
-                setExternalLinks(data.externalLinks);
-                setImages(data.images);
                 const filteredjsonLdSchemas = data.schemas.filter(item => item.format.toLowerCase() === "json-ld");
                 const resolvedJsonLdSchemas  = filteredjsonLdSchemas.flatMap(item => {
                     if (item.raw["@graph"]) {
@@ -170,22 +132,45 @@ export default function ClientOnPageChecker() {
                         return [item.raw]; // single schema
                     }
                 });
-                setSchemaMarkup(resolvedJsonLdSchemas);
-                setHreflang(data.hreflang);
-                setOpenGraphTags(data.openGraphTags);
-                setHtmlLanguageAttribute(data.htmlLanguageAttribute);
-                setViewport(data.viewport);
+
+                setPageData((currentPageData) => {
+                    return {
+                        ...currentPageData,
+                        robotsTxt: data.robotsTxt,
+                        metaRobotsTag: data.metaRobotsTag,
+                        canonicalUrl: data.canonicalUrl,
+                        metaTitle: data.metaTitle,
+                        metaDescription: data.metaDescription,
+                        headings: {
+                            h1s: data.h1s,
+                            h2s: data.h2s,
+                            h3s: data.h3s,
+                            h4s: data.h4s,
+                            h5s: data.h5s,
+                            h6s: data.h6s,
+                        },
+                        internalLinks: data.internalLinks,
+                        externalLinks: data.externalLinks,
+                        images: data.images,
+                        schemaMarkup: resolvedJsonLdSchemas,
+                        hreflang: data.hreflang,
+                        openGraphTags: data.openGraphTags,
+                        htmlLanguageAttribute: data.htmlLanguageAttribute,
+                        viewport: data.viewport,
+                    }
+                });
             } else if (data.enteredUrlStatusCode >= 300 && data.enteredUrlStatusCode < 400) {
-                setFinalUrl(data.finalUrl);
-                setFinalUrlStatusCode(data.finalUrlStatusCode);
-                setRedirectChain(data.redirectChain);
-                setIsRedirectedToHttps(data.redirectsToHttps);
-            } else if (data.enteredUrlStatusCode >= 400 && data.enteredUrlStatusCode < 600) {
-                setFinalUrl(data.finalUrl);
-            } else {
-                // Unexpected status code (outside 200–599 range)
+                setPageData((currentPageData) => {
+                    return {
+                        ...currentPageData,
+                        redirectChain: data.redirectChain,
+                        httpRedirectsToHttps: data.httpRedirectsToHttps,
+                        finalUrl: data.finalUrl,
+                        finalUrlStatusCode: data.finalUrlStatusCode,
+                    }
+                });
+            } else if (data.enteredUrlStatusCode < 200 || data.enteredUrlStatusCode >= 600) {
                 console.warn("Unhandled status code:", data.enteredUrlStatusCode);
-                setFinalUrl(data.finalUrl);
             }
 
             const entered = normalizeUrl(data.enteredUrl);
@@ -199,52 +184,113 @@ export default function ClientOnPageChecker() {
             }
 
             if (data.robotsCheck && !data.robotsCheck.allowed) {
-                setIsUrlIndexable(false);
-                setIndexabilityMessage(data.robotsCheck.reason || "Blocked by robots.txt.");
+                setPageData((currentPageData) => {
+                    return {
+                        ...currentPageData,
+                        isUrlIndexable: false,
+                        indexabilityMessage: data.robotsCheck.reason || "Blocked by robots.txt.",
+                    }
+                })
             } 
             else if (data.metaRobotsTag?.toLowerCase().includes("noindex")) {
-                setIsUrlIndexable(false);
-                setIndexabilityMessage("The Meta Robots Tag is set to 'noindex'.");
+                setPageData((currentPageData) => {
+                    return {
+                        ...currentPageData,
+                        isUrlIndexable: false,
+                        indexabilityMessage: "The Meta Robots Tag is set to 'noindex'.",
+                    }
+                })
             } 
             else if (data.xRobotsTag?.toLowerCase().includes("noindex")) {
-                setIsUrlIndexable(false);
-                setIndexabilityMessage("The X-Robots-Tag header is set to 'noindex'.");
+                setPageData((currentPageData) => {
+                    return {
+                        ...currentPageData,
+                        isUrlIndexable: false,
+                        indexabilityMessage: "The X-Robots-Tag header is set to 'noindex'.",
+                    }
+                })
             }
             else if (data.enteredUrlStatusCode >= 300 && data.enteredUrlStatusCode < 400) {
-                setIsUrlIndexable(false);
-                setIndexabilityMessage("URL redirects to another URL.");
+                setPageData((currentPageData) => {
+                    return {
+                        ...currentPageData,
+                        isUrlIndexable: false,
+                        indexabilityMessage: "URL redirects to another URL.",
+                    }
+                })
             } 
             else if (data.enteredUrlStatusCode === 404) {
-                setIsUrlIndexable(false);
-                setIndexabilityMessage("URL does not exist (404).");
+
+                setPageData((currentPageData) => {
+                    return {
+                        ...currentPageData,
+                        isUrlIndexable: false,
+                        indexabilityMessage: "URL does not exist (404).",
+                    }
+                })
             } 
             else if (data.enteredUrlStatusCode >= 400 && data.enteredUrlStatusCode < 500) {
-                setIsUrlIndexable(false);
-                setIndexabilityMessage(`Client error (${data.enteredUrlStatusCode}). URL is not indexable.`);
+                setPageData((currentPageData) => {
+                    return {
+                        ...currentPageData,
+                        isUrlIndexable: false,
+                        indexabilityMessage: `Client error (${data.enteredUrlStatusCode}). URL is not indexable.`,
+                    }
+                })
             } 
             else if (data.enteredUrlStatusCode >= 500 && data.enteredUrlStatusCode < 600) {
-                setIsUrlIndexable(false);
-                setIndexabilityMessage(`Server error (${data.enteredUrlStatusCode}). URL is not indexable.`);
+                setPageData((currentPageData) => {
+                    return {
+                        ...currentPageData,
+                        isUrlIndexable: false,
+                        indexabilityMessage: `Server error (${data.enteredUrlStatusCode}). URL is not indexable.`,
+                    }
+                })
             } 
             else if (data.enteredUrlStatusCode >= 100 && data.enteredUrlStatusCode < 200) {
-                setIsUrlIndexable(false);
-                setIndexabilityMessage(`Informational response (${data.enteredUrlStatusCode}). URL is not indexable.`);
+                setPageData((currentPageData) => {
+                    return {
+                        ...currentPageData,
+                        isUrlIndexable: false,
+                        indexabilityMessage: `Informational response (${data.enteredUrlStatusCode}). URL is not indexable.`,
+                    }
+                })
             } 
             else if (data.enteredUrlStatusCode === 204) {
-                setIsUrlIndexable(false);
-                setIndexabilityMessage("No content (204). Nothing to index.");
+                setPageData((currentPageData) => {
+                    return {
+                        ...currentPageData,
+                        isUrlIndexable: false,
+                        indexabilityMessage: "No content (204). Nothing to index.",
+                    }
+                })
             } 
             else if (canonical && normalizeUrl(entered) !== normalizeUrl(canonical)) {
-                setIsUrlIndexable(false);
-                setIndexabilityMessage("Canonical URL points to a different page. Search engines may index the canonical URL instead of the entered URL.");
+                setPageData((currentPageData) => {
+                    return {
+                        ...currentPageData,
+                        isUrlIndexable: false,
+                        indexabilityMessage: "Canonical URL points to a different page. Search engines may index the canonical URL instead of the entered URL.",
+                    }
+                })
             } 
             else if (data.enteredUrlStatusCode === 200) {
-                setIsUrlIndexable(true);
-                setIndexabilityMessage("URL can be indexed in search engines.");
+                setPageData((currentPageData) => {
+                    return {
+                        ...currentPageData,
+                        isUrlIndexable: true,
+                        indexabilityMessage: "URL can be indexed in search engines.",
+                    }
+                })
             } 
             else {
-                setIsUrlIndexable(false);
-                setIndexabilityMessage(`Unhandled status code (${data.enteredUrlStatusCode ?? 'unknown'}). Assuming not indexable.`);
+                setPageData((currentPageData) => {
+                    return {
+                        ...currentPageData,
+                        isUrlIndexable: false,
+                        indexabilityMessage: `Unhandled status code (${data.enteredUrlStatusCode ?? 'unknown'}). Assuming not indexable.`,
+                    }
+                })
             }
 
             setIsCheckingPage(false);
@@ -254,6 +300,8 @@ export default function ClientOnPageChecker() {
             setIsCheckingPage(false);
         }
     }
+    
+    console.log("Page Data:", pageData);
 
     return (
         <>
@@ -297,154 +345,264 @@ export default function ClientOnPageChecker() {
                 }
             </section>
 
-            {enteredUrlStatusCode === 200
+            {pageData.enteredUrlStatusCode === 200
                 ? <section>
                     <h2>Contents</h2>
                     <ul>
-                        {isUrlIndexable && (<li><Link href="#is-url-indexable">URL is Indexable?</Link></li>)}
-                        {enteredUrlStatusCode && (<li><Link href="#status-code">Status Code</Link></li>)}
-                        {robotsTxt && (<li><Link href="#robots-txt">Robots.txt</Link></li>)}
-                        {metaRobotsTag && (<li><Link href="#meta-robots-tag">Meta Robots Tag</Link></li>)}
-                        {canonicalUrl && (<li><Link href="#canonical-url">Canonical URL</Link></li>)}
-                        {htmlLanguageAttribute && (<li><Link href="#html-language-attribute">HTML Language Attribute</Link></li>)}
-                        {viewport && (<li><Link href="#html-viewport">Viewport</Link></li>)}
-                        {metaTitle && (<li><Link href="#meta-titles">Meta Title</Link></li>)}
-                        {metaDescription && (<li><Link href="#meta-description">Meta Description</Link></li>)}
-                        {h1s && (<li><Link href="#h1s">H1s</Link></li>)}
-                        {h2s && (<li><Link href="#h2s">H2s</Link></li>)}
-                        {h3s && (<li><Link href="#h3s">H3s</Link></li>)}
-                        {h4s && (<li><Link href="#h4s">H4s</Link></li>)}
-                        {h5s && (<li><Link href="#h5s">H5s</Link></li>)}
-                        {h6s && (<li><Link href="#h6s">H6s</Link></li>)}
-                        {internalLinks && (<li><Link href="#internal-links">Internal Links</Link></li>)}
-                        {externalLinks && (<li><Link href="#external-links">External Links</Link></li>)}
-                        {images && (<li><Link href="#images">Images</Link></li>)}
-                        {schemaMarkup && (<li><Link href="#schema-markup">Schema Markup</Link></li>)}
-                        {hreflang && (<li><Link href="#hreflang">Hreflang</Link></li>)}
-                        {redirectChain && (<li><Link href="#redirect-chain">Redirect Chain</Link></li>)}
-                        {openGraphTags && (<li><Link href="#open-graph-tags">Open Graph Tags</Link></li>)}
+                        {pageData.isUrlIndexable
+                            ? <li>
+                                <Link href="#is-url-indexable">Is the URL Indexable?</Link>
+                            </li>
+                            : null
+                        }
+
+                        {pageData.enteredUrlStatusCode
+                            ? <li>
+                                <Link href="#status-code">Status Code</Link>
+                            </li>
+                            : null
+                        }
+
+                        {pageData.robotsTxt
+                            ? <li>
+                                <Link href="#robots-txt">Robots.txt</Link>
+                            </li>
+                            : null
+                        }
+
+                        {pageData.metaRobotsTag
+                            ? <li>
+                                <Link href="#meta-robots-tag">Meta Robots Tag</Link>
+                            </li>
+                            : null
+                        }
+
+                        {pageData.canonicalUrl
+                            ? <li>
+                                <Link href="#canonical-url">Canonical URL</Link>
+                            </li>
+                            : null
+                        }
+
+                        {pageData.htmlLanguageAttribute
+                            ? <li>
+                                <Link href="#html-language-attribute">HTML Language Attribute</Link>
+                            </li>
+                            : null
+                        }
+
+                        {pageData.viewport
+                            ? <li>
+                                <Link href="#html-viewport">Viewport</Link>
+                            </li>
+                            : null
+                        }
+
+                        {pageData.metaTitle
+                            ? <li>
+                                <Link href="#meta-titles">Meta Title</Link>
+                            </li>
+                            : null
+                        }
+
+                        {pageData.metaDescription
+                            ? <li>
+                                <Link href="#meta-description">Meta Description</Link>
+                            </li>
+                            : null
+                        }
+
+                        {pageData.headings
+                            ? <>
+                                <li>
+                                    <Link href="#h1s">H1s</Link>
+                                </li>
+                                <li>
+                                    <Link href="#h2s">H2s</Link>
+                                </li>
+                                <li>
+                                    <Link href="#h3s">H3s</Link>
+                                </li>
+                                <li>
+                                    <Link href="#h4s">H4s</Link>
+                                </li>
+                                <li>
+                                    <Link href="#h5s">H5s</Link>
+                                </li>
+                                <li>
+                                    <Link href="#h6s">H6s</Link>
+                                </li>
+                            </>
+                            : null
+                        }
+
+                        {pageData.internalLinks
+                            ? <li>
+                                <Link href="#internal-links">Internal Links</Link>
+                            </li>
+                            : null
+                        }
+
+                        {pageData.externalLinks
+                            ? <li>
+                                <Link href="#external-links">External Links</Link>
+                            </li>
+                            : null
+                        }
+
+                        {pageData.images
+                            ? <li>
+                                <Link href="#images">Images</Link>
+                            </li>
+                            : null
+                        }
+
+                        {pageData.schemaMarkup
+                            ? <li>
+                                <Link href="#schema-markup">Schema Markup</Link>
+                            </li>
+                            : null
+                        }
+
+                        {pageData.hreflang
+                            ? <li>
+                                <Link href="#hreflang">Hreflang</Link>
+                            </li>
+                            : null
+                        }
+
+                        {pageData.openGraphTags
+                            ? <li>
+                                <Link href="#open-graph-tags">Open Graph Tags</Link>
+                            </li>
+                            : null
+                        }
                     </ul>
                 </section>
                 : null
             }
 
-            {enteredUrlStatusCode === null || enteredUrlStatusCode === undefined
-                ? null
-                : <section id="status-code">
+            {pageData.enteredUrlStatusCode
+                ? <section>
                     <h2>URL</h2>
-                    <Link href={enteredUrl} target="_blank">{enteredUrl}</Link>
+                    <Link href={pageData.enteredUrl} target="_blank">{pageData.enteredUrl}</Link>
                 </section>
-            }
-
-            {isUrlIndexable === null
-                ? null
-                : <UrlIndexability
-                    isUrlIndexable={isUrlIndexable}
-                    indexabilityMessage={indexabilityMessage}
-                />
-            }
-
-            {enteredUrlStatusCode === null || enteredUrlStatusCode === undefined
-                ? null
-                : <StatusCode enteredUrlStatusCode={enteredUrlStatusCode} />
-            }
-
-            {robotsTxt?.robotsUrl
-                ? <RobotsTxt robotsTxt={robotsTxt} />
                 : null
             }
 
-            {metaRobotsTag
-                ? <MetaRobotsTag metaRobotsTag={metaRobotsTag} />
-                : null
-            }
-
-            {canonicalUrl
-                ? <CanonicalUrl
-                    enteredUrl={enteredUrl}
-                    canonicalUrl={canonicalUrl}
+            {pageData.isUrlIndexable  !== null && pageData.isUrlIndexable !== undefined
+                ? <UrlIndexability
+                    isUrlIndexable={pageData.isUrlIndexable}
+                    indexabilityMessage={pageData.indexabilityMessage}
                 />
                 : null
             }
 
-            {isRedirectedToHttps
+            {pageData.enteredUrlStatusCode
+                ? <StatusCode enteredUrlStatusCode={pageData.enteredUrlStatusCode} />
+                : null
+            }
+
+            
+            {pageData.httpRedirectsToHttps
                 ? <HttpRedirectsToHttps
-                    isRedirectedToHttps={isRedirectedToHttps}
-                    redirectChain={redirectChain}
+                    httpRedirectsToHttps={pageData.httpRedirectsToHttps}
+                    redirectChain={pageData.redirectChain}
                 />
                 : null
             }
 
-            {finalUrl
+            {pageData.finalUrl
                 ? <FinalUrl
-                    finalUrl={finalUrl}
-                    finalUrlStatusCode={finalUrlStatusCode}
+                    finalUrl={pageData.finalUrl}
+                    finalUrlStatusCode={pageData.finalUrlStatusCode}
                 />
                 : null
             }
 
-            {redirectChain
-                ? <RedirectChain redirectChain={redirectChain} />
+            {pageData.redirectChain
+                ? <RedirectChain redirectChain={pageData.redirectChain} />
                 : null
             }
 
-            {htmlLanguageAttribute === null
-                ? null
-                : <HtmlLanguageAttribute htmlLanguageAttribute={htmlLanguageAttribute} />
+            {pageData.robotsTxt
+                ? <RobotsTxt robotsTxt={pageData.robotsTxt} />
+                : null
             }
 
-            {viewport === null
-                ? null
-                : <Viewport viewport={viewport} />
+            {pageData.metaRobotsTag
+                ? <MetaRobotsTag metaRobotsTag={pageData.metaRobotsTag} />
+                : null
             }
 
-            {metaTitle === null
-                ? null
-                : <MetaTitle metaTitle={metaTitle} />
+            {pageData.canonicalUrl
+                ? <CanonicalUrl
+                    enteredUrl={pageData.enteredUrl}
+                    canonicalUrl={pageData.canonicalUrl}
+                />
+                : null
             }
 
-            {metaDescription === null
-                ? null
-                : <MetaDescription metaDescription={metaDescription} />
+            {pageData.htmlLanguageAttribute
+                ? <HtmlLanguageAttribute htmlLanguageAttribute={pageData.htmlLanguageAttribute} />
+                : null
             }
 
-            <Headings
-                h1s={h1s}
-                h2s={h2s}
-                h3s={h3s}
-                h4s={h4s}
-                h5s={h5s}
-                h6s={h6s}
-            />
-
-            {internalLinks === null
-                ? null
-                : <InternalLinks internalLinks={internalLinks} />
+            {pageData.viewport
+                ? <Viewport viewport={pageData.viewport} />
+                : null
             }
 
-            {externalLinks === null
-                ? null
-                : <ExternalLinks externalLinks={externalLinks} />
+            {pageData.metaTitle
+                ? <MetaTitle metaTitle={pageData.metaTitle} />
+                : null
             }
 
-            {images === null
-                ? null
-                : <Images images={images} />
+            {pageData.metaDescription
+                ? <MetaDescription metaDescription={pageData.metaDescription} />
+                : null
             }
 
-            {schemaMarkup === null
-                ? null
-                : <SchemaMarkup schemaMarkup={schemaMarkup} />
+            {pageData.headings
+                ? <Headings
+                    h1s={pageData.headings.h1s}
+                    h2s={pageData.headings.h2s}
+                    h3s={pageData.headings.h3s}
+                    h4s={pageData.headings.h4s}
+                    h5s={pageData.headings.h5s}
+                    h6s={pageData.headings.h6s}
+                />
+                : null
+            }
+            
+            {pageData.internalLinks
+                ? <InternalLinks internalLinks={pageData.internalLinks} />
+                : null
             }
 
-            {hreflang === null
-                ? null
-                : <Hreflang hreflang={hreflang} />
+            {pageData.externalLinks
+                ? <ExternalLinks externalLinks={pageData.externalLinks} />
+                : null
             }
 
-            {openGraphTags === null
-                ? null
-                : <OpenGraphTags openGraphTags={openGraphTags} />
+            {pageData.images
+                ? <Images images={pageData.images} />
+                : null
+            }
+
+            {pageData.schemaMarkup
+                ? <SchemaMarkup schemaMarkup={pageData.schemaMarkup} />
+                : null
+            }
+
+            {pageData.hreflang
+                ? <Hreflang hreflang={pageData.hreflang} />
+                : null
+            }
+
+            {pageData.openGraphTags
+                ? <OpenGraphTags openGraphTags={pageData.openGraphTags} />
+                : null
             }
         </>
     )

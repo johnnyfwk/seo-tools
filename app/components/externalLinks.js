@@ -5,9 +5,8 @@ export default function ExternalLinks({ externalLinks }) {
         <section id="external-links">
             <h2>External Links ({externalLinks.length})</h2>
 
-            {externalLinks.length === 0
-                ? <p>No external links found on this page.</p>
-                : <table>
+            {externalLinks.length
+                ? <table>
                     <thead>
                         <tr>
                             <th style={{ textAlign: 'center' }}>#</th>
@@ -66,6 +65,7 @@ export default function ExternalLinks({ externalLinks }) {
                         ))}
                     </tbody>
                 </table>
+                : <p>No external links found on this page.</p>
             }
         </section>
     )

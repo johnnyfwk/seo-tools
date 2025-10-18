@@ -5,9 +5,8 @@ export default function InternalLinks({ internalLinks }) {
         <section id="internal-links">
             <h2>Internal Links ({internalLinks.length})</h2>
 
-            {internalLinks.length === 0
-                ? <p>No internal links found on this page.</p>
-                : <table>
+            {internalLinks
+                ? <table>
                     <thead>
                         <tr>
                             <th style={{ textAlign: 'center' }}>#</th>
@@ -66,6 +65,7 @@ export default function InternalLinks({ internalLinks }) {
                         ))}
                     </tbody>
                 </table>
+                : <p>No internal links found on this page.</p>
             }
         </section>
     )
