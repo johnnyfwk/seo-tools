@@ -51,6 +51,23 @@ export default function ClientOnPageChecker() {
         }
     }
 
+    // NEW: normalizer that PRESERVES the query/search for canonical comparison
+    function normalizeUrlKeepSearch(url) {
+        try {
+            const u = new URL(url.trim());
+            u.hostname = u.hostname.toLowerCase();
+            u.hash = ""; // keep search but remove fragment
+            // leave u.search intact (do NOT clear)
+            if (u.pathname.endsWith("/") && u.pathname !== "/") {
+                u.pathname = u.pathname.slice(0, -1);
+            }
+            // return full href including search
+            return u.href;
+        } catch {
+            return url.trim();
+        }
+    }
+
     async function handleCheckPage() {
         setError(null);
 
@@ -265,7 +282,10 @@ export default function ClientOnPageChecker() {
                     }
                 })
             } 
-            else if (canonical && normalizeUrl(entered) !== normalizeUrl(canonical)) {
+            else if (
+                canonical &&
+                normalizeUrlKeepSearch(data.enteredUrl) !== normalizeUrlKeepSearch(canonical)
+            ) {
                 setPageData((currentPageData) => {
                     return {
                         ...currentPageData,
