@@ -50,7 +50,7 @@ export async function POST(req) {
 
         const firstRedirectUrl = redirectChain[0]?.url || '';
         const secondRedirectUrl = redirectChain[1]?.url || '';
-        const redirectsToHttps = firstRedirectUrl.startsWith('http://') && secondRedirectUrl?.startsWith('https://');
+        const httpRedirectsToHttps = firstRedirectUrl.startsWith('http://') && secondRedirectUrl?.startsWith('https://');
 
         // 2. Identify entered status + final URL
         const enteredUrlStatusCode = redirectChain[0]?.statusCode || null;
@@ -58,7 +58,7 @@ export async function POST(req) {
         const finalUrl = finalEntry.url || url;
         const finalUrlStatusCode = finalEntry.statusCode || null;
 
-        const robotsCheck = await checkRobotsTxt(finalUrl, '*');
+        const robotsTxt = await checkRobotsTxt(finalUrl, '*');
 
         let scraped = {};
 
@@ -91,8 +91,8 @@ export async function POST(req) {
                 finalUrl,        // last URL after redirects
                 finalUrlStatusCode,     // last status
                 redirectChain,   // full chain with {url, statusCode}
-                redirectsToHttps,
-                robotsCheck,
+                httpRedirectsToHttps,
+                robotsTxt,
                 ...scraped,
             }),
             {

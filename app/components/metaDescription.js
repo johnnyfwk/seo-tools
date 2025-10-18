@@ -4,10 +4,9 @@ export default function MetaDescription({ metaDescription }) {
     return (
         <section id="meta-description">
             <h2>Meta Description</h2>
-            
-            {metaDescription.length === 0
-                ? <p className="error-text">No meta description found.</p>
-                : <>
+
+            {metaDescription
+                ? <>
                     {metaDescription.length > 1
                         ? <p className="warning-text">Multiple meta descriptions found.</p>
                         : null
@@ -33,6 +32,7 @@ export default function MetaDescription({ metaDescription }) {
                         </tbody>
                     </table>
                 </>
+                : <p className="error-text">No meta description found.</p>            
             }
         </section>
     )

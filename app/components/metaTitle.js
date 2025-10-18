@@ -4,10 +4,9 @@ export default function MetaTitle({ metaTitle }) {
     return (
         <section id="meta-titles">
             <h2>Meta Title</h2>
-            
-            {metaTitle.length === 0
-                ? <p className="error-text">No &lt;title&gt; tag found.</p>
-                : <>
+
+            {metaTitle
+                ? <>
                     {metaTitle.length > 1
                         ? <p className="error-text">Multiple &lt;title&gt; tags found.</p>
                         : null
@@ -33,6 +32,7 @@ export default function MetaTitle({ metaTitle }) {
                         </tbody>
                     </table>
                 </>
+                : <p className="error-text">No &lt;title&gt; tag found.</p>
             }
         </section>
     )
