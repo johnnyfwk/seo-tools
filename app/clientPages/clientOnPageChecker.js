@@ -129,7 +129,7 @@ export default function ClientOnPageChecker() {
             }
 
             const data = await res.json();
-            // console.log("Data:", data);
+            console.log("Data:", data);
 
             setPageData((currentPageData) => {
                 return {
@@ -344,7 +344,7 @@ export default function ClientOnPageChecker() {
                         id="url"
                         value={inputUrl}
                         onChange={(e) => setInputUrl(e.target.value)}
-                        placeholder="https://example.com or http://example.com"
+                        placeholder="Enter the URL to check"
                         required
                         disabled={isCheckingPage}
                         style={{width: '100%', padding: "10px"}}
@@ -546,7 +546,7 @@ export default function ClientOnPageChecker() {
             }
 
             {pageData.robotsTxt
-                ? <RobotsTxt robotsTxt={pageData.robotsTxt} />
+                ? <RobotsTxt robotsTxt={pageData.robotsTxt.enteredUrl} />
                 : null
             }
 

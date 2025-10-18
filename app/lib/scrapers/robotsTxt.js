@@ -6,14 +6,14 @@ async function fetchRobotsTxt(url) {
         const res = await fetch(robotsUrl, { redirect: 'follow' });
 
         if (!res.ok) {
-            return { content: null, robotsUrl, exists: false };
+            return { content: null, url, exists: false };
         }
 
         const text = await res.text();
 
-        return { content: text, robotsUrl, exists: true };
+        return { content: text, url, exists: true };
     } catch (err) {
-        return { content: null, robotsUrl: null, exists: false, error: err.message };
+        return { content: null, url: null, exists: false, error: err.message };
     }
 }
 
@@ -92,7 +92,7 @@ async function checkRobotsTxt(url, userAgent = '*') {
     const robots = await fetchRobotsTxt(url);
 
     if (!robots.exists) {
-        return { allowed: true, reason: 'No robots.txt found', robotsUrl: robots.robotsUrl };
+        return { allowed: true, reason: 'No robots.txt found', url: robots.url };
     }
 
     const rules = parseRobotsTxt(robots.content);
@@ -100,7 +100,7 @@ async function checkRobotsTxt(url, userAgent = '*') {
 
     return {
         allowed,
-        robotsUrl: robots.robotsUrl,
+        url: robots.url,
         reason: allowed
             ? 'URL allowed by robots.txt'
             : 'URL blocked from crawling by robots.txt (not indexable via content)'

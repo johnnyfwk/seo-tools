@@ -58,7 +58,8 @@ export async function POST(req) {
         const finalUrl = finalEntry.url || url;
         const finalUrlStatusCode = finalEntry.statusCode || null;
 
-        const robotsTxt = await checkRobotsTxt(finalUrl, '*');
+        const robotsTxtEnteredUrl = await checkRobotsTxt(url, '*');
+        const robotsTxtFinalUrl = finalUrl !== url ? await checkRobotsTxt(finalUrl, '*') : robotsTxtEnteredUrl;
 
         let scraped = {};
 
@@ -92,7 +93,10 @@ export async function POST(req) {
                 finalUrlStatusCode,     // last status
                 redirectChain,   // full chain with {url, statusCode}
                 httpRedirectsToHttps,
-                robotsTxt,
+                robotsTxt: {
+                    enteredUrl: robotsTxtEnteredUrl,
+                    finalUrl: robotsTxtFinalUrl,
+                },
                 ...scraped,
             }),
             {
