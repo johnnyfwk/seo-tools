@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio';
 import { scrapeCanonical } from './canonical';
+import { checkRobotsTxt } from './robotsTxt';
 
 export async function scrapeHreflang($, pageUrl, headers = {}) {
     const hreflangs = [];
@@ -46,6 +47,11 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
 
         try {
             const absoluteUrl = new URL(item.url, pageUrl).href;
+            let statusCode = null;
+            let isIndexable = null;
+            let isNoindex = false;
+            let canonical = absoluteUrl;
+            let robotsTxtCheck = { allowed: true, reason: 'Not checked' };
 
             const response = await fetch(absoluteUrl, {
                 method: 'GET',
@@ -55,22 +61,19 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
                 redirect: 'manual', // do not follow redirects
             });
 
-            const statusCode = response.status;
-            let isIndexable = null;
-
+            statusCode = response.status;
+            
             // 4️⃣ Only check indexability if status is 200
             if (statusCode === 200) {
                 const html = await response.text();
                 const $page = cheerio.load(html);
 
-                // Extract canonical
-                const canonical = scrapeCanonical($page).canonicalUrl || absoluteUrl;
-
-                // Extract meta robots
+                canonical = scrapeCanonical($page).canonicalUrl || absoluteUrl;
                 const metaRobots = $page('meta[name="robots"]').attr('content') || '';
-                const isNoindex = metaRobots.toLowerCase().includes('noindex');
+                isNoindex = metaRobots.toLowerCase().includes('noindex');
+                robotsTxtCheck = await checkRobotsTxt(absoluteUrl, '*');
 
-                isIndexable = !isNoindex && (canonical === absoluteUrl || canonical === '');
+                isIndexable = !isNoindex && robotsTxtCheck.allowed;
             }
 
             results.push({
@@ -78,6 +81,9 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
                 statusCode,
                 finalUrl: absoluteUrl,
                 isIndexable,
+                robotsTxtCheck,
+                isNoindex,
+                canonicalUrl: canonical,
             });
         } catch (err) {
             results.push({

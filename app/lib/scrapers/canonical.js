@@ -1,5 +1,8 @@
 export function scrapeCanonical($) {
-    return {
-        canonicalUrl: $('link[rel="canonical"]').attr('href') || "",
-    };
+    const href = $('link[rel="canonical"]').attr('href') || "";
+    try {
+        return { canonicalUrl: href ? new URL(href, pageUrl).href : "" };
+    } catch {
+        return { canonicalUrl: href }; // leave as-is if invalid
+    }
 }
