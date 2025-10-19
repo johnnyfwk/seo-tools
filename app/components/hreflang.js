@@ -16,8 +16,8 @@ export default function Hreflang({ hreflang }) {
                             <th style={{ textAlign: 'left' }}>URL</th>
                             <th style={{ textAlign: 'center' }}>Status Code</th>
                             <th style={{ textAlign: 'left' }}>Final URL</th>
-                            <th style={{ textAlign: 'center' }}>Allowed by Robots.txt?</th>
-                            <th style={{ textAlign: 'center' }}>Is NoIndex?</th>
+                            <th style={{ textAlign: 'center' }}>URL is allowed by Robots.txt?</th>
+                            <th style={{ textAlign: 'center' }}>URL has Noindex tag?</th>
                             <th style={{ textAlign: 'center' }}>URL = Canonical URL?</th>
                             <th style={{ textAlign: 'center' }}>URL is Indexable?</th>
                         </tr>

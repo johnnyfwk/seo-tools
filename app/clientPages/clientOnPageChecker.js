@@ -507,8 +507,8 @@ export default function ClientOnPageChecker() {
                 : null
             }
 
-            {pageData.robotsTxt
-                ? <RobotsTxt robotsTxt={pageData.robotsTxt.enteredUrl} />
+            {pageData.robotsTxt?.enteredUrl
+                ? <RobotsTxt robotsTxt={pageData.robotsTxt} />
                 : null
             }
 
