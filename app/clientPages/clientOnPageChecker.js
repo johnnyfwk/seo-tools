@@ -1,4 +1,5 @@
 'use client';
+
 import { useState } from "react";
 import Link from "next/link";
 import RobotsTxt from "../components/robotsTxt";
@@ -75,7 +76,6 @@ export default function ClientOnPageChecker() {
         }
 
         setIsCheckingPage(true);
-        setPageData({ enteredUrl: validatedUrl.href })
 
         try {
             const res = await fetch('/api/on-page-checker', {
@@ -96,6 +96,7 @@ export default function ClientOnPageChecker() {
             setPageData((currentPageData) => {
                 return {
                     ...currentPageData,
+                    enteredUrl: validatedUrl.href,
                     enteredUrlStatusCode: data.enteredUrlStatusCode
                 }                
             });

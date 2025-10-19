@@ -24,7 +24,6 @@ async function fetchRedirectChain(url) {
 
 export async function POST(req) {
     try {
-        // const { url } = await req.json();
         let { url } = await req.json();
         url = url.trim();
 
