@@ -5,6 +5,7 @@ export default function Nav() {
         <nav>
             <Link href="/on-page-checker">On-Page Checker</Link>
             <Link href="link-checker">Link Checker</Link>
+            <Link href="xml-sitemap-checker">XML Sitemap Checker</Link>
         </nav>
     )
 }
