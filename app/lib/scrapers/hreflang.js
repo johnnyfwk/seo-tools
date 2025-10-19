@@ -48,7 +48,7 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
         try {
             const absoluteUrl = new URL(item.url, pageUrl).href;
             let statusCode = null;
-            let isIndexable = null;
+            let isIndexable = false;
             let isNoindex = false;
             let canonical = absoluteUrl;
             let robotsTxtCheck = { allowed: true, reason: 'Not checked' };
@@ -74,6 +74,8 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
                 robotsTxtCheck = await checkRobotsTxt(absoluteUrl, '*');
 
                 isIndexable = !isNoindex && robotsTxtCheck.allowed;
+            } else {
+                isIndexable = false;
             }
 
             results.push({
