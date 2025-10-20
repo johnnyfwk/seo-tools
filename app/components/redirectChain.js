@@ -1,6 +1,10 @@
 import Link from "next/link";
 
 export default function RedirectChain({ redirectChain }) {
+    if (redirectChain.length === 1) {
+        return null;
+    };
+
     return (
         <section id="redirect-chain">
             <h2>Redirect Chain</h2>

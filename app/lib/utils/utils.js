@@ -64,3 +64,24 @@ export function normaliseUrlKeepSearch(url) {
         return url.trim();
     }
 }
+
+export async function fetchRedirectChain(url) {
+    const chain = [];
+    let currentUrl = url;
+
+    while (currentUrl) {
+        try {
+            const res = await fetch(currentUrl, { method: 'HEAD', redirect: 'manual' });
+            const statusCode = res.status;
+            chain.push({ url: currentUrl, statusCode });
+
+            const location = res.headers.get('location');
+            currentUrl = location ? new URL(location, currentUrl).href : null;
+        } catch {
+            chain.push({ url: currentUrl, statusCode: "Could not fetch status code" });
+            currentUrl = null;
+        }
+    }
+
+    return chain;
+}

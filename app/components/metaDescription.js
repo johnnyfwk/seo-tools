@@ -1,4 +1,4 @@
-import * as utils from '@/app/lib/utils';
+import * as utils from '@/app/lib/utils/utils';
 
 export default function MetaDescription({ metaDescription }) {
     return (

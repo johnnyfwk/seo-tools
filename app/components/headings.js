@@ -1,4 +1,4 @@
-import * as utils from'@/app/lib/utils';
+import * as utils from'@/app/lib/utils/utils';
 
 export default function Headings({ h1s, h2s, h3s, h4s, h5s, h6s }) {
     return (
