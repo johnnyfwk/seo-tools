@@ -1,4 +1,4 @@
-import * as utils from '@/app/lib/utils';
+import * as utils from '@/app/lib/utils/utils';
 
 export default function MetaTitle({ metaTitle }) {
     return (
@@ -8,7 +8,7 @@ export default function MetaTitle({ metaTitle }) {
             {metaTitle
                 ? <>
                     {metaTitle.length > 1
-                        ? <p className="error-text">Multiple &lt;title&gt; tags found.</p>
+                        ? <p className="warning-text">Multiple &lt;title&gt; tags found.</p>
                         : null
                     }
                     <table>
