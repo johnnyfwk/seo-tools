@@ -601,6 +601,7 @@ import RedirectChain from "../components/redirectChain";
 import HttpRedirectsToHttps from "../components/httpRedirectsToHttps";
 import MetaTitle from "../components/metaTitle";
 import MetaDescription from "../components/metaDescription";
+import Headings from "../components/headings";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -610,9 +611,16 @@ export default function ClientOnPageChecker() {
         finalUrl: "",
         finalUrlStatusCode: null,
         finalUrlFetchError: null,
-        metaTitle: [],
-        redirectChain: [],
         httpRedirectsToHttps: null,
+        redirectChain: [],
+        metaTitle: [],
+        metaDescription: [],
+        h1s: [],
+        h2s: [],
+        h3s: [],
+        h4s: [],
+        h5s: [],
+        h6s: [],
     };
 
     const [inputUrl, setInputUrl] = useState("");
@@ -667,10 +675,16 @@ export default function ClientOnPageChecker() {
                 finalUrl: data.finalUrl,
                 finalUrlStatusCode: data.finalUrlStatusCode,
                 finalUrlFetchError: data.finalUrlFetchError || null,
+                httpRedirectsToHttps: data.httpRedirectsToHttps || null,
+                redirectChain: data.redirectChain || [],
                 metaTitle: data.metaTitle || [],
                 metaDescription: data.metaDescription || [],
-                redirectChain: data.redirectChain || [],
-                httpRedirectsToHttps: data.httpRedirectsToHttps || null,
+                h1s: data.h1s || [],
+                h2s: data.h2s || [],
+                h3s: data.h3s || [],
+                h4s: data.h4s || [],
+                h5s: data.h5s || [],
+                h6s: data.h6s || [],
             });
 
         } catch (err) {
@@ -725,60 +739,89 @@ export default function ClientOnPageChecker() {
             </section>
 
             {hasCheckedPage
-                ? <Url
-                    urlId="entered-url"
-                    urlName="URL"
-                    url={pageData.enteredUrl}
-                />
+                ? <section>
+                    <h2>URL</h2>
+                    <Url url={pageData.enteredUrl} />
+                </section>
                 : null
             }
 
             {hasCheckedPage
-                ? <StatusCode
-                    statusCode={pageData.enteredUrlStatusCode}
-                    fetchError={pageData.enteredUrlFetchError}
-                />
+                ? <section>
+                    <h2>Status Code</h2>
+                    <StatusCode
+                        statusCode={pageData.enteredUrlStatusCode}
+                        fetchError={pageData.enteredUrlFetchError}
+                    />
+                </section>
                 : null
             }
 
-            {hasCheckedPage
-                ? <HttpRedirectsToHttps
-                    httpRedirectsToHttps={pageData.httpRedirectsToHttps}
-                    redirectChain={pageData.redirectChain}
-                />
+            {hasCheckedPage &&
+            pageData.enteredUrlStatusCode >= 300 &&
+            pageData.enteredUrlStatusCode < 400
+                ? <section>
+                    <h2>HTTP redirects to HTTPS?</h2>
+                    <HttpRedirectsToHttps
+                        httpRedirectsToHttps={pageData.httpRedirectsToHttps}
+                        redirectChain={pageData.redirectChain}
+                    />
+                </section>
                 : null
             }
 
             {hasCheckedPage && pageData.redirectChain.length > 1
-                ? <Url
-                    urlId="redirect-url"
-                    urlName="Redirect URL"
-                    url={pageData.redirectChain[1].url}
-                />
+                ? <section>
+                    <h2>Redirect URL</h2>
+                    <Url url={pageData.redirectChain[1].url} />
+                </section>
                 : null
             }
 
             {hasCheckedPage && pageData.redirectChain.length > 2
-                ? <Url
-                    urlId="final-url"
-                    urlName="Final URL"
-                    url={pageData.redirectChain[pageData.redirectChain.length - 1].url}
-                />
+                ? <section>
+                    <h2>Final URL</h2>
+                    <Url url={pageData.redirectChain[pageData.redirectChain.length - 1].url} />
+                </section>
                 : null
             }
 
-            {hasCheckedPage
-                ? <RedirectChain redirectChain={pageData.redirectChain} />
+            {hasCheckedPage &&
+            pageData.enteredUrlStatusCode >= 300 &&
+            pageData.enteredUrlStatusCode < 400
+                ? <section>
+                    <h2>Redirect Chain</h2>
+                    <RedirectChain redirectChain={pageData.redirectChain} />
+                </section>
                 : null
             }
 
             {hasCheckedPage && pageData.enteredUrlStatusCode === 200
-                ? <MetaTitle metaTitle={pageData.metaTitle} />
+                ? <section>
+                    <h2>Meta Title</h2>
+                    <MetaTitle metaTitle={pageData.metaTitle} />
+                </section>
+                
                 : null
             }
 
             {hasCheckedPage && pageData.enteredUrlStatusCode === 200
-                ? <MetaDescription metaDescription={pageData.metaDescription} />
+                ? <section>
+                    <h2>Meta Description</h2>
+                    <MetaDescription metaDescription={pageData.metaDescription} />
+                </section>
+                : null
+            }
+
+            {hasCheckedPage && pageData.enteredUrlStatusCode === 200
+                ? <Headings
+                    h1s={pageData.h1s}
+                    h2s={pageData.h2s}
+                    h3s={pageData.h3s}
+                    h4s={pageData.h4s}
+                    h5s={pageData.h5s}
+                    h6s={pageData.h6s}
+                />      
                 : null
             }
         </>

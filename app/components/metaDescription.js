@@ -2,10 +2,8 @@ import * as utils from '@/app/lib/utils/utils';
 
 export default function MetaDescription({ metaDescription }) {
     return (
-        <section id="meta-description">
-            <h2>Meta Description</h2>
-
-            {metaDescription
+        <>
+            {metaDescription.length > 0
                 ? <>
                     {metaDescription.length > 1
                         ? <p className="warning-text">Multiple meta descriptions found.</p>
@@ -34,6 +32,6 @@ export default function MetaDescription({ metaDescription }) {
                 </>
                 : <p className="error-text">No meta description found.</p>            
             }
-        </section>
+        </>
     )
 }

@@ -6,9 +6,6 @@ export default function HttpRedirectsToHttps({ httpRedirectsToHttps, redirectCha
     }
 
     return (
-        <section>
-            <h2>HTTP redirects to HTTPS?</h2>
-            <p className={httpRedirectsToHttps ? "success-text" : "error-text"}>{httpRedirectsToHttps ? "Yes" : "No"}</p>
-        </section>
+        <p className={httpRedirectsToHttps ? "success-text" : "error-text"}>{httpRedirectsToHttps ? "Yes" : "No"}</p>
     )
 }

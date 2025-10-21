@@ -34,7 +34,7 @@
 import * as cheerio from 'cheerio';
 import { scrapeMetaTitle } from './metaTitle';
 import { scrapeMetaDescription } from './metaDescription';
-
+import { scrapeHeadings } from './headings';
 export async function scrapeWithCheerio(
     html,
     pageUrl,
@@ -51,6 +51,10 @@ export async function scrapeWithCheerio(
 
     if (opts.metaDescription || opts.all) {
         Object.assign(results, scrapeMetaDescription($));
+    }
+
+    if (opts.headings || opts.all) {
+        Object.assign(results, scrapeHeadings($));
     }
 
     return results;
