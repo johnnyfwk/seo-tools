@@ -6,9 +6,6 @@ export default function StatusCode({ statusCode, fetchError }) {
     else if (statusCode >= 300 && statusCode < 400) className = "warning-text";
 
     return (
-        <section id="status-code">
-            <h2>Status Code</h2>
-            <p className={className}>{displayText}</p>
-        </section>
+        <p className={className}>{displayText}</p>
     );
 }

@@ -2,10 +2,8 @@ import * as utils from '@/app/lib/utils/utils';
 
 export default function MetaTitle({ metaTitle }) {
     return (
-        <section id="meta-titles">
-            <h2>Meta Title</h2>
-
-            {metaTitle
+        <>
+            {metaTitle.length > 0
                 ? <>
                     {metaTitle.length > 1
                         ? <p className="warning-text">Multiple &lt;title&gt; tags found.</p>
@@ -34,6 +32,6 @@ export default function MetaTitle({ metaTitle }) {
                 </>
                 : <p className="error-text">No &lt;title&gt; tag found.</p>
             }
-        </section>
+        </>
     )
 }
