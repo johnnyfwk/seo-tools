@@ -1,5 +1,5 @@
 export function scrapeHtmlLanguageAttribute($) {
     return {
-        htmlLanguageAttribute: $('html').attr('lang') || "",
+        htmlLanguageAttribute: ($('html').attr('lang') || "").toLowerCase(),
     };
 }

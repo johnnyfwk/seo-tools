@@ -20,7 +20,11 @@ export default function OpenGraphTags({ openGraphTags }) {
                     <tr>
                         <td><strong>URL</strong></td>
                         <td className={!openGraphTags.url ? "warning-background" : undefined}>
-                            <Link href={openGraphTags.url} target="_blank">{openGraphTags.url}</Link>
+                            <Link
+                                href={openGraphTags.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >{openGraphTags.url}</Link>
                         </td>
                     </tr>
                     {openGraphTags.url

@@ -1,11 +1,51 @@
 export default function StatusCode({ statusCode, fetchError }) {
-    let displayText = statusCode ?? (fetchError ? `Fetch error: ${fetchError}` : "Unknown");
+    const code = Number(statusCode);
 
+    const statusMessages = {
+        200: "OK",
+        201: "Created",
+        204: "No Content",
+        301: "Moved Permanently",
+        302: "Found (Temporary Redirect)",
+        304: "Not Modified",
+        307: "Temporary Redirect",
+        308: "Permanent Redirect",
+        400: "Bad Request",
+        401: "Unauthorized",
+        403: "Forbidden",
+        404: "Not Found",
+        410: "Gone",
+        429: "Too Many Requests",
+        500: "Internal Server Error",
+        502: "Bad Gateway",
+        503: "Service Unavailable",
+        504: "Gateway Timeout",
+    };
+
+    let displayText;
     let className = "error-text";
-    if (statusCode === 200) className = "success-text";
-    else if (statusCode >= 300 && statusCode < 400) className = "warning-text";
+
+    if (fetchError) {
+        displayText = `Fetch error: ${fetchError}`;
+    } else if (code) {
+        const message = statusMessages[code] || "Unknown Status";
+        displayText = message;
+        if (code === 200) className = "success-text";
+        else if (code >= 300 && code < 400) className = "warning-text";
+    } else {
+        displayText = "No status code available";
+    }
 
     return (
-        <p className={className}>{displayText}</p>
+        <div>
+            <p>
+                <strong>Code: </strong>
+                <span className={className}>{code || "N/A"}</span>
+            </p>
+            <p>
+                <strong>Definition: </strong>
+                <span>{displayText}</span>
+            </p>
+        </div>
     );
 }

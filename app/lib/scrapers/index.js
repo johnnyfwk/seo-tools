@@ -32,29 +32,56 @@
 
 
 import * as cheerio from 'cheerio';
+
+import { scrapeMetaRobotsTag } from './metaRobotsTag';
 import { scrapeMetaTitle } from './metaTitle';
 import { scrapeMetaDescription } from './metaDescription';
 import { scrapeHeadings } from './headings';
+import { scrapeCanonicalUrl } from './canonicalUrl';
+import { scrapeHtmlLanguageAttribute } from './htmlLanguageAttribute';
+import { scrapeViewport } from './viewport';
+
 export async function scrapeWithCheerio(
     html,
     pageUrl,
     headers = {},
     opts = {}
 ) {
-    const $ = cheerio.load(html);
+    if (!html || !pageUrl) return {};
 
+    const $ = cheerio.load(html);
     const results = {};
 
-    if (opts.metaTitle || opts.all) {
-        Object.assign(results, scrapeMetaTitle($));
-    }
+    try {
+        if (opts.metaRobotsTag || opts.all) {
+            Object.assign(results, scrapeMetaRobotsTag($, headers));
+        }
 
-    if (opts.metaDescription || opts.all) {
-        Object.assign(results, scrapeMetaDescription($));
-    }
+        if (opts.metaTitle || opts.all) {
+            Object.assign(results, scrapeMetaTitle($));
+        }
 
-    if (opts.headings || opts.all) {
-        Object.assign(results, scrapeHeadings($));
+        if (opts.metaDescription || opts.all) {
+            Object.assign(results, scrapeMetaDescription($));
+        }
+
+        if (opts.headings || opts.all) {
+            Object.assign(results, scrapeHeadings($));
+        }
+
+        if (opts.canonicalUrl || opts.all) {
+            Object.assign(results, scrapeCanonicalUrl($, pageUrl));
+        }
+
+        if (opts.htmlLanguageAttribute || opts.all) {
+            Object.assign(results, scrapeHtmlLanguageAttribute($));
+        }
+
+        if (opts.viewport || opts.all) {
+            Object.assign(results, scrapeViewport($));
+        }
+    } catch (err) {
+        console.error(`Error scraping page ${pageUrl}:`, err);
     }
 
     return results;

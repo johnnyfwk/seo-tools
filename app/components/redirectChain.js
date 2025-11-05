@@ -19,7 +19,13 @@ export default function RedirectChain({ redirectChain }) {
                     return (
                         <tr key={i}>
                             <td style={{ textAlign: 'center' }}>{i + 1}</td>
-                            <td style={{ textAlign: 'left' }}><Link href={redirect.url}>{redirect.url}</Link></td>
+                            <td style={{ textAlign: 'left' }}>
+                                <Link
+                                    href={redirect.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >{redirect.url}</Link>
+                            </td>
                             <td style={{ textAlign: 'center' }}>{redirect.statusCode}</td>
                         </tr>
                     )
