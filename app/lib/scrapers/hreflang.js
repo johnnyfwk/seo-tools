@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio';
-import { scrapeCanonical } from './canonical';
+import { scrapeCanonical } from './canonicalUrl';
 import { checkRobotsTxt } from './robotsTxt';
 
 export async function scrapeHreflang($, pageUrl, headers = {}) {

@@ -602,17 +602,27 @@ import HttpRedirectsToHttps from "../components/httpRedirectsToHttps";
 import MetaTitle from "../components/metaTitle";
 import MetaDescription from "../components/metaDescription";
 import Headings from "../components/headings";
+import RobotsTxt from "../components/robotsTxt";
+import MetaRobotsTag from "../components/metaRobotsTag";
+import CanonicalUrl from "../components/canonicalUrl";
+import HtmlLanguageAttribute from "../components/htmlLanguageAttribute";
+import Viewport from "../components/viewport";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
-        enteredUrl: "",
+        enteredUrl: null,
         enteredUrlStatusCode: null,
         enteredUrlFetchError: null,
-        finalUrl: "",
+        finalUrl: null,
         finalUrlStatusCode: null,
         finalUrlFetchError: null,
         httpRedirectsToHttps: null,
         redirectChain: [],
+        robotsTxt: null,
+        metaRobotsTag: null,
+        canonicalUrl: null,
+        htmlLanguageAttribute: null,
+        viewport: null,
         metaTitle: [],
         metaDescription: [],
         h1s: [],
@@ -628,11 +638,11 @@ export default function ClientOnPageChecker() {
     const [hasCheckedPage, setHasCheckedPage] = useState(false);
     const [error, setError] = useState(null);
     const [pageData, setPageData] = useState(initialPageData);
+    const [scrapeEvenIfBlocked, setScrapeEvenIfBlocked] = useState(false);
 
     async function handleCheckPage() {
         setError(null);
         setHasCheckedPage(false);
-
         setPageData(initialPageData);
 
         let input = inputUrl.trim();
@@ -657,7 +667,10 @@ export default function ClientOnPageChecker() {
             const res = await fetch('/api/on-page-checker', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ url: validatedUrl.href }),
+                body: JSON.stringify({
+                    enteredUrl: validatedUrl.href,
+                    scrapeEvenIfBlocked
+                }),
             });
 
             if (!res.ok) {
@@ -669,14 +682,8 @@ export default function ClientOnPageChecker() {
             console.log("Data:", data);
 
             setPageData({
-                enteredUrl: data.enteredUrl,
-                enteredUrlStatusCode: data.enteredUrlStatusCode,
-                enteredUrlFetchError: data.enteredUrlFetchError || null,
-                finalUrl: data.finalUrl,
-                finalUrlStatusCode: data.finalUrlStatusCode,
-                finalUrlFetchError: data.finalUrlFetchError || null,
-                httpRedirectsToHttps: data.httpRedirectsToHttps || null,
-                redirectChain: data.redirectChain || [],
+                ...initialPageData,
+                ...data,
                 metaTitle: data.metaTitle || [],
                 metaDescription: data.metaDescription || [],
                 h1s: data.h1s || [],
@@ -696,134 +703,186 @@ export default function ClientOnPageChecker() {
         }
     }
 
-    return (
-        <>
-            <section>
-                <h1>On-Page Checker</h1>
+    const sections = [
+        {
+            title: "URL",
+            component: <Url url={pageData.enteredUrl} />
+        },
 
-                <form
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        handleCheckPage();
-                    }}
-                >
-                    <label htmlFor="url">Enter the full URL to check:</label>
+        {
+            title: "Status Code",
+            component: <StatusCode statusCode={pageData.enteredUrlStatusCode} fetchError={pageData.enteredUrlFetchError} />
+        },
 
-                    <br />
-
-                    <input
-                        type="text"
-                        name="url"
-                        id="url"
-                        value={inputUrl}
-                        onChange={(e) => setInputUrl(e.target.value)}
-                        placeholder="Enter the URL to check"
-                        required
-                        disabled={isCheckingPage}
-                        style={{width: '100%', padding: "10px"}}
-                    />
-
-                    <br />
-
-                    <input
-                        type="submit"
-                        value={isCheckingPage ? "Fetching data..." : "Check Page"}
-                        disabled={!inputUrl || isCheckingPage}
-                    />
-                </form>
-
-                {hasCheckedPage && error
-                    ? <p className="error-text">{error}</p>
-                    : null
-                }
-            </section>
-
-            {hasCheckedPage
-                ? <section>
-                    <h2>URL</h2>
-                    <Url url={pageData.enteredUrl} />
-                </section>
-                : null
+        pageData.enteredUrlStatusCode >= 300 &&
+        pageData.enteredUrlStatusCode < 400
+            ? {
+                title: "HTTP redirects to HTTPS?",
+                component: <HttpRedirectsToHttps redirectChain={pageData.redirectChain} />
             }
+            : null,
 
-            {hasCheckedPage
-                ? <section>
-                    <h2>Status Code</h2>
-                    <StatusCode
-                        statusCode={pageData.enteredUrlStatusCode}
-                        fetchError={pageData.enteredUrlFetchError}
-                    />
-                </section>
-                : null
+        pageData.redirectChain.length > 1
+            ? {
+                title: "Redirect URL",
+                component: <Url url={pageData.redirectChain[1].url} />
             }
+            : null,
 
-            {hasCheckedPage &&
-            pageData.enteredUrlStatusCode >= 300 &&
-            pageData.enteredUrlStatusCode < 400
-                ? <section>
-                    <h2>HTTP redirects to HTTPS?</h2>
-                    <HttpRedirectsToHttps
-                        httpRedirectsToHttps={pageData.httpRedirectsToHttps}
-                        redirectChain={pageData.redirectChain}
-                    />
-                </section>
-                : null
+        pageData.redirectChain.length > 2
+            ? {
+                title: "Final URL",
+                component: <Url url={pageData.redirectChain[pageData.redirectChain.length - 1].url} />
             }
+            : null,
 
-            {hasCheckedPage && pageData.redirectChain.length > 1
-                ? <section>
-                    <h2>Redirect URL</h2>
-                    <Url url={pageData.redirectChain[1].url} />
-                </section>
-                : null
+        pageData.redirectChain.length > 1 &&
+        pageData.enteredUrlStatusCode >= 300 &&
+        pageData.enteredUrlStatusCode < 400
+            ? {
+                title: "Redirect Chain",
+                component: <RedirectChain redirectChain={pageData.redirectChain} />
             }
+            : null,
 
-            {hasCheckedPage && pageData.redirectChain.length > 2
-                ? <section>
-                    <h2>Final URL</h2>
-                    <Url url={pageData.redirectChain[pageData.redirectChain.length - 1].url} />
-                </section>
-                : null
+        pageData.enteredUrlStatusCode === 200 &&
+        pageData.robotsTxt
+            ? {
+                title: "Robots.txt",
+                component: <RobotsTxt robotsTxt={pageData.robotsTxt} />
             }
+            : null,
 
-            {hasCheckedPage &&
-            pageData.enteredUrlStatusCode >= 300 &&
-            pageData.enteredUrlStatusCode < 400
-                ? <section>
-                    <h2>Redirect Chain</h2>
-                    <RedirectChain redirectChain={pageData.redirectChain} />
-                </section>
-                : null
+        pageData.enteredUrlStatusCode === 200 &&
+        pageData.metaRobotsTag
+            ? {
+                title: "Meta Robots Tag",
+                component: <MetaRobotsTag metaRobotsTag={pageData.metaRobotsTag} />
             }
+            : null,
 
-            {hasCheckedPage && pageData.enteredUrlStatusCode === 200
-                ? <section>
-                    <h2>Meta Title</h2>
-                    <MetaTitle metaTitle={pageData.metaTitle} />
-                </section>
-                
-                : null
+        pageData.enteredUrlStatusCode === 200 &&
+        pageData.canonicalUrl
+            ? {
+                title: "Canonical URL",
+                component: <CanonicalUrl enteredUrl={pageData.enteredUrl} canonicalUrl={pageData.canonicalUrl} />
             }
-
-            {hasCheckedPage && pageData.enteredUrlStatusCode === 200
-                ? <section>
-                    <h2>Meta Description</h2>
-                    <MetaDescription metaDescription={pageData.metaDescription} />
-                </section>
-                : null
+            : null,
+        
+        pageData.enteredUrlStatusCode === 200 &&
+        pageData.htmlLanguageAttribute
+            ? {
+                title: "HTML Language Attribute",
+                component: <HtmlLanguageAttribute htmlLanguageAttribute={pageData.htmlLanguageAttribute} />,
             }
+            : null,
 
-            {hasCheckedPage && pageData.enteredUrlStatusCode === 200
-                ? <Headings
+        pageData.enteredUrlStatusCode === 200 &&
+        pageData.viewport
+            ? {
+                title: "Viewport",
+                component: <Viewport viewport={pageData.viewport} />
+            }
+            : null,
+
+        pageData.enteredUrlStatusCode === 200
+            ? {
+                title: "Meta Title",
+                component: <MetaTitle metaTitle={pageData.metaTitle} />
+            }
+            : null,
+
+        pageData.enteredUrlStatusCode === 200
+            ? {
+                title: "Meta Description",
+                component: <MetaDescription metaDescription={pageData.metaDescription} />
+            }
+            : null,
+
+        pageData.enteredUrlStatusCode === 200
+            ? {
+                title: "",
+                component: <Headings
                     h1s={pageData.h1s}
                     h2s={pageData.h2s}
                     h3s={pageData.h3s}
                     h4s={pageData.h4s}
                     h5s={pageData.h5s}
                     h6s={pageData.h6s}
-                />      
+                />
+            }
+            : null,
+    ].filter(Boolean);
+
+    return (
+        <>
+            <section>
+                <h1>On-Page Checker</h1>
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        handleCheckPage();
+                    }}
+                    aria-busy={isCheckingPage}
+                >
+                    <fieldset disabled={isCheckingPage} style={{ border: "none", padding: 0 }}>
+                        <legend className="sr-only">URL Checker Form</legend>
+
+                        <label htmlFor="url"><strong>Enter URL:</strong></label>
+
+                        <input
+                            id="url"
+                            type="text"
+                            value={inputUrl}
+                            onChange={(e) => {
+                                setInputUrl(e.target.value);
+                                if (error) setError(null);
+                            }}
+                            placeholder="https://example.com"
+                            aria-invalid={!!error}
+                            aria-describedby={error ? "url-error" : undefined}
+                            style={{width: '100%', padding: "10px"}}
+                        />
+
+                        {error
+                            ? <p
+                                id="url-error"
+                                className="error-text"
+                                role="alert"
+                            >{error}</p>
+                            : null
+                        }
+
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={scrapeEvenIfBlocked}
+                                onChange={(e) => setScrapeEvenIfBlocked(e.target.checked)}
+                            />
+                            Ignore robots.txt
+                        </label>
+
+                        <br />
+
+                        <button
+                            type="submit"
+                            disabled={isCheckingPage || !inputUrl || !!error}
+                        >
+                            {isCheckingPage ? "Fetching..." : "Check Page"}
+                        </button>
+                    </fieldset>
+                </form>
+            </section>
+            
+            {hasCheckedPage
+                ? sections.map((s, i) => (
+                    <section key={i}>
+                        <h2>{s.title}</h2>
+                        {s.component}
+                    </section>
+                ))
                 : null
             }
         </>
-    )
+    );
 }

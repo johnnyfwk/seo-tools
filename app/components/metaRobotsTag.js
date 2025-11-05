@@ -1,19 +1,27 @@
 export default function MetaRobotsTag({ metaRobotsTag }) {
+    if (!metaRobotsTag || !metaRobotsTag.content) {
+        return <p>ℹ️ No meta robots tag found. URL is indexable and links are followable by default.</p>;
+    }
+
     return (
-        <section id="meta-robots-tag">
-            <h2>
-                Meta Robots Tag allows indexing?{" "}
-                <span
-                    className={
-                        metaRobotsTag.toLowerCase().includes("noindex")
-                            ? "warning-text"
-                            : "success-text"
-                    }
-                >
-                    {metaRobotsTag.toLowerCase().includes("noindex") ? "No" : "Yes"}
-                </span>
-            </h2>
-            <p>{metaRobotsTag}</p>
-        </section>
+        <div>
+            <p><strong>Content:</strong> <code>{metaRobotsTag.content}</code></p>
+
+            <p>
+                <strong>Allows indexing of the URL?: </strong>
+                {metaRobotsTag.allowsIndexing
+                    ? <span>✅ Yes</span>
+                    : <span>❌ No</span>
+                }
+            </p>
+
+            <p>
+                <strong>Allows crawling of linked pages / passing link equity?: </strong>
+                {metaRobotsTag.allowsFollowing
+                    ? <span>✅ Yes</span>
+                    : <span>❌ No</span>
+                }
+            </p>
+        </div>
     )
 }

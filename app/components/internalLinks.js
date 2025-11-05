@@ -47,7 +47,11 @@ export default function InternalLinks({ internalLinks }) {
                                 </td>
 
                                 <td style={{ textAlign: 'left' }}>
-                                    <Link href={link.url} target="_blank">{link.url}</Link>
+                                    <Link
+                                        href={link.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >{link.url}</Link>
                                 </td>
 
                                 <td

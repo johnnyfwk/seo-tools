@@ -35,7 +35,11 @@ export default function Hreflang({ hreflang }) {
                                     </td>
 
                                     <td style={{ textAlign: 'left' }}>
-                                        <Link href={hreflang.url} target="_blank">{hreflang.url}</Link>
+                                        <Link
+                                            href={hreflang.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >{hreflang.url}</Link>
                                     </td>
 
                                     <td

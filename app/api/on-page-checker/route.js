@@ -92,70 +92,82 @@
 
 import { fetchRedirectInfo } from "@/app/lib/utils/fetchRedirectInfo";
 import { scrapeWithCheerio } from "@/app/lib/scrapers";
+import { checkRobotsTxt } from "@/app/lib/scrapers/robotsTxt";
 
 export async function POST(request) {
-    const { url } = await request.json();
-
     try {
+        const { enteredUrl, scrapeEvenIfBlocked = false } = await request.json();
+
+        const redirectData = await fetchRedirectInfo(enteredUrl);
+
         const {
-            enteredUrl,
             enteredUrlStatusCode,
             enteredUrlFetchError,
             finalUrl,
             finalUrlStatusCode,
             finalUrlFetchError,
             redirectChain,
-            httpRedirectsToHttps,
-        } = await fetchRedirectInfo(url);
+        } = redirectData;
 
-        let scraped = [];
+        const isRedirected = redirectChain.length > 1;
 
-        // Determine if the page was redirected
-        const isRedirected =
-            redirectChain.length > 1 ||
-            enteredUrl !== finalUrl ||
-            enteredUrlStatusCode !== finalUrlStatusCode;
+        const robotsResult = await checkRobotsTxt(finalUrl, "SEO-Checker") || {};
 
-        // Only scrape if there was no redirect and entered URL returned 200
-        if (!isRedirected && enteredUrlStatusCode === 200 && !enteredUrlFetchError) {
-            try {
-                const response = await fetch(enteredUrl, {
-                    headers: {
-                        "User-Agent": "SEO-Checker",
-                        Accept: "text/html",
-                    },
-                });
+        // Base response (always returned)
+        const baseResponse = {
+            enteredUrl,
+            finalUrl,
+            enteredUrlStatusCode,
+            finalUrlStatusCode,
+            redirectChain,
+            isRedirected,
+            robotsTxt: {
+                url: robotsResult.robotsTxtUrl,
+                allowed: robotsResult.allowed,
+                reason: robotsResult.reason,
+                fetchError: robotsResult.error || null,
+            },
+        };
 
-                if (response.ok) {
-                    const html = await response.text();
-                    scraped = await scrapeWithCheerio(
-                        html,
-                        enteredUrl,
-                        {},
-                        {
-                            metaTitle: true,
-                            metaDescription: true,
-                            headings: true,
-                        },
-                    );
-                }
-            } catch (err) {
-                console.error(`Failed to scrape ${enteredUrl}:`, err.message);
-            }
+        // Respect robots.txt (unless override)
+        if (!robotsResult.allowed && !scrapeEvenIfBlocked) {
+            return Response.json({
+                ...baseResponse,
+                message: "🚫 Blocked by robots.txt — scraping skipped.",
+            });
         }
 
-        return Response.json({
-            enteredUrl,
-            enteredUrlStatusCode,
-            enteredUrlFetchError,
-            finalUrl,
-            finalUrlStatusCode,
-            finalUrlFetchError,
-            redirectChain,
-            httpRedirectsToHttps,
-            ...scraped,
+        // Skip scraping for redirects, errors, or non-200s
+        if (
+            isRedirected ||
+            enteredUrlStatusCode !== 200 ||
+            enteredUrlFetchError ||
+            finalUrlStatusCode !== 200 ||
+            finalUrlFetchError
+        ) {
+            return Response.json({
+                ...baseResponse,
+                message: "❌ Page not suitable for scraping (redirected, error, or non-200 status).",
+            });
+        }
+
+        // Fetch and scrape HTML only if allowed and 200 OK
+        const response = await fetch(finalUrl, {
+            headers: {
+                "User-Agent": "Mozilla/5.0 (compatible; SEO-Checker/1.0; +https://yourdomain.com)",
+            },
         });
-    } catch (err) {
-        return Response.json({ error: err.message }, { status: 500 });
+        const html = await response.text();
+
+        const scrapedData = await scrapeWithCheerio(html, finalUrl, {}, { all: true });
+
+        return Response.json({
+            ...baseResponse,
+            ...scrapedData,
+            message: "✅ Scrape successful",
+        });
+    } catch (error) {
+        console.error("Error in on-page-checker:", error);
+        return Response.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }

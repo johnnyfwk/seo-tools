@@ -1,11 +1,24 @@
 export default function HtmlLanguageAttribute({ htmlLanguageAttribute }) {
+    if (!htmlLanguageAttribute || htmlLanguageAttribute.trim() === "") {
+        return <p>No HTML language attribute found.</p>;
+    }
+
+    const [language, region] = htmlLanguageAttribute.split('-');
+
+    const formattedLanguage = language ? language.toUpperCase() : null;
+    const formattedRegion = region ? region.toUpperCase() : null;
+
     return (
-        <section id="html-language-attribute">
-            <h2>HTML Language Attribute</h2>
-            {htmlLanguageAttribute
-                ? <p>{htmlLanguageAttribute}</p>
-                : <p>No HTML language attribute found.</p>
+        <div>
+            <p>
+                <strong>Language:</strong> {formattedLanguage}
+            </p>
+            {formattedRegion
+                ? <p>
+                    <strong>Region:</strong> {formattedRegion}
+                </p>
+                : null
             }
-        </section>
+        </div>
     )
 }

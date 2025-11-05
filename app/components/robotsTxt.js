@@ -1,14 +1,31 @@
 import Link from "next/link";
 
 export default function RobotsTxt({ robotsTxt }) {
+    if (!robotsTxt) {
+        return <p>No robots.txt data available.</p>;
+    }
+
+    const { url, allowed, reason, fetchError } = robotsTxt;
+
+    if (reason === "No robots.txt found") {
+        return <p>No robots.txt found. URL is allowed to be crawled by bots by default.</p>;
+    }
+
     return (
-        <section id="robots-txt">
-            <h2>URL allowed by Robots.txt? <span className={robotsTxt.enteredUrl.allowed ? "success-text" : "error-text"}>{robotsTxt.enteredUrl.allowed ? "Yes" : "No"}</span></h2>
-            <p style={{ marginBottom: '10px'}}>
-                <Link href={robotsTxt.enteredUrl.robotsTxtUrl || "#"} target="_blank">
-                    {robotsTxt.enteredUrl.robotsTxtUrl || "robots.txt not found"}
-                </Link>
+        <div>
+            <p>
+                <strong>URL:</strong>{" "}
+                {url ? <Link href={url} target="_blank" rel="noopener noreferrer">{url}</Link> : "N/A"}
             </p>
-        </section>
+            <p>
+                <strong>URL is allowed to be crawled by bots?:</strong>{" "}
+                {allowed ? "✅ Yes" : "🚫 No"}
+            </p>
+
+            {fetchError
+                ? <p><strong>Fetch error:</strong> {fetchError}</p>
+                : null
+            }
+        </div>
     )
 }
