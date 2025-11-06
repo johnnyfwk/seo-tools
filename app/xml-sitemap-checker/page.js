@@ -1,4 +1,4 @@
-import ClientXmlSitemapChecker from "../clientPages/xmlSitemapChecker";
+import ClientXmlSitemapChecker from "../clientPages/clientXmlSitemapChecker";
 
 export const metadata = {
     title: "XML Sitemap Checker | SEO Tools",

@@ -1,7 +1,7 @@
 async function fetchRobotsTxt(url) {
     let robotsUrl = null;
     try {
-        const { origin } = new URL(url);        // e.g. https://www.bbc.co.uk
+        const { origin } = new URL(url);
         robotsUrl = `${origin}/robots.txt`;
 
         const res = await fetch(robotsUrl, { redirect: 'follow' });

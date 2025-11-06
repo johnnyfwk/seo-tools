@@ -85,3 +85,28 @@ export async function fetchRedirectChain(url) {
 
     return chain;
 }
+
+export function createLimiter(maxConcurrency) {
+    const queue = [];
+    let activeCount = 0;
+
+    const next = () => {
+        if (queue.length === 0 || activeCount >= maxConcurrency) return;
+        activeCount++;
+        const { fn, resolve, reject } = queue.shift();
+        fn()
+            .then(resolve)
+            .catch(reject)
+            .finally(() => {
+                activeCount--;
+                next();
+            });
+    };
+
+    return function limit(fn) {
+        return new Promise((resolve, reject) => {
+            queue.push({ fn, resolve, reject });
+            process.nextTick(next);
+        });
+    };
+}
