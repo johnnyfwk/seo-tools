@@ -3,9 +3,7 @@ import * as utils from '@/app/lib/utils/utils';
 
 export default function InternalLinks({ internalLinks }) {
     return (
-        <section id="internal-links">
-            <h2>Internal Links ({internalLinks.length})</h2>
-
+        <>
             {internalLinks
                 ? <table>
                     <thead>
@@ -16,11 +14,10 @@ export default function InternalLinks({ internalLinks }) {
                             <th style={{ textAlign: 'left' }}>URL</th>
                             <th style={{ textAlign: 'center' }}>Status Code</th>
                             <th style={{ textAlign: 'left' }}>Final URL</th>
-                            {/* <th style={{ textAlign: 'left' }}>Redirect Chain</th> */}
-                            <th style={{ textAlign: 'center' }}>URL is allowed by Robots.txt?</th>
-                            <th style={{ textAlign: 'center' }}>URL has Noindex tag?</th>
-                            <th style={{ textAlign: 'center' }}>URL = Canonical URL?</th>
-                            <th style={{ textAlign: 'center' }}>URL is Indexable?</th>
+                            <th style={{ textAlign: 'center' }}>Link is allowed by Robots.txt?</th>
+                            <th style={{ textAlign: 'center' }}>Link has Noindex tag?</th>
+                            <th style={{ textAlign: 'center' }}>Link URL = Canonical URL?</th>
+                            <th style={{ textAlign: 'center' }}>Link is Indexable?</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,20 +65,6 @@ export default function InternalLinks({ internalLinks }) {
                                     <Link href={link.finalUrl} target="_blank">{link.finalUrl}</Link>
                                 </td>
 
-                                {/* <td>
-                                    <ol>
-                                        {link.redirectChain && link.redirectChain.length > 1
-                                            ? link.redirectChain.map((r, idx) => (
-                                                <li key={idx}>
-                                                    <Link href={r.url} target="_blank">{r.url}</Link> ({r.statusCode})
-                                                    {idx < link.redirectChain.length - 1 ? " → " : ""}
-                                                </li>
-                                            ))
-                                            : "—"
-                                        }
-                                    </ol>
-                                </td> */}
-
                                 <td
                                     style={{ textAlign: 'center' }}
                                     className={link.robotsTxtCheck.allowed
@@ -127,6 +110,6 @@ export default function InternalLinks({ internalLinks }) {
                 </table>
                 : <p>No internal links found on this page.</p>
             }
-        </section>
+        </>
     )
 }

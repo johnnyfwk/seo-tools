@@ -607,6 +607,7 @@ import MetaRobotsTag from "../components/metaRobotsTag";
 import CanonicalUrl from "../components/canonicalUrl";
 import HtmlLanguageAttribute from "../components/htmlLanguageAttribute";
 import Viewport from "../components/viewport";
+import InternalLinks from "../components/internalLinks";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -623,14 +624,10 @@ export default function ClientOnPageChecker() {
         canonicalUrl: null,
         htmlLanguageAttribute: null,
         viewport: null,
+        links: null,
         metaTitle: [],
         metaDescription: [],
-        h1s: [],
-        h2s: [],
-        h3s: [],
-        h4s: [],
-        h5s: [],
-        h6s: [],
+        headings: {},
     };
 
     const [inputUrl, setInputUrl] = useState("");
@@ -684,14 +681,14 @@ export default function ClientOnPageChecker() {
             setPageData({
                 ...initialPageData,
                 ...data,
+                metaRobotsTag: data.metaRobotsTag || "",
+                canonicalUrl: data.canonicalUrl || "",
+                htmlLanguageAttribute: data.htmlLanguageAttribute || "",
+                viewport: data.viewport || "",
                 metaTitle: data.metaTitle || [],
                 metaDescription: data.metaDescription || [],
-                h1s: data.h1s || [],
-                h2s: data.h2s || [],
-                h3s: data.h3s || [],
-                h4s: data.h4s || [],
-                h5s: data.h5s || [],
-                h6s: data.h6s || [],
+                headings: data.headings || {},
+                links: data.links || {},
             });
 
         } catch (err) {
@@ -801,17 +798,24 @@ export default function ClientOnPageChecker() {
 
         pageData.enteredUrlStatusCode === 200
             ? {
-                title: "",
+                title: "Headings",
                 component: <Headings
-                    h1s={pageData.h1s}
-                    h2s={pageData.h2s}
-                    h3s={pageData.h3s}
-                    h4s={pageData.h4s}
-                    h5s={pageData.h5s}
-                    h6s={pageData.h6s}
+                    h1s={pageData.headings.h1s}
+                    h2s={pageData.headings.h2s}
+                    h3s={pageData.headings.h3s}
+                    h4s={pageData.headings.h4s}
+                    h5s={pageData.headings.h5s}
+                    h6s={pageData.headings.h6s}
                 />
             }
             : null,
+
+        pageData.enteredUrlStatusCode === 200
+            ? {
+                title: `Internal Links (${pageData.links.internal.length})`,
+                component: <InternalLinks internalLinks={pageData.links.internal} />
+            }
+            : null
     ].filter(Boolean);
 
     return (

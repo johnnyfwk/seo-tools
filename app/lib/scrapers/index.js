@@ -40,6 +40,7 @@ import { scrapeHeadings } from './headings';
 import { scrapeCanonicalUrl } from './canonicalUrl';
 import { scrapeHtmlLanguageAttribute } from './htmlLanguageAttribute';
 import { scrapeViewport } from './viewport';
+import { scrapeLinks } from './links';
 
 export async function scrapeWithCheerio(
     html,
@@ -49,12 +50,24 @@ export async function scrapeWithCheerio(
 ) {
     if (!html || !pageUrl) return {};
 
-    const $ = cheerio.load(html);
+    const $ = typeof html === 'function' && html.root ? html : cheerio.load(html);
     const results = {};
 
     try {
         if (opts.metaRobotsTag || opts.all) {
             Object.assign(results, scrapeMetaRobotsTag($, headers));
+        }
+
+        if (opts.canonicalUrl || opts.all) {
+            Object.assign(results, scrapeCanonicalUrl($, pageUrl));
+        }
+
+        if (opts.htmlLanguageAttribute || opts.all) {
+            Object.assign(results, scrapeHtmlLanguageAttribute($));
+        }
+
+        if (opts.viewport || opts.all) {
+            Object.assign(results, scrapeViewport($));
         }
 
         if (opts.metaTitle || opts.all) {
@@ -69,16 +82,8 @@ export async function scrapeWithCheerio(
             Object.assign(results, scrapeHeadings($));
         }
 
-        if (opts.canonicalUrl || opts.all) {
-            Object.assign(results, scrapeCanonicalUrl($, pageUrl));
-        }
-
-        if (opts.htmlLanguageAttribute || opts.all) {
-            Object.assign(results, scrapeHtmlLanguageAttribute($));
-        }
-
-        if (opts.viewport || opts.all) {
-            Object.assign(results, scrapeViewport($));
+        if (opts.links || opts.all) {
+            Object.assign(results, await scrapeLinks($, pageUrl));
         }
     } catch (err) {
         console.error(`Error scraping page ${pageUrl}:`, err);

@@ -1,11 +1,12 @@
 export function scrapeMetaRobotsTag($, headers = {}) {
     const robotsTag = $('meta[name="robots"]').attr('content')?.trim() || null;
+    const robotsTagLower = robotsTag?.toLowerCase() || '';
 
     return {
         metaRobotsTag: {
             content: robotsTag,
-            allowsIndexing: robotsTag ? !robotsTag.toLowerCase().includes('noindex') : true,
-            allowsFollowing: robotsTag ? !robotsTag.toLowerCase().includes('nofollow') : true,
+            allowsIndexing: !robotsTagLower.includes('noindex'),
+            allowsFollowing: !robotsTagLower.includes('nofollow'),
         }
     };
 }
