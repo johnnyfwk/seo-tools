@@ -16,6 +16,7 @@ import Viewport from "../components/viewport";
 import InternalLinks from "../components/internalLinks";
 import ExternalLinks from "../components/externalLinks";
 import SchemaMarkup from "../components/schemaMarkup";
+import Images from "../components/images";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -36,6 +37,7 @@ export default function ClientOnPageChecker() {
         metaDescription: [],
         headings: {},
         links: null,
+        images: [],
         schemaMarkup: [],
     };
 
@@ -98,6 +100,7 @@ export default function ClientOnPageChecker() {
                 metaDescription: data.metaDescription || [],
                 headings: data.headings || {},
                 links: data.links || {},
+                images: data.images || [],
                 schemaMarkup: data.schemaMarkup || [],
             });
 
@@ -228,13 +231,20 @@ export default function ClientOnPageChecker() {
                 component: <ExternalLinks externalLinks={pageData.links.external} />
             }
             : null,
+        
+        pageData.enteredUrlStatusCode === 200
+            ? {
+                title: `Images (${pageData.images.length})`,
+                component: <Images images={pageData.images} />
+            }
+            : null,
 
         pageData.enteredUrlStatusCode === 200
             ? {
                 title: `Schema Markeup (${pageData.schemaMarkup.filter(s => s.format === 'JSON-LD').length})`,
                 component: <SchemaMarkup schemaMarkup={pageData.schemaMarkup} />
             }
-            : null
+            : null,
     ].filter(Boolean);
 
     return (

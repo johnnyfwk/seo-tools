@@ -19,7 +19,7 @@ export default function InternalLinks({ internalLinks }) {
                     <th style={{ textAlign: 'center' }}>Final URL Status Code</th>
                     <th style={{ textAlign: 'center' }}>Link URL allowed by Robots.txt?</th>
                     <th style={{ textAlign: 'center' }}>Link URL has noindex tag?</th>
-                    <th style={{ textAlign: 'center' }}>Link URL = Canonical URL?</th>
+                    <th style={{ textAlign: 'center' }}>Link URL has a self-referencing canonical URL?</th>
                     <th style={{ textAlign: 'center' }}>Link URL is indexable?</th>
                 </tr>
             </thead>
