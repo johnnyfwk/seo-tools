@@ -1,21 +1,21 @@
-function handleSchema(schema, schemas, typesUsed) {
-    const type = schema['@type'];
+function handleSchema(schema, schemas) {
+    if (!schema || typeof schema !== 'object') return;
 
-    if (type) {
-        if (Array.isArray(type)) type.forEach(t => typesUsed.add(t));
-        else typesUsed.add(type);
-    }
+    const type = schema['@type'];
 
     schemas.push({
         type: Array.isArray(type) ? type.join(', ') : type || 'Unknown',
         format: 'JSON-LD',
         raw: schema,
     });
+
+    if (schema['@graph']) {
+        schema['@graph'].forEach(s => handleSchema(s, schemas));
+    }
 }
 
-export function scrapeSchema($) {
+export function scrapeSchemaMarkup($) {
     const schemas = [];
-    const typesUsed = new Set();
 
     // --- JSON-LD ---
     $('script[type*="ld+json" i]').each((i, el) => {
@@ -24,11 +24,11 @@ export function scrapeSchema($) {
             const parsed = JSON.parse(jsonText);
 
             if (Array.isArray(parsed)) {
-                parsed.forEach(schema => handleSchema(schema, schemas, typesUsed));
+                parsed.forEach(schema => handleSchema(schema, schemas));
             } else if (parsed['@graph']) { // ✅ handle Yoast SEO schemas
-                parsed['@graph'].forEach(schema => handleSchema(schema, schemas, typesUsed));
+                parsed['@graph'].forEach(schema => handleSchema(schema, schemas));
             } else {
-                handleSchema(parsed, schemas, typesUsed);
+                handleSchema(parsed, schemas);
             }
         } catch (e) {
             // ignore invalid JSON
@@ -40,8 +40,7 @@ export function scrapeSchema($) {
         const type = $(el).attr('itemtype');
 
         if (type) {
-            const typeName = type.replace('https://schema.org/', '').replace('http://schema.org/', '');
-            typesUsed.add(typeName);
+            const typeName = type.trim().replace(/^https?:\/\/schema\.org\//, '');
             schemas.push({
                 type: typeName,
                 format: 'microdata',
@@ -55,8 +54,7 @@ export function scrapeSchema($) {
         const type = $(el).attr('typeof');
 
         if (type) {
-            const typeName = type.replace('schema:', '');
-            typesUsed.add(typeName);
+            const typeName = type.trim().replace(/^schema:/, '');
             schemas.push({
                 type: typeName,
                 format: 'RDFa',
@@ -65,8 +63,5 @@ export function scrapeSchema($) {
         }
     });
 
-    return {
-        schemas: schemas.length ? schemas : [],
-        types: Array.from(typesUsed),
-    };
+    return { schemaMarkup: schemas };
 }
