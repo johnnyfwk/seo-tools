@@ -9,6 +9,7 @@ import { scrapeHtmlLanguageAttribute } from './htmlLanguageAttribute';
 import { scrapeViewport } from './viewport';
 import { scrapeLinks } from './links';
 import { scrapeSchemaMarkup } from './schemaMarkup';
+import { scrapeImages } from './images';
 
 export async function scrapeWithCheerio(
     html,
@@ -56,6 +57,10 @@ export async function scrapeWithCheerio(
 
         if (opts.schema || opts.all) {
             Object.assign(results, scrapeSchemaMarkup($));
+        }
+
+        if (opts.images || opts.all) {
+            Object.assign(results, await scrapeImages($, pageUrl));
         }
     } catch (err) {
         console.error(`Error scraping page ${pageUrl}:`, err);
