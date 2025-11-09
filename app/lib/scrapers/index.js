@@ -10,6 +10,8 @@ import { scrapeViewport } from './viewport';
 import { scrapeLinks } from './links';
 import { scrapeSchemaMarkup } from './schemaMarkup';
 import { scrapeImages } from './images';
+import { scrapeHreflang } from './hreflang';
+import { scrapeOpenGraph } from './openGraph';
 
 export async function scrapeWithCheerio(
     html,
@@ -61,6 +63,14 @@ export async function scrapeWithCheerio(
 
         if (opts.images || opts.all) {
             Object.assign(results, await scrapeImages($, pageUrl));
+        }
+
+        if (opts.hreflang || opts.all) {
+            Object.assign(results, await scrapeHreflang($, pageUrl, headers));
+        }
+
+        if (opts.openGraph || opts.all) {
+            Object.assign(results, await scrapeOpenGraph($, pageUrl));
         }
     } catch (err) {
         console.error(`Error scraping page ${pageUrl}:`, err);

@@ -1,5 +1,11 @@
-export async function scrapeOpenGraphTags($, pageUrl) {
-    const openGraphTags = {
+import { fetchRedirectInfo } from "../utils/fetchRedirectInfo";
+import { scrapeCanonicalUrl } from "./canonicalUrl";
+import { scrapeMetaRobotsTag } from "./metaRobotsTag";
+import { checkRobotsTxt } from "./robotsTxt";
+import * as cheerio from 'cheerio';
+
+export async function scrapeOpenGraph($, pageUrl) {
+    const openGraph = {
         title: '',
         type: '',
         url: '',
@@ -12,68 +18,87 @@ export async function scrapeOpenGraphTags($, pageUrl) {
         determiner: '',
         ogUrlStatusCode: null,
         ogUrlFinalUrl: '',
-        isOgUrlIndexable: ''
+        ogUrlIsSelfCanonical: null,
+        ogUrlNoindex: null,
+        ogUrlRobotsAllowed: null,
     };
 
     $('meta[property^="og:"]').each((_, element) => {
         const property = $(element).attr('property');
         const content = $(element).attr('content');
-
         if (property && content) {
             const key = property.replace(/^og:/, '');
-        if (openGraphTags.hasOwnProperty(key)) {
-            openGraphTags[key] = content;
-        } else {
-            openGraphTags[key] = content;
-        }
+            openGraph[key] = content;
         }
     });
 
-    const ogUrl = openGraphTags.url;
+    let ogUrl = openGraph.url;
 
     if (ogUrl) {
-        async function fetchOgUrlStatus(url) {
-            let currentUrl = url;
-            let ogUrlStatusCode = null;
-            let ogUrlFinalUrl = url;
-            let xRobots = '';
-            let isOgUrlIndexable = null;
-
-            while (currentUrl) {
-                try {
-                const response = await fetch(currentUrl, {
-                    method: 'HEAD',
-                    redirect: 'manual',
-                });
-
-                ogUrlStatusCode = response.status;
-                xRobots = response.headers.get('x-robots-tag') || '';
-                const location = response.headers.get('location');
-                if (location) {
-                    currentUrl = new URL(location, currentUrl).href;
-                    ogUrlFinalUrl = currentUrl;
-                } else {
-                    currentUrl = null;
-                }
-                } catch {
-                    ogUrlStatusCode = 'Could not fetch';
-                    currentUrl = null;
-                }
-            }
-
-            const xNoIndex = /noindex/i.test(xRobots);
-            isOgUrlIndexable = !xNoIndex;
-
-            return { ogUrlStatusCode, ogUrlFinalUrl, isOgUrlIndexable };
+        try {
+            ogUrl = new URL(ogUrl, pageUrl).href;
+        } catch {
+            console.warn(`Invalid OG URL: ${ogUrl}`);
         }
-
-        const { ogUrlStatusCode, ogUrlFinalUrl, isOgUrlIndexable } = await fetchOgUrlStatus(ogUrl);
-        openGraphTags.ogUrlStatusCode = ogUrlStatusCode;
-        openGraphTags.ogUrlFinalUrl = ogUrlFinalUrl;
-        openGraphTags.isOgUrlIndexable = isOgUrlIndexable;
     }
 
-    // Map for human-readable names
+    if (!ogUrl) return { openGraph };
+
+    // ------------------------------
+    // Step 1: Scrape OG URL page
+    // ------------------------------
+    let $ogPage = null;
+    try {
+        const res = await fetch(ogUrl, {
+            headers: { 'User-Agent': 'Mozilla/5.0 (compatible; SEO-Crawler/1.0)' }
+        });
+        if (res.ok) {
+            const html = await res.text();
+            $ogPage = cheerio.load(html);
+        } else {
+            console.warn(`OG URL fetch returned status ${res.status}: ${ogUrl}`);
+        }
+    } catch (err) {
+        console.warn(`Failed to fetch OG URL HTML for ${ogUrl}:`, err.message);
+    }
+
+    // Scrape canonical & meta robots if HTML is available
+    let canonicalUrl = ogUrl;
+    let allowsIndexing = true;
+
+    if ($ogPage) {
+        const canonicalData = scrapeCanonicalUrl($ogPage, ogUrl);
+        canonicalUrl = canonicalData.canonicalUrl || ogUrl;
+
+        const metaRobotsData = scrapeMetaRobotsTag($ogPage);
+        if (metaRobotsData && metaRobotsData.metaRobotsTag) {
+            allowsIndexing = metaRobotsData.metaRobotsTag.allowsIndexing;
+        }
+    }
+
+    openGraph.ogUrlIsSelfCanonical = canonicalUrl === ogUrl;
+    openGraph.ogUrlNoindex = !allowsIndexing;
+
+    // Check robots.txt
+    try {
+        const robotsCheck = await checkRobotsTxt(ogUrl, '*');
+        openGraph.ogUrlRobotsAllowed = robotsCheck.allowed;
+    } catch {
+        openGraph.ogUrlRobotsAllowed = null;
+    }
+
+    // ------------------------------
+    // Step 2: Follow redirects to final URL
+    // ------------------------------
+    try {
+        const redirectInfo = await fetchRedirectInfo(ogUrl);
+        openGraph.ogUrlFinalUrl = redirectInfo.finalUrl;
+        openGraph.ogUrlStatusCode = redirectInfo.finalUrlStatusCode;
+    } catch (err) {
+        console.warn(`Failed to fetch OG URL redirects for ${ogUrl}:`, err.message);
+    }
+
+    // Human-readable missing fields
     const readableMap = {
         title: 'Title',
         type: 'Type',
@@ -87,15 +112,14 @@ export async function scrapeOpenGraphTags($, pageUrl) {
         determiner: 'Determiner',
         ogUrlStatusCode: 'OG URL Status Code',
         ogUrlFinalUrl: 'OG URL Final URL',
-        isOgUrlIndexable: 'Is OG URL Indexable'
+        ogUrlIsSelfCanonical: 'OG URL Self-Canonical',
+        ogUrlNoindex: 'OG URL Noindex',
+        ogUrlRobotsAllowed: 'OG URL Robots Allowed'
     };
 
-    // Compute missing OG fields
-    const missingTags = Object.entries(openGraphTags)
-        .filter(([key, value]) => value === '' || value === null)
-        .map(([key]) => readableMap[key] || key); // fallback to key
+    openGraph.missingTags = Object.entries(openGraph)
+        .filter(([_, value]) => value === '' || value === null)
+        .map(([key]) => readableMap[key] || key);
 
-    openGraphTags.missingTags = [...missingTags];
-
-    return { openGraphTags };
+    return { openGraph };
 }

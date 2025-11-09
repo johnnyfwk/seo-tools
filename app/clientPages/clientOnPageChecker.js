@@ -17,6 +17,8 @@ import InternalLinks from "../components/internalLinks";
 import ExternalLinks from "../components/externalLinks";
 import SchemaMarkup from "../components/schemaMarkup";
 import Images from "../components/images";
+import Hreflang from "../components/hreflang";
+import OpenGraph from "../components/openGraph";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -39,6 +41,8 @@ export default function ClientOnPageChecker() {
         links: null,
         images: [],
         schemaMarkup: [],
+        hreflang: [],
+        openGraph: {},
     };
 
     const [inputUrl, setInputUrl] = useState("");
@@ -102,6 +106,8 @@ export default function ClientOnPageChecker() {
                 links: data.links || {},
                 images: data.images || [],
                 schemaMarkup: data.schemaMarkup || [],
+                hreflang: data.hreflang || [],
+                openGraph: data.openGraph || {},
             });
 
         } catch (err) {
@@ -116,33 +122,33 @@ export default function ClientOnPageChecker() {
     const sections = [
         {
             title: "URL",
-            component: <Url url={pageData.enteredUrl} />
+            component: <Url url={pageData.enteredUrl} />,
         },
 
         {
             title: "Status Code",
-            component: <StatusCode statusCode={pageData.enteredUrlStatusCode} fetchError={pageData.enteredUrlFetchError} />
+            component: <StatusCode statusCode={pageData.enteredUrlStatusCode} fetchError={pageData.enteredUrlFetchError} />,
         },
 
         pageData.enteredUrlStatusCode >= 300 &&
         pageData.enteredUrlStatusCode < 400
             ? {
                 title: "HTTP redirects to HTTPS?",
-                component: <HttpRedirectsToHttps redirectChain={pageData.redirectChain} />
+                component: <HttpRedirectsToHttps redirectChain={pageData.redirectChain} />,
             }
             : null,
 
         pageData.redirectChain.length > 1
             ? {
                 title: "Redirect URL",
-                component: <Url url={pageData.redirectChain[1].url} />
+                component: <Url url={pageData.redirectChain[1].url} />,
             }
             : null,
 
         pageData.redirectChain.length > 1
             ? {
                 title: "Final URL",
-                component: <Url url={pageData.redirectChain[pageData.redirectChain.length - 1].url} />
+                component: <Url url={pageData.redirectChain[pageData.redirectChain.length - 1].url} />,
             }
             : null,
 
@@ -151,28 +157,28 @@ export default function ClientOnPageChecker() {
         pageData.enteredUrlStatusCode < 400
             ? {
                 title: "Redirect Chain",
-                component: <RedirectChain redirectChain={pageData.redirectChain} />
+                component: <RedirectChain redirectChain={pageData.redirectChain} />,
             }
             : null,
 
         pageData.enteredUrlStatusCode === 200
             ? {
                 title: "Robots.txt",
-                component: <RobotsTxt robotsTxt={pageData.robotsTxt} />
+                component: <RobotsTxt robotsTxt={pageData.robotsTxt} />,
             }
             : null,
 
         pageData.enteredUrlStatusCode === 200
             ? {
                 title: "Meta Robots Tag",
-                component: <MetaRobotsTag metaRobotsTag={pageData.metaRobotsTag} />
+                component: <MetaRobotsTag metaRobotsTag={pageData.metaRobotsTag} />,
             }
             : null,
 
         pageData.enteredUrlStatusCode === 200
             ? {
                 title: "Canonical URL",
-                component: <CanonicalUrl enteredUrl={pageData.enteredUrl} canonicalUrl={pageData.canonicalUrl} />
+                component: <CanonicalUrl enteredUrl={pageData.enteredUrl} canonicalUrl={pageData.canonicalUrl} />,
             }
             : null,
         
@@ -186,21 +192,21 @@ export default function ClientOnPageChecker() {
         pageData.enteredUrlStatusCode === 200
             ? {
                 title: "Viewport",
-                component: <Viewport viewport={pageData.viewport} />
+                component: <Viewport viewport={pageData.viewport} />,
             }
             : null,
 
         pageData.enteredUrlStatusCode === 200
             ? {
                 title: "Meta Title",
-                component: <MetaTitle metaTitle={pageData.metaTitle} />
+                component: <MetaTitle metaTitle={pageData.metaTitle} />,
             }
             : null,
 
         pageData.enteredUrlStatusCode === 200
             ? {
                 title: "Meta Description",
-                component: <MetaDescription metaDescription={pageData.metaDescription} />
+                component: <MetaDescription metaDescription={pageData.metaDescription} />,
             }
             : null,
 
@@ -214,37 +220,51 @@ export default function ClientOnPageChecker() {
                     h4s={pageData.headings.h4s}
                     h5s={pageData.headings.h5s}
                     h6s={pageData.headings.h6s}
-                />
+                />,
             }
             : null,
 
         pageData.enteredUrlStatusCode === 200
             ? {
                 title: `Internal Links (${pageData.links.internal.length})`,
-                component: <InternalLinks internalLinks={pageData.links.internal} />
+                component: <InternalLinks internalLinks={pageData.links.internal} />,
             }
             : null,
 
         pageData.enteredUrlStatusCode === 200
             ? {
                 title: `External Links (${pageData.links.external.length})`,
-                component: <ExternalLinks externalLinks={pageData.links.external} />
+                component: <ExternalLinks externalLinks={pageData.links.external} />,
             }
             : null,
         
         pageData.enteredUrlStatusCode === 200
             ? {
                 title: `Images (${pageData.images.length})`,
-                component: <Images images={pageData.images} />
+                component: <Images images={pageData.images} />,
             }
             : null,
 
         pageData.enteredUrlStatusCode === 200
             ? {
                 title: `Schema Markeup (${pageData.schemaMarkup.filter(s => s.format === 'JSON-LD').length})`,
-                component: <SchemaMarkup schemaMarkup={pageData.schemaMarkup} />
+                component: <SchemaMarkup schemaMarkup={pageData.schemaMarkup} />,
             }
             : null,
+        
+        pageData.enteredUrlStatusCode === 200
+            ? {
+                title: `Hreflang (${pageData.hreflang.length})`,
+                component: <Hreflang hreflang={pageData.hreflang} />,
+            }
+            : null,
+
+        pageData.enteredUrlStatusCode === 200
+            ? {
+                title: "Open Graph",
+                component: <OpenGraph openGraph={pageData.openGraph} />,
+            }
+            : null
     ].filter(Boolean);
 
     return (
