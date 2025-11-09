@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio';
-import { scrapeCanonical } from './canonicalUrl';
+import { scrapeCanonicalUrl } from './canonicalUrl';
 import { checkRobotsTxt } from './robotsTxt';
 
 export async function scrapeHreflang($, pageUrl, headers = {}) {
@@ -23,7 +23,7 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
     const linkHeader = headers['link'] || headers['Link'];
     if (linkHeader) {
         const matches = linkHeader.matchAll(
-            /<([^>]+)>;\s*rel=["']?alternate["']?;\s*hreflang=["']?([a-zA-Z-]+)["']?/g
+            /<([^>]+)>;\s*(?:rel=["']?alternate["']?;\s*hreflang=["']?([a-zA-Z0-9-]+)["']?|hreflang=["']?([a-zA-Z0-9-]+)["']?;\s*rel=["']?alternate["']?)/gi
         );
         for (const match of matches) {
             hreflangs.push({
@@ -68,9 +68,17 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
                 const html = await response.text();
                 const $page = cheerio.load(html);
 
-                canonical = scrapeCanonical($page).canonicalUrl || absoluteUrl;
-                const metaRobots = $page('meta[name="robots"]').attr('content') || '';
-                isNoindex = metaRobots.toLowerCase().includes('noindex');
+                canonical = scrapeCanonicalUrl($page).canonicalUrl || absoluteUrl;
+                // const metaRobots = $page('meta[name="robots"]').attr('content') || '';
+                const metaRobots = $page('meta[name="robots" i]')
+                    .map((i, el) => 
+                        $page(el).attr('content') || ''
+                    )
+                    .get()
+                    .join(',')
+                    .toLowerCase();
+
+                isNoindex = metaRobots.includes('noindex');
                 robotsTxtCheck = await checkRobotsTxt(absoluteUrl, '*');
 
                 isIndexable = !isNoindex && robotsTxtCheck.allowed;
@@ -91,11 +99,14 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
             results.push({
                 ...item,
                 statusCode: 'Error',
+                error: err.message,
                 finalUrl: item.url,
                 isIndexable: null,
             });
         }
     }
 
-    return { hreflang: results };
+    return {
+        hreflang: results,
+    };
 }
