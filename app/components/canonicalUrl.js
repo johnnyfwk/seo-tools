@@ -1,37 +1,44 @@
 import Link from "next/link";
 import * as utils from '@/app/lib/utils/utils';
 
-export default function CanonicalUrl({ enteredUrl, canonicalUrl }) {
-    if (!canonicalUrl) {
-        return <p>⚠️ No canonical tag found. The entered URL is indexable by default.</p>;
+export default function CanonicalUrl({ canonicalUrl }) {
+    if (!canonicalUrl.url) {
+        return <p>No canonical URL found.</p>;
     }
-
-    if (!enteredUrl) {
-        return <p>⚠️ Entered URL is not available.</p>;
-    }
-
-    const enteredNorm = utils.normaliseUrlKeepSearch(enteredUrl);
-    const canonicalNorm = utils.normaliseUrlKeepSearch(canonicalUrl);
-    
-    const isSelfReferencing = enteredNorm === canonicalNorm;
 
     return (
         <div>
             <p>
-                <Link
-                    href={canonicalUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >{canonicalUrl}</Link>
+                <strong>Canonical URL:</strong>{" "}
+                <Link href={canonicalUrl.url} target="_blank" rel="noopener noreferrer">
+                    {canonicalUrl.url}
+                </Link>
             </p>
 
+            {canonicalUrl.statusCode
+                ? <p>
+                    <strong>Status Code:</strong> {canonicalUrl.statusCode}
+                </p>
+                : null
+            }
+
             <p>
-                <strong>Entered URL is indexable?: </strong>
-                {isSelfReferencing
-                    ? "✅ Yes, the canonical URL matches the entered URL."
-                    : `❌ No, the canonical URL points to a different URL.`
-                }
+                <strong>Self-referential:</strong> {canonicalUrl.isSelfReferential ? "✅ Yes" : "❌ No"}
             </p>
+
+            {canonicalUrl.issues?.length > 0
+                ? <details>
+                    <summary>
+                        <strong>Canonical Issues ({canonicalUrl.issues.length})</strong>
+                    </summary>
+                    <ul>
+                        {canonicalUrl.issues.map((issue, i) => (
+                            <li key={i}>{issue}</li>
+                        ))}
+                    </ul>
+                </details>
+                : null
+            }
         </div>
     )
 }

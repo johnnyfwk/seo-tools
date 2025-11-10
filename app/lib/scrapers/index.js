@@ -31,7 +31,7 @@ export async function scrapeWithCheerio(
         }
 
         if (opts.canonicalUrl || opts.all) {
-            Object.assign(results, scrapeCanonicalUrl($, pageUrl));
+            Object.assign(results, await scrapeCanonicalUrl($, pageUrl));
         }
 
         if (opts.htmlLanguageAttribute || opts.all) {
