@@ -19,6 +19,7 @@ import SchemaMarkup from "../components/schemaMarkup";
 import Images from "../components/images";
 import Hreflang from "../components/hreflang";
 import OpenGraph from "../components/openGraph";
+import XmlSitemap from "../components/xmlSitemap";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -43,6 +44,7 @@ export default function ClientOnPageChecker() {
         schemaMarkup: [],
         hreflang: [],
         openGraph: {},
+        xmlSitemap: {},
     };
 
     const [inputUrl, setInputUrl] = useState("");
@@ -108,6 +110,7 @@ export default function ClientOnPageChecker() {
                 schemaMarkup: data.schemaMarkup || [],
                 hreflang: data.hreflang || [],
                 openGraph: data.openGraph || {},
+                xmlSitemap: data.xmlSitemap || {},
             });
 
         } catch (err) {
@@ -263,6 +266,13 @@ export default function ClientOnPageChecker() {
             ? {
                 title: "Open Graph",
                 component: <OpenGraph openGraph={pageData.openGraph} />,
+            }
+            : null,
+
+        pageData.enteredUrlStatusCode === 200
+            ? {
+                title: "XML Sitemap",
+                component: <XmlSitemap xmlSitemap={pageData.xmlSitemap} />
             }
             : null
     ].filter(Boolean);
