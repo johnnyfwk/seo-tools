@@ -25,11 +25,14 @@ export default function OpenGraph({ openGraph }) {
                 <tr>
                     <td><strong>Open Graph URL</strong></td>
                     <td className={!openGraph.url ? "warning-background" : undefined}>
-                        <Link
-                            href={openGraph.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >{openGraph.url}</Link>
+                        {openGraph.url
+                            ? <Link
+                                href={openGraph.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >{openGraph.url}</Link>
+                            : ""
+                        }
                     </td>
                 </tr>
                 {openGraph.url

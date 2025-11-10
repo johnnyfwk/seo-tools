@@ -33,7 +33,7 @@ export default function ClientOnPageChecker() {
         redirectChain: [],
         robotsTxt: null,
         metaRobotsTag: null,
-        canonicalUrl: null,
+        canonicalUrl: {},
         htmlLanguageAttribute: null,
         viewport: null,
         metaTitle: [],
@@ -99,7 +99,7 @@ export default function ClientOnPageChecker() {
                 ...initialPageData,
                 ...data,
                 metaRobotsTag: data.metaRobotsTag || "",
-                canonicalUrl: data.canonicalUrl || "",
+                canonicalUrl: data.canonicalUrl || {},
                 htmlLanguageAttribute: data.htmlLanguageAttribute || "",
                 viewport: data.viewport || "",
                 metaTitle: data.metaTitle || [],
@@ -181,7 +181,7 @@ export default function ClientOnPageChecker() {
         pageData.enteredUrlStatusCode === 200
             ? {
                 title: "Canonical URL",
-                component: <CanonicalUrl enteredUrl={pageData.enteredUrl} canonicalUrl={pageData.canonicalUrl} />,
+                component: <CanonicalUrl canonicalUrl={pageData.canonicalUrl} />,
             }
             : null,
         
@@ -229,15 +229,15 @@ export default function ClientOnPageChecker() {
 
         pageData.enteredUrlStatusCode === 200
             ? {
-                title: `Internal Links (${pageData.links.internal.length})`,
-                component: <InternalLinks internalLinks={pageData.links.internal} />,
+                title: `Internal Links (${pageData.links?.internal?.length || 0})`,
+                component: <InternalLinks internalLinks={pageData.links?.internal || []} />,
             }
             : null,
 
         pageData.enteredUrlStatusCode === 200
             ? {
-                title: `External Links (${pageData.links.external.length})`,
-                component: <ExternalLinks externalLinks={pageData.links.external} />,
+                title: `External Links (${pageData.links?.external?.length || 0})`,
+                component: <ExternalLinks externalLinks={pageData.links?.external || []} />,
             }
             : null,
         

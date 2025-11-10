@@ -1,6 +1,13 @@
 import * as utils from'@/app/lib/utils/utils';
 
-export default function Headings({ h1s, h2s, h3s, h4s, h5s, h6s }) {
+export default function Headings({
+    h1s = [],
+    h2s = [],
+    h3s = [],
+    h4s = [],
+    h5s = [],
+    h6s = [],
+}) {
     return (
         <>
             <p>This section lists the subheadings on the page.</p>
