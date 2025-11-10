@@ -12,6 +12,7 @@ import { scrapeSchemaMarkup } from './schemaMarkup';
 import { scrapeImages } from './images';
 import { scrapeHreflang } from './hreflang';
 import { scrapeOpenGraph } from './openGraph';
+import { scrapeXmlSitemap } from './xmlSitemap';
 
 export async function scrapeWithCheerio(
     html,
@@ -71,6 +72,10 @@ export async function scrapeWithCheerio(
 
         if (opts.openGraph || opts.all) {
             Object.assign(results, await scrapeOpenGraph($, pageUrl));
+        }
+
+        if (opts.xmlSitemap || opts.all) {
+            Object.assign(results, await scrapeXmlSitemap(pageUrl));
         }
     } catch (err) {
         console.error(`Error scraping page ${pageUrl}:`, err);
