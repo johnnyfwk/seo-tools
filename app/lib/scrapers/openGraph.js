@@ -1,5 +1,5 @@
 import { fetchRedirectInfo } from "../utils/fetchRedirectInfo";
-import { scrapeCanonicalUrl } from "./canonicalUrl";
+import { scrapeCanonicalTag } from "./canonicalTag";
 import { scrapeMetaRobotsTag } from "./metaRobotsTag";
 import { checkRobotsTxt } from "./robotsTxt";
 import * as cheerio from 'cheerio';
@@ -9,25 +9,27 @@ export async function scrapeOpenGraph($, pageUrl) {
         title: '',
         type: '',
         url: '',
-        image: null,
-        description: '',
-        siteName: '',
-        audio: '',
-        video: '',
-        locale: '',
-        determiner: '',
         ogUrlStatusCode: null,
         ogUrlFinalUrl: '',
         ogUrlIsSelfCanonical: null,
         ogUrlNoindex: null,
         ogUrlRobotsAllowed: null,
+        image: null,
+        description: '',
+        siteName: '', // canonical property
+        audio: '',
+        video: '',
+        locale: '',
+        determiner: '',
     };
 
     $('meta[property^="og:"]').each((_, element) => {
         const property = $(element).attr('property');
         const content = $(element).attr('content');
         if (property && content) {
-            const key = property.replace(/^og:/, '');
+            let key = property.replace(/^og:/, '');
+            // Normalize site_name → siteName
+            if (key === 'site_name') key = 'siteName';
             openGraph[key] = content;
         }
     });
@@ -67,7 +69,7 @@ export async function scrapeOpenGraph($, pageUrl) {
     let allowsIndexing = true;
 
     if ($ogPage) {
-        const canonicalData = scrapeCanonicalUrl($ogPage, ogUrl);
+        const canonicalData = scrapeCanonicalTag($ogPage, ogUrl);
         canonicalUrl = canonicalData.canonicalUrl || ogUrl;
 
         const metaRobotsData = scrapeMetaRobotsTag($ogPage);
@@ -103,6 +105,11 @@ export async function scrapeOpenGraph($, pageUrl) {
         title: 'Title',
         type: 'Type',
         url: 'URL',
+        ogUrlStatusCode: 'OG URL Status Code',
+        ogUrlFinalUrl: 'OG URL Final URL',
+        ogUrlIsSelfCanonical: 'OG URL Self-Canonical',
+        ogUrlNoindex: 'OG URL Noindex',
+        ogUrlRobotsAllowed: 'OG URL Robots Allowed',
         image: 'Image',
         description: 'Description',
         siteName: 'Site Name',
@@ -110,11 +117,6 @@ export async function scrapeOpenGraph($, pageUrl) {
         video: 'Video',
         locale: 'Locale',
         determiner: 'Determiner',
-        ogUrlStatusCode: 'OG URL Status Code',
-        ogUrlFinalUrl: 'OG URL Final URL',
-        ogUrlIsSelfCanonical: 'OG URL Self-Canonical',
-        ogUrlNoindex: 'OG URL Noindex',
-        ogUrlRobotsAllowed: 'OG URL Robots Allowed'
     };
 
     openGraph.missingTags = Object.entries(openGraph)

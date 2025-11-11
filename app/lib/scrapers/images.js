@@ -1,8 +1,7 @@
 import * as utils from '@/app/lib/utils/utils';
 
-export async function scrapeImages($, pageUrl) {
+export async function scrapeImages($, pageUrl, { checkStatus = false } = {}) {
     const limit = utils.createLimiter(5);
-
     const imageElements = $('img').toArray();
 
     const images = await Promise.all(
@@ -24,40 +23,18 @@ export async function scrapeImages($, pageUrl) {
             // Resolve relative URLs
             try { src = new URL(src, pageUrl).href; } catch {}
 
-            // Optionally fetch headers to check status
             let statusCode = null;
-            let finalUrl = src;
-            let redirectChain = [];
 
-            if (src) {
+            if (checkStatus && src) {
                 try {
-                    let currentUrl = src;
-                    let redirectCount = 0;
-                    let response;
-
-                    do {
-                        response = await fetch(currentUrl, { method: "HEAD", redirect: "manual" });
-                        statusCode = response.status;
-                        finalUrl = currentUrl;
-
-                        if (statusCode >= 300 && statusCode < 400) {
-                            const location = response.headers.get("location");
-                            if (!location) break;
-                            const nextUrl = new URL(location, currentUrl).href;
-                            redirectChain.push(nextUrl);
-                            currentUrl = nextUrl;
-                            redirectCount++;
-                        } else break;
-
-                    } while (redirectCount < 10);
-
+                    const res = await fetch(src, { method: "HEAD", redirect: "manual" });
+                    statusCode = res.status;
                 } catch {
                     statusCode = null;
-                    redirectChain.push("Fetch failed");
                 }
             }
 
-            return { src, alt, statusCode, finalUrl, redirectChain };
+            return { src, alt, statusCode };
         }))
     );
 

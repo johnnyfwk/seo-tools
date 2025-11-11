@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Url from "../components/url";
+import Indexability from "../components/indexability";
 import StatusCode from "../components/statusCode";
 import RedirectChain from "../components/redirectChain";
 import HttpRedirectsToHttps from "../components/httpRedirectsToHttps";
@@ -10,7 +11,7 @@ import MetaDescription from "../components/metaDescription";
 import Headings from "../components/headings";
 import RobotsTxt from "../components/robotsTxt";
 import MetaRobotsTag from "../components/metaRobotsTag";
-import CanonicalUrl from "../components/canonicalUrl";
+import CanonicalTag from "../components/canonicalTag";
 import HtmlLanguageAttribute from "../components/htmlLanguageAttribute";
 import Viewport from "../components/viewport";
 import InternalLinks from "../components/internalLinks";
@@ -33,7 +34,7 @@ export default function ClientOnPageChecker() {
         redirectChain: [],
         robotsTxt: null,
         metaRobotsTag: null,
-        canonicalUrl: {},
+        canonicalTag: {},
         htmlLanguageAttribute: null,
         viewport: null,
         metaTitle: [],
@@ -77,6 +78,9 @@ export default function ClientOnPageChecker() {
 
         setIsCheckingPage(true);
 
+        // Start timer
+        const startTime = performance.now();
+
         try {
             const res = await fetch('/api/on-page-checker', {
                 method: "POST",
@@ -95,11 +99,16 @@ export default function ClientOnPageChecker() {
             const data = await res.json();
             console.log("Data:", data);
 
+            const endTime = performance.now();
+            const elapsedMs = endTime - startTime;
+            console.log(`Scraping took ${elapsedMs.toFixed(2)} ms`);
+
             setPageData({
                 ...initialPageData,
                 ...data,
+                scrapeDurationMs: elapsedMs,
                 metaRobotsTag: data.metaRobotsTag || "",
-                canonicalUrl: data.canonicalUrl || {},
+                canonicalTag: data.canonicalTag || {},
                 htmlLanguageAttribute: data.htmlLanguageAttribute || "",
                 viewport: data.viewport || "",
                 metaTitle: data.metaTitle || [],
@@ -122,15 +131,38 @@ export default function ClientOnPageChecker() {
         }
     }
 
+    function formatDuration(ms) {
+        const seconds = Math.floor(ms / 1000);
+        const milliseconds = Math.floor(ms % 1000);
+        return seconds > 0 ? `${seconds}s ${milliseconds}ms` : `${milliseconds}ms`;
+    }
+
     const sections = [
+        pageData.scrapeDurationMs
+            ? {
+                title: "Scrape Duration",
+                component: <p>{formatDuration(pageData.scrapeDurationMs)}</p>,
+            }
+            : null,
         {
             title: "URL",
             component: <Url url={pageData.enteredUrl} />,
         },
-
+        {
+            title: "Indexability",
+            component: <Indexability
+                statusCode={pageData.enteredUrlStatusCode}
+                isAllowedByRobotsTxt={pageData.robotsTxt?.allowed ?? true}
+                metaRobotsTagAllowsIndexing={pageData.metaRobotsTag?.allowsIndexing ?? true}
+                canonicalTagIsSelfReferential={pageData.canonicalTag?.isSelfReferential ?? true}
+            />
+        },
         {
             title: "Status Code",
-            component: <StatusCode statusCode={pageData.enteredUrlStatusCode} fetchError={pageData.enteredUrlFetchError} />,
+            component: <StatusCode
+                statusCode={pageData.enteredUrlStatusCode}
+                fetchError={pageData.enteredUrlFetchError}
+            />,
         },
 
         pageData.enteredUrlStatusCode >= 300 &&
@@ -180,8 +212,8 @@ export default function ClientOnPageChecker() {
 
         pageData.enteredUrlStatusCode === 200
             ? {
-                title: "Canonical URL",
-                component: <CanonicalUrl canonicalUrl={pageData.canonicalUrl} />,
+                title: "Canonical Tag",
+                component: <CanonicalTag canonicalTag={pageData.canonicalTag} />,
             }
             : null,
         

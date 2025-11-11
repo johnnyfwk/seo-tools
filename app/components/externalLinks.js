@@ -25,12 +25,10 @@ export default function ExternalLinks({ externalLinks }) {
                             {i + 1}
                         </td>
                         
-                        {/* Type */}
                         <td style={{ textAlign: 'center' }}>
                             {link.anchor?.type || "Text"}
                         </td>
 
-                        {/* Anchor */}
                         <td style={{ textAlign: 'left' }}>
                             {link.anchor?.type?.toLowerCase() === "image" ? (
                                 <img
@@ -43,14 +41,12 @@ export default function ExternalLinks({ externalLinks }) {
                             )}
                         </td>
 
-                        {/* Link URL */}
                         <td style={{ textAlign: 'left' }}>
                             <Link href={link.url || "#"} target="_blank">
                                 {link.url}
                             </Link>
                         </td>
 
-                        {/* Link URL Status Code */}
                         <td
                             style={{ textAlign: 'center' }}
                             className={link.statusCode === 200
@@ -63,14 +59,12 @@ export default function ExternalLinks({ externalLinks }) {
                             {link.statusCode || "N/A"}
                         </td>
 
-                        {/* Final URL */}
                         <td style={{ textAlign: 'left' }}>
                             <Link href={link.finalUrl || "#"} target="_blank">
                                 {link.finalUrl}
                             </Link>
                         </td>
 
-                        {/* Final URL Status Code */}
                         <td
                             style={{ textAlign: 'center' }}
                             className={link.finalUrlStatusCode === 200

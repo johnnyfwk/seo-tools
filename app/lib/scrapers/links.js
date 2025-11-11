@@ -1,16 +1,137 @@
 import * as cheerio from 'cheerio';
-import { fetchRedirectInfo } from '../utils/fetchRedirectInfo';
-import { scrapeCanonicalUrl } from './canonicalUrl';
+import { scrapeCanonicalTag } from './canonicalTag';
 import { checkRobotsTxt } from './robotsTxt';
 import { scrapeMetaRobotsTag } from './metaRobotsTag';
 import * as utils from '@/app/lib/utils/utils';
 
-export async function scrapeLinks($, pageUrl) {
-    const limit = utils.createLimiter(5);
+// HEAD -> GET fallback for internal links
+async function fetchRedirectInfoWithHeadFallback(url) {
+    const redirectChain = [];
+    const MAX_REDIRECTS = 10;
+    let currentUrl = url;
 
+    for (let i = 0; i < MAX_REDIRECTS; i++) {
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+            // Try HEAD first
+            let res = await fetch(currentUrl, {
+                method: 'HEAD',
+                redirect: 'manual',
+                headers: { 'User-Agent': 'Mozilla/5.0 (compatible; SEO-Crawler/1.0)' },
+                signal: controller.signal,
+            });
+            clearTimeout(timeoutId);
+
+            // Fallback to GET if HEAD fails or is not allowed
+            if ([0, 405, 501].includes(res.status)) {
+                const getController = new AbortController();
+                const getTimeout = setTimeout(() => getController.abort(), 5000);
+
+                res = await fetch(currentUrl, {
+                    method: 'GET',
+                    redirect: 'manual',
+                    headers: { 'User-Agent': 'Mozilla/5.0 (compatible; SEO-Crawler/1.0)' },
+                    signal: getController.signal,
+                });
+                clearTimeout(getTimeout);
+            }
+
+            redirectChain.push({ url: currentUrl, statusCode: res.status });
+
+            const location = res.headers.get('location');
+            if (location) {
+                currentUrl = new URL(location, currentUrl).href;
+            } else {
+                return {
+                    redirectChain,
+                    enteredUrlStatusCode: redirectChain[0]?.statusCode ?? null,
+                    finalUrl: currentUrl,
+                    finalUrlStatusCode: res.status,
+                    fetchError: null,
+                };
+            }
+        } catch (err) {
+            redirectChain.push({ url: currentUrl, statusCode: null, fetchError: err.message });
+            return {
+                redirectChain,
+                enteredUrlStatusCode: redirectChain[0]?.statusCode ?? null,
+                finalUrl: currentUrl,
+                finalUrlStatusCode: null,
+                fetchError: err.message,
+            };
+        }
+    }
+
+    return {
+        redirectChain,
+        enteredUrlStatusCode: redirectChain[0]?.statusCode ?? null,
+        finalUrl: currentUrl,
+        finalUrlStatusCode: redirectChain[redirectChain.length - 1]?.statusCode ?? null,
+        fetchError: null,
+    };
+}
+
+// External links (HEAD only)
+async function fetchExternalRedirectInfo(url) {
+    const redirectChain = [];
+    const MAX_REDIRECTS = 10;
+    let currentUrl = url;
+
+    for (let i = 0; i < MAX_REDIRECTS; i++) {
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+            const res = await fetch(currentUrl, {
+                method: 'HEAD',
+                redirect: 'manual',
+                headers: { 'User-Agent': 'Mozilla/5.0 (compatible; SEO-Crawler/1.0)' },
+                signal: controller.signal,
+            });
+            clearTimeout(timeoutId);
+
+            redirectChain.push({ url: currentUrl, statusCode: res.status });
+
+            const location = res.headers.get('location');
+            if (location) {
+                currentUrl = new URL(location, currentUrl).href;
+            } else {
+                return {
+                    redirectChain,
+                    enteredUrlStatusCode: redirectChain[0]?.statusCode ?? null,
+                    finalUrl: currentUrl,
+                    finalUrlStatusCode: res.status,
+                    fetchError: null,
+                };
+            }
+        } catch (err) {
+            redirectChain.push({ url: currentUrl, statusCode: null, fetchError: err.message });
+            return {
+                redirectChain,
+                enteredUrlStatusCode: redirectChain[0]?.statusCode ?? null,
+                finalUrl: currentUrl,
+                finalUrlStatusCode: null,
+                fetchError: err.message,
+            };
+        }
+    }
+
+    return {
+        redirectChain,
+        enteredUrlStatusCode: redirectChain[0]?.statusCode ?? null,
+        finalUrl: currentUrl,
+        finalUrlStatusCode: redirectChain[redirectChain.length - 1]?.statusCode ?? null,
+        fetchError: null,
+    };
+}
+
+export async function scrapeLinks($, pageUrl) {
+    const limit = utils.createLimiter(10);
     const base = new URL(pageUrl);
 
-    // Extract all <a> tags
+    // Extract links
     const links = $('a[href]')
         .map((i, el) => {
             const href = $(el).attr('href');
@@ -29,15 +150,11 @@ export async function scrapeLinks($, pageUrl) {
 
             if (innerImgSrcRaw) {
                 try {
-                    // Resolve relative to the link itself if href is absolute
                     const linkBase = new URL(href, base);
                     resolvedImgSrc = new URL(innerImgSrcRaw, linkBase).href;
-                } catch {
-                    resolvedImgSrc = innerImgSrcRaw;
-                }
+                } catch { resolvedImgSrc = innerImgSrcRaw; }
             }
 
-            // Determine anchor to display
             let anchor;
             if (resolvedImgSrc) {
                 anchor = { type: 'Image', src: resolvedImgSrc, alt: innerImgAlt };
@@ -54,7 +171,7 @@ export async function scrapeLinks($, pageUrl) {
         .get()
         .filter(Boolean);
 
-    // Separate internal and external links
+    // Separate internal vs external
     const normalizeHost = h => h.replace(/^www\./, '').toLowerCase();
     const baseHost = normalizeHost(base.hostname);
 
@@ -69,151 +186,136 @@ export async function scrapeLinks($, pageUrl) {
             } else {
                 externalLinks.push(link);
             }
-        } catch {
-            // skip invalid urls
-        }
+        } catch {}
     });
 
-    async function fetchHtmlPage(url) {
-        try {
-            const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; SEO-Crawler/1.0)' } });
-            if (!res.ok) return null;
-            const contentType = res.headers.get('content-type') || '';
-            if (!contentType.includes('text/html')) return null;
-            const html = await res.text();
-            return cheerio.load(html);
-        } catch {
-            return null;
+    // Caches
+    const robotsCache = new Map();
+    const canonicalCache = new Map();
+
+    async function cachedCheckRobotsTxt(url, agent) {
+        const origin = new URL(url).origin;
+        if (!robotsCache.has(origin)) {
+            const result = await checkRobotsTxt(url, agent);
+            robotsCache.set(origin, result);
         }
+        return robotsCache.get(origin);
     }
 
-    // Process internal links (full SEO info)
-    async function processInternal(links) {
-        return Promise.all(
-            links.map(link =>
-                limit(async () => {
-                    let redirectInfo;
+    async function fetchHtmlAndMeta(url) {
+        const origin = new URL(url).origin;
 
-                    try {
-                        redirectInfo = await fetchRedirectInfo(link.url);
-                    } catch (err) {
-                        console.warn(`Failed to fetch ${link.url}:`, err.message);
-                        redirectInfo = {
-                            redirectChain: [],
-                            finalUrl: link.url,
-                            finalUrlStatusCode: null,
-                            enteredUrlStatusCode: null,
-                            httpRedirectsToHttps: null,
-                            enteredUrlFetchError: err.message,
-                            finalUrlFetchError: err.message,
-                        };
-                    }
+        if (canonicalCache.has(url) && robotsCache.has(origin)) {
+            const cachedCanonical = canonicalCache.get(url);
+            return {
+                canonicalUrl: cachedCanonical,
+                isNoindex: !robotsCache.get(origin).allowed,
+                robotsTxtCheck: robotsCache.get(origin),
+                isSelfReferentialCanonical: cachedCanonical === url,
+            };
+        }
 
-                    const enteredUrlStatus = redirectInfo.enteredUrlStatusCode;
-                    const isRedirected = redirectInfo.finalUrl !== link.url;
+        let canonicalUrl = url;
+        let isNoindex = false;
+        let robotsTxtCheck = { allowed: true, reason: 'Default allow' };
+        let isSelfReferentialCanonical = true;
 
-                    let isNoindex = false;
-                    let canonicalUrl = link.url;
-                    let robotsTxtCheck = { allowed: true, reason: 'Default allow' };
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-                    if (enteredUrlStatus === 200 && !isRedirected) {
-                        const $page = await fetchHtmlPage(link.url);
-                        if ($page) {
-                            canonicalUrl = scrapeCanonicalUrl($page).canonicalUrl || link.url;
-                            const metaRobots = scrapeMetaRobotsTag($page);
-                            if (!metaRobots.metaRobotsTag.allowsIndexing) isNoindex = true;
-                        }
-                        try { robotsTxtCheck = await checkRobotsTxt(link.url, '*'); } catch {}
-                    }
+            const res = await fetch(url, {
+                headers: { 'User-Agent': 'Mozilla/5.0 (compatible; SEO-Crawler/1.0)' },
+                signal: controller.signal,
+            });
+            clearTimeout(timeoutId);
 
-                    return {
-                        ...link,
-                        statusCode: enteredUrlStatus,
-                        finalUrl: redirectInfo.finalUrl,
-                        finalUrlStatusCode: redirectInfo.finalUrlStatusCode,
-                        redirectChain: redirectInfo.redirectChain,
-                        httpRedirectsToHttps: redirectInfo.httpRedirectsToHttps,
-                        canonicalUrl,
-                        isNoindex,
-                        robotsTxtCheck,
-                        isIndexable: enteredUrlStatus === 200 && !isRedirected && !isNoindex && robotsTxtCheck.allowed,
-                        fetchError: redirectInfo.finalUrlFetchError,
-                    };
-                })
-            )
-        );
+            if (!res.ok) return { canonicalUrl, isNoindex, robotsTxtCheck, isSelfReferentialCanonical };
+            if (!res.headers.get('content-type')?.includes('text/html')) return { canonicalUrl, isNoindex, robotsTxtCheck, isSelfReferentialCanonical };
+
+            const html = await res.text();
+            const $page = cheerio.load(html);
+
+            canonicalUrl = scrapeCanonicalTag($page).canonicalUrl || url;
+            isSelfReferentialCanonical = canonicalUrl === url;
+
+            const metaRobots = scrapeMetaRobotsTag($page);
+            if (!metaRobots.metaRobotsTag.allowsIndexing) isNoindex = true;
+
+            robotsTxtCheck = await cachedCheckRobotsTxt(url, '*');
+
+            canonicalCache.set(url, canonicalUrl);
+            robotsCache.set(origin, robotsTxtCheck);
+        } catch (err) {
+            console.warn(`Failed to fetch HTML/meta for ${url}:`, err.message);
+        }
+
+        return { canonicalUrl, isNoindex, robotsTxtCheck, isSelfReferentialCanonical };
     }
 
-    // Process external links (lightweight)
-    async function processExternal(links) {
-        return Promise.all(
-            links.map(link =>
-                limit(async () => {
-                    let enteredStatus = null;
-                    let finalUrlStatus = null;
-                    let finalUrl = link.url;
-                    let redirectChain = [];
-                    let fetchError = null;
+    async function processLink(link, internal = true) {
+        let redirectInfo;
+        try {
+            redirectInfo = internal
+                ? await fetchRedirectInfoWithHeadFallback(link.url)
+                : await fetchExternalRedirectInfo(link.url);
+        } catch (err) {
+            redirectInfo = {
+                redirectChain: [],
+                finalUrl: link.url,
+                finalUrlStatusCode: null,
+                enteredUrlStatusCode: null,
+                fetchError: err.message,
+            };
+        }
 
-                    try {
-                        let currentUrl = link.url;
-                        const MAX_REDIRECTS = 10;
+        const enteredUrlStatus = redirectInfo.enteredUrlStatusCode;
+        const isRedirected = redirectInfo.finalUrl !== link.url;
 
-                        for (let i = 0; i < MAX_REDIRECTS; i++) {
-                            const res = await Promise.race([
-                                fetch(currentUrl, {
-                                    method: 'HEAD',
-                                    redirect: 'manual',
-                                    headers: { 'User-Agent': 'Mozilla/5.0 (compatible; SEO-Crawler/1.0)' },
-                                }),
-                                new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 10000)) // 10s timeout
-                            ]);
+        let canonicalUrl = link.url;
+        let isNoindex = false;
+        let robotsTxtCheck = { allowed: true, reason: 'Default allow' };
+        let isSelfReferentialCanonical = true;
 
-                            if (i === 0) enteredStatus = res.status;
-                            redirectChain.push({ url: currentUrl, statusCode: res.status });
+        if (internal && enteredUrlStatus === 200 && !isRedirected) {
+            const metaData = await fetchHtmlAndMeta(link.url);
+            canonicalUrl = metaData.canonicalUrl;
+            isNoindex = metaData.isNoindex;
+            robotsTxtCheck = metaData.robotsTxtCheck;
+            isSelfReferentialCanonical = metaData.isSelfReferentialCanonical;
+        }
 
-                            const location = res.headers.get('location');
-                            if (location) {
-                                currentUrl = new URL(location, currentUrl).href;
-                            } else {
-                                finalUrl = currentUrl;
-                                finalUrlStatus = res.status;
-                                break;
-                            }
-                        }
-
-                        if (!finalUrlStatus) {
-                            finalUrlStatus = enteredStatus;
-                        }
-                    } catch (err) {
-                        console.warn(`Failed to fetch ${link.url}:`, err.message);
-                        fetchError = err.message;
-                        finalUrlStatus = null;
-                    }
-
-                    return {
-                        url: link.url,
-                        anchor: link.anchor,
-                        statusCode: enteredStatus,
-                        finalUrl,
-                        finalUrlStatusCode: finalUrlStatus,
-                        redirectChain,
-                        fetchError
-                    };
-                })
-            )
-        );
+        return {
+            ...link,
+            internal,
+            statusCode: enteredUrlStatus,
+            finalUrl: redirectInfo.finalUrl,
+            finalUrlStatusCode: redirectInfo.finalUrlStatusCode,
+            redirectChain: redirectInfo.redirectChain,
+            canonicalUrl,
+            isNoindex,
+            robotsTxtCheck,
+            isSelfReferentialCanonical,
+            isIndexable: internal
+                ? enteredUrlStatus === 200 && !isRedirected && !isNoindex && robotsTxtCheck.allowed
+                : undefined,
+            fetchError: redirectInfo.fetchError,
+        };
     }
 
-    const [processedInternal, processedExternal] = await Promise.all([
-        processInternal(internalLinks),
-        processExternal(externalLinks),
-    ]);
+    const allLinks = [
+        ...internalLinks,
+        ...externalLinks.map(l => ({ ...l, internal: false })),
+    ];
+
+    const processedLinks = await Promise.all(
+        allLinks.map(link => limit(() => processLink(link, link.internal)))
+    );
 
     return {
         links: {
-            internal: processedInternal,
-            external: processedExternal
+            internal: processedLinks.filter(l => l.internal),
+            external: processedLinks.filter(l => !l.internal),
         },
     };
 }

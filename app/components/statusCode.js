@@ -2,7 +2,7 @@ export default function StatusCode({ statusCode, fetchError }) {
     const code = Number(statusCode);
 
     const statusMessages = {
-        200: "OK",
+        200: "OK ✅",
         201: "Created",
         204: "No Content",
         301: "Moved Permanently",
@@ -23,15 +23,12 @@ export default function StatusCode({ statusCode, fetchError }) {
     };
 
     let displayText;
-    let className = "error-text";
 
     if (fetchError) {
         displayText = `Fetch error: ${fetchError}`;
     } else if (code) {
         const message = statusMessages[code] || "Unknown Status";
         displayText = message;
-        if (code === 200) className = "success-text";
-        else if (code >= 300 && code < 400) className = "warning-text";
     } else {
         displayText = "No status code available";
     }
@@ -40,7 +37,7 @@ export default function StatusCode({ statusCode, fetchError }) {
         <div>
             <p>
                 <strong>Code: </strong>
-                <span className={className}>{code || "N/A"}</span>
+                <span>{code || "N/A"}</span>
             </p>
             <p>
                 <strong>Definition: </strong>

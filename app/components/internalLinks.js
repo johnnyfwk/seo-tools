@@ -63,7 +63,7 @@ export default function InternalLinks({ internalLinks }) {
                             }
                             style={{ textAlign: 'center' }}
                         >
-                            {link.statusCode}
+                            {link.statusCode || "N/A"}
                         </td>
 
                         <td style={{ textAlign: 'left' }}>
@@ -79,7 +79,7 @@ export default function InternalLinks({ internalLinks }) {
                             }
                             style={{ textAlign: 'center' }}
                         >
-                            {link.finalUrlStatusCode}
+                            {link.finalUrlStatusCode || "N/A"}
                         </td>
 
                         <td

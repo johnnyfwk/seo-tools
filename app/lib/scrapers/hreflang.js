@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio';
-import { scrapeCanonicalUrl } from './canonicalUrl';
+import { scrapeCanonicalTag } from './canonicalTag';
 import { checkRobotsTxt } from './robotsTxt';
 
 export async function scrapeHreflang($, pageUrl, headers = {}) {
@@ -68,8 +68,7 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
                 const html = await response.text();
                 const $page = cheerio.load(html);
 
-                canonical = scrapeCanonicalUrl($page).canonicalUrl || absoluteUrl;
-                // const metaRobots = $page('meta[name="robots"]').attr('content') || '';
+                canonical = scrapeCanonicalTag($page).canonicalUrl || absoluteUrl;
                 const metaRobots = $page('meta[name="robots" i]')
                     .map((i, el) => 
                         $page(el).attr('content') || ''
