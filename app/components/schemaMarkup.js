@@ -39,7 +39,7 @@ export default function SchemaMarkup({ schemaMarkup }) {
             {jsonLdSchemas.map((schema, idx) => (
                 <section key={idx}>
                     <h3>
-                        Type: {Array.isArray(schema.raw['@type'])
+                        {Array.isArray(schema.raw['@type'])
                             ? schema.raw['@type'].join(', ')
                             : schema.raw['@type'] || "Unknown"}
                     </h3>

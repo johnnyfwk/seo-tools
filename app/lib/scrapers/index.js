@@ -4,7 +4,7 @@ import { scrapeMetaRobotsTag } from './metaRobotsTag';
 import { scrapeMetaTitle } from './metaTitle';
 import { scrapeMetaDescription } from './metaDescription';
 import { scrapeHeadings } from './headings';
-import { scrapeCanonicalUrl } from './canonicalUrl';
+import { scrapeCanonicalTag } from './canonicalTag';
 import { scrapeHtmlLanguageAttribute } from './htmlLanguageAttribute';
 import { scrapeViewport } from './viewport';
 import { scrapeLinks } from './links';
@@ -22,7 +22,13 @@ export async function scrapeWithCheerio(
 ) {
     if (!html || !pageUrl) return {};
 
-    const $ = typeof html === 'function' && html.root ? html : cheerio.load(html);
+    const $ = typeof html === 'function' && html.root
+        ? html
+        : cheerio.load(html, {
+            xmlMode: false,      // parse as lenient HTML
+            decodeEntities: true // converts HTML entities
+        });
+
     const results = {};
 
     try {
@@ -31,7 +37,7 @@ export async function scrapeWithCheerio(
         }
 
         if (opts.canonicalUrl || opts.all) {
-            Object.assign(results, await scrapeCanonicalUrl($, pageUrl));
+            Object.assign(results, await scrapeCanonicalTag($, pageUrl));
         }
 
         if (opts.htmlLanguageAttribute || opts.all) {
@@ -63,7 +69,7 @@ export async function scrapeWithCheerio(
         }
 
         if (opts.images || opts.all) {
-            Object.assign(results, await scrapeImages($, pageUrl));
+            Object.assign(results, await scrapeImages($, pageUrl, { checkStatus: true }));
         }
 
         if (opts.hreflang || opts.all) {

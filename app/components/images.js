@@ -14,7 +14,6 @@ export default function Images({ images }) {
                     <th style={{ textAlign: 'left' }}>Alt Text</th>
                     <th style={{ textAlign: 'left' }}>Source URL</th>
                     <th style={{ textAlign: 'center' }}>Status Code</th>
-                    <th style={{ textAlign: 'left' }}>Final URL</th>
                 </tr>
             </thead>
             <tbody>
@@ -49,14 +48,6 @@ export default function Images({ images }) {
                                     : "error-background"
                                 }
                             >{image.statusCode}</td>
-
-                            <td>
-                                <Link
-                                    href={image.finalUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >{image.finalUrl}</Link>
-                            </td>
                         </tr>
                     )
                 })}
