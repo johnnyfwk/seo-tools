@@ -1,4 +1,5 @@
 import { DOMParser } from '@xmldom/xmldom';
+import zlib from 'zlib';
 
 export async function scrapeXmlSitemap(targetUrl) {
     const baseUrl = new URL(targetUrl).origin;
@@ -36,13 +37,45 @@ export async function scrapeXmlSitemap(targetUrl) {
             const res = await fetch(url, {
                 headers: {
                     'User-Agent': 'Mozilla/5.0 (compatible; SEO-Checker/1.0; +https://yourdomain.com)',
+                    'Accept-Encoding': 'gzip,deflate,br',
                 },
+                redirect: 'follow',
             });
-            if (!res.ok) return null;
-            const xml = await res.text();
-            return new DOMParser().parseFromString(xml, 'application/xml');
-        } catch (e) {
-            console.error('sitemap fetch/parse error:', e);
+
+            if (!res.ok) {
+                console.warn(`⚠️ Sitemap fetch returned ${res.status} for ${url}`);
+                return null;
+            }
+
+            const contentType = res.headers.get('content-type') || '';
+            const buffer = Buffer.from(await res.arrayBuffer());
+            let xmlString;
+
+            // ✅ Detect and handle gzip-compressed sitemaps
+            if (url.endsWith('.gz') || contentType.includes('gzip')) {
+                try {
+                    xmlString = zlib.gunzipSync(buffer).toString('utf-8');
+                } catch (decompressErr) {
+                    console.error(`❌ Failed to decompress gzip sitemap: ${url}`, decompressErr.message);
+                    return null;
+                }
+            } else {
+                xmlString = buffer.toString('utf-8');
+            }
+
+            // ✅ Parse XML
+            const xmlDoc = new DOMParser().parseFromString(xmlString, 'application/xml');
+
+            // Optional sanity check
+            if (!xmlDoc || !xmlDoc.getElementsByTagName('urlset').length &&
+                !xmlDoc.getElementsByTagName('sitemapindex').length) {
+                console.warn(`⚠️ Parsed file didn’t look like a sitemap: ${url}`);
+            }
+
+            return xmlDoc;
+
+        } catch (error) {
+            console.error('❌ sitemap fetch/parse error:', error.message);
             return null;
         }
     }
@@ -65,10 +98,23 @@ export async function scrapeXmlSitemap(targetUrl) {
 
         // URL set
         const urlEls = Array.from(xmlDoc.getElementsByTagName('url'));
+
+        const normalize = (u) => {
+            try {
+                return new URL(u).href
+                    .replace(/\/$/, '')   // remove trailing slash
+                    .toLowerCase();        // normalize case
+            } catch {
+                return '';
+            }
+        };
+
         for (const el of urlEls) {
             const loc = el.getElementsByTagName('loc')[0]?.textContent?.trim();
+
             if (!loc) continue;
-            if (new URL(loc).href.replace(/\/$/, '') === new URL(targetUrl).href.replace(/\/$/, '')) {
+
+            if (normalize(loc) === normalize(targetUrl)) {
                 foundMatchIn.push(url);
             }
         }

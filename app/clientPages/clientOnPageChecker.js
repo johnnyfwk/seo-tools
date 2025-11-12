@@ -121,7 +121,7 @@ export default function ClientOnPageChecker() {
                 schemaMarkup: data.schemaMarkup || [],
                 hreflang: data.hreflang || [],
                 openGraph: data.openGraph || {},
-                xmlSitemap: data.xmlSitemap || {},
+                xmlSitemap: Object.keys(data.xmlSitemap || {}).length > 0 ? data.xmlSitemap : null,
                 pagination: data.pagination || [],
             });
 
@@ -203,6 +203,13 @@ export default function ClientOnPageChecker() {
             ? {
                 title: "Robots.txt",
                 component: <RobotsTxt robotsTxt={pageData.robotsTxt} />,
+            }
+            : null,
+
+        pageData.enteredUrlStatusCode === 200 && pageData.xmlSitemap
+            ? {
+                title: "XML Sitemap",
+                component: <XmlSitemap xmlSitemap={pageData.xmlSitemap} />
             }
             : null,
 
@@ -301,13 +308,6 @@ export default function ClientOnPageChecker() {
             ? {
                 title: "Open Graph",
                 component: <OpenGraph openGraph={pageData.openGraph} />,
-            }
-            : null,
-
-        pageData.enteredUrlStatusCode === 200
-            ? {
-                title: "XML Sitemap",
-                component: <XmlSitemap xmlSitemap={pageData.xmlSitemap} />
             }
             : null,
 
