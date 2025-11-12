@@ -17,11 +17,7 @@ export default function Home() {
             </h2>
 
             <h2>
-                <Link href="/link-checker">Backlink & Internal Checker</Link>
-            </h2>
-
-            <h2>
-                <Link href="/xml-sitemap-checker">XML Sitemap Checker</Link>
+                <Link href="/link-checker">Internal Link & Backlink Checker</Link>
             </h2>
         </div>
     );

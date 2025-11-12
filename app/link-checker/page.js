@@ -1,8 +1,8 @@
 import ClientLinkChecker from "../clientPages/clientLinkChecker";
 
 export const metadata = {
-    title: "Backlink & Internal Link Checker | SEO Tools",
-    description: "This is the meta description for the Backlink & Internal Link Checker page.",
+    title: "Internal Link & Backlink Checker | SEO Tools",
+    description: "This is the meta description for the Internal Link & Backlink Checker page.",
 }
 
 export default function LinkChecker() {

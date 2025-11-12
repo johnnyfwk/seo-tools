@@ -5,7 +5,7 @@ export const metadata = {
 
 export default function About() {
     return (
-        <>
+        <section>
             <h1>About</h1>
 
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis tristique urna tellus, sed dignissim enim aliquet eu. Nullam aliquet vitae enim vestibulum consequat. Aenean nisi nisl, vestibulum vitae pretium non, faucibus et nibh. Curabitur sed dolor non risus fringilla dictum sit amet id sem. Vestibulum vitae est eget magna semper dictum. Cras luctus mi et nulla rutrum egestas. Duis hendrerit ligula id est semper, fringilla varius lacus interdum. Cras dignissim risus sed nisi consequat varius.</p>
@@ -17,6 +17,6 @@ export default function About() {
             <p>Sed a nisi eu mi pulvinar scelerisque. Nam rutrum sapien laoreet mauris iaculis feugiat. Proin mauris risus, tincidunt vel dui ut, convallis dictum urna. Vivamus commodo placerat turpis sit amet lacinia. Nullam et ultrices est. Proin eleifend nibh libero, ut elementum ligula porttitor sit amet. Vestibulum at dolor orci.</p>
 
             <p>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Mauris non odio dignissim, ornare velit ac, faucibus justo. In vitae mauris nisi. Morbi pulvinar ligula a finibus tincidunt. Vivamus eu justo hendrerit, euismod lorem sit amet, bibendum ex. Quisque pellentesque enim at justo pretium, sed dignissim nisi bibendum. Pellentesque bibendum diam quam, eget auctor tellus posuere in. Donec at felis non nunc convallis fringilla id vitae ligula. Vestibulum laoreet ligula vel turpis commodo facilisis. Pellentesque eget semper tellus. Cras a semper mauris. Vestibulum eleifend rhoncus neque sit amet aliquet.</p>
-        </>
+        </section>
     )
 }
