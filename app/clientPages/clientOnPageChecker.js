@@ -21,6 +21,7 @@ import Images from "../components/images";
 import Hreflang from "../components/hreflang";
 import OpenGraph from "../components/openGraph";
 import XmlSitemap from "../components/xmlSitemap";
+import Pagination from "../components/pagination";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -46,6 +47,7 @@ export default function ClientOnPageChecker() {
         hreflang: [],
         openGraph: {},
         xmlSitemap: {},
+        pagination: [],
     };
 
     const [inputUrl, setInputUrl] = useState("");
@@ -120,6 +122,7 @@ export default function ClientOnPageChecker() {
                 hreflang: data.hreflang || [],
                 openGraph: data.openGraph || {},
                 xmlSitemap: data.xmlSitemap || {},
+                pagination: data.pagination || [],
             });
 
         } catch (err) {
@@ -306,7 +309,14 @@ export default function ClientOnPageChecker() {
                 title: "XML Sitemap",
                 component: <XmlSitemap xmlSitemap={pageData.xmlSitemap} />
             }
-            : null
+            : null,
+
+        pageData.enteredUrlStatusCode === 200
+            ? {
+                title: "Pagination",
+                component: <Pagination pagination={pageData.pagination} />,
+            }
+            : null,
     ].filter(Boolean);
 
     return (
