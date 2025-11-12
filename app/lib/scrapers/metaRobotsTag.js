@@ -1,4 +1,4 @@
-export function scrapeMetaRobotsTag($, headers = {}) {
+export function scrapeMetaRobotsTag($) {
     const robotsTag = $('meta[name="robots"]').attr('content')?.trim() || null;
     const robotsTagLower = robotsTag?.toLowerCase() || '';
 
