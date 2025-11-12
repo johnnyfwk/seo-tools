@@ -15,6 +15,11 @@ import { scrapeOpenGraph } from './openGraph';
 import { scrapeXmlSitemap } from './xmlSitemap';
 import { scrapePagination } from './pagination';
 
+function shouldScrape(optionKey, opts) {
+    if (opts[optionKey] === false) return false; // explicitly disabled
+    return opts[optionKey] === true || opts.all === true;
+}
+
 export async function scrapeWithCheerio(
     html,
     pageUrl,
@@ -33,59 +38,59 @@ export async function scrapeWithCheerio(
     const results = {};
 
     try {
-        if (opts.metaRobotsTag || opts.all) {
+        if (shouldScrape('metaRobotsTag', opts)) {
             Object.assign(results, scrapeMetaRobotsTag($, headers));
         }
 
-        if (opts.canonicalUrl || opts.all) {
+        if (shouldScrape('canonicalUrl', opts)) {
             Object.assign(results, await scrapeCanonicalTag($, pageUrl));
         }
 
-        if (opts.htmlLanguageAttribute || opts.all) {
+        if (shouldScrape('htmlLanguageAttribute', opts)) {
             Object.assign(results, scrapeHtmlLanguageAttribute($));
         }
 
-        if (opts.viewport || opts.all) {
+        if (shouldScrape('viewport', opts)) {
             Object.assign(results, scrapeViewport($));
         }
 
-        if (opts.metaTitle || opts.all) {
+        if (shouldScrape('metaTitle', opts)) {
             Object.assign(results, scrapeMetaTitle($));
         }
 
-        if (opts.metaDescription || opts.all) {
+        if (shouldScrape('metaDescription', opts)) {
             Object.assign(results, scrapeMetaDescription($));
         }
 
-        if (opts.headings || opts.all) {
+        if (shouldScrape('headings', opts)) {
             Object.assign(results, scrapeHeadings($));
         }
 
-        if (opts.links || opts.all) {
+        if (shouldScrape('links', opts)) {
             Object.assign(results, await scrapeLinks($, pageUrl));
         }
 
-        if (opts.schema || opts.all) {
+        if (shouldScrape('schema', opts)) {
             Object.assign(results, scrapeSchemaMarkup($));
         }
 
-        if (opts.images || opts.all) {
+        if (shouldScrape('images', opts)) {
             Object.assign(results, await scrapeImages($, pageUrl, { checkStatus: true }));
         }
 
-        if (opts.hreflang || opts.all) {
+        if (shouldScrape('hreflang', opts)) {
             Object.assign(results, await scrapeHreflang($, pageUrl, headers));
         }
 
-        if (opts.openGraph || opts.all) {
+        if (shouldScrape('openGraph', opts)) {
             Object.assign(results, await scrapeOpenGraph($, pageUrl));
         }
 
-        if (opts.xmlSitemap || opts.all) {
+        if (shouldScrape('xmlSitemap', opts)) {
             Object.assign(results, await scrapeXmlSitemap(pageUrl));
         }
 
-        if (opts.pagination || opts.all) {
+        if (shouldScrape('pagination', opts)) {
             Object.assign(results, await scrapePagination($, pageUrl, headers));
         }
     } catch (err) {
