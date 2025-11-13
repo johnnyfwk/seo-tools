@@ -1,111 +1,126 @@
 import * as cheerio from 'cheerio';
-import { scrapeCanonicalTag } from './canonicalTag';
+import { fetchRedirectInfo } from '../utils/fetchRedirectInfo';
+import { scrapeCanonicalTags } from './canonicalTags';
 import { checkRobotsTxt } from './robotsTxt';
+import { scrapeMetaRobotsTag } from './metaRobotsTag';
 
 export async function scrapeHreflang($, pageUrl, headers = {}) {
     const hreflangs = [];
 
     // 1️⃣ Collect <link hreflang>
-    $('link[hreflang]').each((i, el) => {
+    $('link[hreflang]').each((_, el) => {
         const href = $(el).attr('href')?.trim();
         const hreflang = $(el).attr('hreflang')?.trim();
-
-        hreflangs.push({
-            source: '<link>',
-            hreflang,
-            url: href,
-            statusCode: null,
-            isIndexable: null,
-        });
+        if (href && hreflang) {
+            hreflangs.push({ source: '<link>', hreflang, url: href });
+        }
     });
 
-    // 2️⃣ Collect hreflangs from HTTP headers (if any)
+    // 2️⃣ Collect hreflangs from headers
     const linkHeader = headers['link'] || headers['Link'];
     if (linkHeader) {
         const matches = linkHeader.matchAll(
             /<([^>]+)>;\s*(?:rel=["']?alternate["']?;\s*hreflang=["']?([a-zA-Z0-9-]+)["']?|hreflang=["']?([a-zA-Z0-9-]+)["']?;\s*rel=["']?alternate["']?)/gi
         );
         for (const match of matches) {
-            hreflangs.push({
-                source: 'HTTP header',
-                hreflang: match[2].toLowerCase(),
-                url: match[1],
-                statusCode: null,
-                isIndexable: null,
-            });
+            const hreflang = (match[2] || match[3] || '').toLowerCase();
+            const href = match[1];
+            hreflangs.push({ source: 'HTTP header', hreflang, url: href });
         }
     }
 
     const results = [];
 
-    // 3️⃣ Fetch each hreflang URL
-    for (const item of hreflangs) {
-        if (!item.url) {
-            results.push(item);
-            continue;
-        }
-
+    // Helper: normalize URLs for comparison
+    const normalizeUrl = (url) => {
         try {
-            const absoluteUrl = new URL(item.url, pageUrl).href;
-            let statusCode = null;
-            let isIndexable = false;
-            let isNoindex = false;
-            let canonical = absoluteUrl;
-            let robotsTxtCheck = { allowed: true, reason: 'Not checked' };
+            const u = new URL(url);
+            return `${u.origin}${u.pathname.replace(/\/$/, '')}`.toLowerCase();
+        } catch {
+            return url.toLowerCase();
+        }
+    };
 
-            const response = await fetch(absoluteUrl, {
-                method: 'GET',
-                headers: {
-                    'User-Agent': 'Mozilla/5.0 (compatible; SEO-Crawler/1.0)',
-                },
-                redirect: 'manual', // do not follow redirects
-            });
-
-            statusCode = response.status;
-            
-            // 4️⃣ Only check indexability if status is 200
-            if (statusCode === 200) {
-                const html = await response.text();
-                const $page = cheerio.load(html);
-
-                canonical = scrapeCanonicalTag($page).canonicalUrl || absoluteUrl;
-                const metaRobots = $page('meta[name="robots" i]')
-                    .map((i, el) => 
-                        $page(el).attr('content') || ''
-                    )
-                    .get()
-                    .join(',')
-                    .toLowerCase();
-
-                isNoindex = metaRobots.includes('noindex');
-                robotsTxtCheck = await checkRobotsTxt(absoluteUrl, '*');
-
-                isIndexable = !isNoindex && robotsTxtCheck.allowed;
-            } else {
-                isIndexable = false;
+    // 3️⃣ Process each hreflang URL
+    for (const item of hreflangs) {
+        try {
+            if (!item.url) {
+                results.push({ ...item, error: 'Missing URL' });
+                continue;
             }
 
+            const absoluteUrl = new URL(item.url, pageUrl).href;
+
+            // --- 3a. Check hreflang URL ---
+            let canonicalData = { canonicalTags: [] };
+            let metaRobotsData = { metaRobotsTag: { allowsIndexing: true, allowsFollowing: true } };
+            let robotsTxtCheck = { allowed: true, reason: 'Not checked' };
+            let hreflangUrlStatusCode = null;
+
+            try {
+                const res = await fetch(absoluteUrl, { method: 'GET', redirect: 'manual' });
+                hreflangUrlStatusCode = res.status;
+                if (res.ok) {
+                    const html = await res.text();
+                    const $page = cheerio.load(html);
+
+                    canonicalData = await scrapeCanonicalTags($page, absoluteUrl);
+                    metaRobotsData = scrapeMetaRobotsTag($page);
+                    robotsTxtCheck = await checkRobotsTxt(absoluteUrl);
+                }
+            } catch (err) {
+                results.push({
+                    ...item,
+                    hreflangUrl: absoluteUrl,
+                    hreflangUrlStatusCode,
+                    error: `Failed to fetch hreflang URL: ${err.message}`,
+                });
+                continue;
+            }
+
+            // --- 3b. Get final URL after redirects ---
+            let finalUrl = absoluteUrl;
+            let finalUrlStatusCode = null;
+
+            try {
+                const redirectInfo = await fetchRedirectInfo(absoluteUrl);
+                finalUrl = redirectInfo.finalUrl || absoluteUrl;
+                finalUrlStatusCode = redirectInfo.finalUrlStatusCode || null;
+            } catch {
+                finalUrlStatusCode = 'Error';
+            }
+
+            // --- 3c. Check if hreflang URL matches the first canonical tag ---
+            let matchesCanonical = null;
+            const firstCanonical = canonicalData.canonicalTags[0];
+            if (firstCanonical && firstCanonical.resolvedUrl) {
+                matchesCanonical = normalizeUrl(absoluteUrl) === normalizeUrl(firstCanonical.resolvedUrl);
+            }
+
+            const hreflangUrlIsIndexable =
+                hreflangUrlStatusCode === 200 &&
+                matchesCanonical &&
+                metaRobotsData.metaRobotsTag.allowsIndexing &&
+                robotsTxtCheck.allowed;
+
             results.push({
                 ...item,
-                statusCode,
-                finalUrl: absoluteUrl,
-                isIndexable,
-                robotsTxtCheck,
-                isNoindex,
-                canonicalUrl: canonical,
+                hreflangUrl: absoluteUrl,
+                hreflangUrlStatusCode,
+                hreflangUrlIsIndexable,
+                canonicalData: {
+                    canonicalTags: canonicalData.canonicalTags,
+                    matchesFirstCanonicalTag: matchesCanonical,
+                },
+                metaRobots: metaRobotsData.metaRobotsTag,
+                robotsTxt: robotsTxtCheck,
+                finalUrl,
+                finalUrlStatusCode,
             });
         } catch (err) {
-            results.push({
-                ...item,
-                statusCode: 'Error',
-                error: err.message,
-                finalUrl: item.url,
-                isIndexable: null,
-            });
+            results.push({ ...item, error: err.message });
         }
     }
 
-    return {
-        hreflang: results,
-    };
+    return { hreflang: results };
 }

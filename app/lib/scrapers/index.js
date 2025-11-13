@@ -4,7 +4,7 @@ import { scrapeMetaRobotsTag } from './metaRobotsTag';
 import { scrapeMetaTitle } from './metaTitle';
 import { scrapeMetaDescription } from './metaDescription';
 import { scrapeHeadings } from './headings';
-import { scrapeCanonicalTag } from './canonicalTag';
+import { scrapeCanonicalTags } from './canonicalTags';
 import { scrapeHtmlLanguageAttribute } from './htmlLanguageAttribute';
 import { scrapeViewport } from './viewport';
 import { scrapeLinks } from './links';
@@ -42,8 +42,8 @@ export async function scrapeWithCheerio(
             Object.assign(results, scrapeMetaRobotsTag($, headers));
         }
 
-        if (shouldScrape('canonicalUrl', opts)) {
-            Object.assign(results, await scrapeCanonicalTag($, pageUrl));
+        if (shouldScrape('canonicalTags', opts)) {
+            Object.assign(results, await scrapeCanonicalTags($, pageUrl));
         }
 
         if (shouldScrape('htmlLanguageAttribute', opts)) {

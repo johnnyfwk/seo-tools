@@ -67,19 +67,25 @@ export default function InternalLinks({ internalLinks }) {
                         </td>
 
                         <td style={{ textAlign: 'left' }}>
-                            <Link href={link.finalUrl} target="_blank">{link.finalUrl}</Link>
+                            {link.statusCode === 200
+                                ? "-"
+                                : <Link href={link.finalUrl} target="_blank">{link.finalUrl}</Link>
+                            }
                         </td>
 
                         <td
-                            className={link.finalUrlStatusCode === 200
-                                ? "success-background"
-                                : link.finalUrlStatusCode === null
-                                    ? ""
+                            className={link.statusCode === 200 || link.finalUrlStatusCode === null
+                                ? ""
+                                : link.finalUrlStatusCode === 200
+                                    ? "success-background"
                                     : "error-background"
                             }
                             style={{ textAlign: 'center' }}
                         >
-                            {link.finalUrlStatusCode || "N/A"}
+                            {link.statusCode === 200
+                                ? "-"
+                                : link.finalUrlStatusCode || "N/A"
+                            }
                         </td>
 
                         <td

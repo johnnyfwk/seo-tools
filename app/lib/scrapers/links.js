@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio';
-import { scrapeCanonicalTag } from './canonicalTag';
+import { scrapeCanonicalTags } from './canonicalTags';
 import { checkRobotsTxt } from './robotsTxt';
 import { scrapeMetaRobotsTag } from './metaRobotsTag';
 import * as utils from '@/app/lib/utils/utils';
@@ -137,7 +137,7 @@ export async function scrapeLinks($, pageUrl) {
             const href = $(el).attr('href');
             if (!href) return null;
 
-            const anchorText = $(el).text().trim();
+            const anchorText = $(el).text();
             const isImageHref = /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(href);
 
             const innerImg = $(el).find('img').first();
@@ -194,12 +194,17 @@ export async function scrapeLinks($, pageUrl) {
     const canonicalCache = new Map();
 
     async function cachedCheckRobotsTxt(url, agent) {
-        const origin = new URL(url).origin;
-        if (!robotsCache.has(origin)) {
-            const result = await checkRobotsTxt(url, agent);
-            robotsCache.set(origin, result);
+        try {
+            const origin = new URL(url).origin;
+            if (!robotsCache.has(origin)) {
+                const result = await checkRobotsTxt(url, agent);
+                robotsCache.set(origin, result);
+            }
+            return robotsCache.get(origin);
+        } catch (err) {
+            // Default allow if robots.txt fails to fetch
+            return { allowed: true, reason: `Robots fetch error: ${err.message}` };
         }
-        return robotsCache.get(origin);
     }
 
     async function fetchHtmlAndMeta(url) {
@@ -208,17 +213,19 @@ export async function scrapeLinks($, pageUrl) {
         if (canonicalCache.has(url) && robotsCache.has(origin)) {
             const cachedCanonical = canonicalCache.get(url);
             return {
-                canonicalUrl: cachedCanonical,
+                canonicalUrl: cachedCanonical.resolvedUrl,
                 isNoindex: !robotsCache.get(origin).allowed,
                 robotsTxtCheck: robotsCache.get(origin),
-                isSelfReferentialCanonical: cachedCanonical === url,
+                matchesFirstCanonicalTag: cachedCanonical.resolvedUrlMatchesOriginalUrl,
+                fetchError: null,
             };
         }
 
         let canonicalUrl = url;
         let isNoindex = false;
         let robotsTxtCheck = { allowed: true, reason: 'Default allow' };
-        let isSelfReferentialCanonical = true;
+        let matchesFirstCanonicalTag = null;
+        let fetchError = null;
 
         try {
             const controller = new AbortController();
@@ -230,27 +237,42 @@ export async function scrapeLinks($, pageUrl) {
             });
             clearTimeout(timeoutId);
 
-            if (!res.ok) return { canonicalUrl, isNoindex, robotsTxtCheck, isSelfReferentialCanonical };
-            if (!res.headers.get('content-type')?.includes('text/html')) return { canonicalUrl, isNoindex, robotsTxtCheck, isSelfReferentialCanonical };
+            if (!res.ok || !res.headers.get('content-type')?.includes('text/html')) {
+                fetchError = `Non-HTML or bad status: ${res.status}`;
+            } else {
+                const html = await res.text();
+                const $page = cheerio.load(html);
 
-            const html = await res.text();
-            const $page = cheerio.load(html);
+                const canonicalData = await scrapeCanonicalTags($page, url);
+                const firstCanonical = canonicalData.canonicalTags[0];
 
-            canonicalUrl = scrapeCanonicalTag($page).canonicalUrl || url;
-            isSelfReferentialCanonical = canonicalUrl === url;
+                if (firstCanonical) {
+                    canonicalUrl = firstCanonical.resolvedUrl || url;
+                    matchesFirstCanonicalTag = firstCanonical.resolvedUrlMatchesOriginalUrl;
+                }
 
-            const metaRobots = scrapeMetaRobotsTag($page);
-            if (!metaRobots.metaRobotsTag.allowsIndexing) isNoindex = true;
+                const metaRobots = scrapeMetaRobotsTag($page);
+                if (!metaRobots.metaRobotsTag.allowsIndexing) isNoindex = true;
+            }
 
             robotsTxtCheck = await cachedCheckRobotsTxt(url, '*');
 
-            canonicalCache.set(url, canonicalUrl);
-            robotsCache.set(origin, robotsTxtCheck);
+            canonicalCache.set(url, {
+                resolvedUrl: canonicalUrl,
+                resolvedUrlMatchesOriginalUrl: matchesFirstCanonicalTag,
+            });
         } catch (err) {
-            console.warn(`Failed to fetch HTML/meta for ${url}:`, err.message);
+            fetchError = err.message;
+            robotsTxtCheck = await cachedCheckRobotsTxt(url, '*'); // fallback to robots
         }
 
-        return { canonicalUrl, isNoindex, robotsTxtCheck, isSelfReferentialCanonical };
+        return {
+            canonicalUrl,
+            isNoindex,
+            robotsTxtCheck,
+            matchesFirstCanonicalTag,
+            fetchError
+        };
     }
 
     async function processLink(link, internal = true) {
@@ -275,14 +297,14 @@ export async function scrapeLinks($, pageUrl) {
         let canonicalUrl = link.url;
         let isNoindex = false;
         let robotsTxtCheck = { allowed: true, reason: 'Default allow' };
-        let isSelfReferentialCanonical = true;
+        let matchesFirstCanonicalTag = null;
 
         if (internal && enteredUrlStatus === 200 && !isRedirected) {
             const metaData = await fetchHtmlAndMeta(link.url);
             canonicalUrl = metaData.canonicalUrl;
             isNoindex = metaData.isNoindex;
             robotsTxtCheck = metaData.robotsTxtCheck;
-            isSelfReferentialCanonical = metaData.isSelfReferentialCanonical;
+            matchesFirstCanonicalTag = metaData.matchesFirstCanonicalTag;
         }
 
         return {
@@ -295,7 +317,7 @@ export async function scrapeLinks($, pageUrl) {
             canonicalUrl,
             isNoindex,
             robotsTxtCheck,
-            isSelfReferentialCanonical,
+            matchesFirstCanonicalTag,
             isIndexable: internal
                 ? enteredUrlStatus === 200 && !isRedirected && !isNoindex && robotsTxtCheck.allowed
                 : undefined,

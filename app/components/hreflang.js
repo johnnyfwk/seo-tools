@@ -13,11 +13,12 @@ export default function Hreflang({ hreflang }) {
                     <th style={{ textAlign: 'center' }}>Source</th>
                     <th style={{ textAlign: 'center' }}>Hreflang</th>
                     <th style={{ textAlign: 'left' }}>URL</th>
-                    <th style={{ textAlign: 'center' }}>Hreflang URL Status Code</th>
+                    <th style={{ textAlign: 'center' }}>Status Code</th>
                     <th style={{ textAlign: 'left' }}>Final URL</th>
+                    <th style={{ textAlign: 'center' }}>Final URL Status Code</th>
                     <th style={{ textAlign: 'center' }}>Hreflang URL is allowed by Robots.txt?</th>
                     <th style={{ textAlign: 'center' }}>Hreflang URL has noindex tag?</th>
-                    <th style={{ textAlign: 'center' }}>Hreflang URL has self-referencing canonical URL?</th>
+                    <th style={{ textAlign: 'center' }}>Canonical URL matches Hreflang URL?</th>
                     <th style={{ textAlign: 'center' }}>Hreflang URL is indexable?</th>
                 </tr>
             </thead>
@@ -43,26 +44,48 @@ export default function Hreflang({ hreflang }) {
 
                             <td
                                 style={{ textAlign: 'center' }}
-                                className={hreflang.statusCode === 200
+                                className={hreflang.hreflangUrlStatusCode === 200
                                     ? "success-background"
                                     : "error-background"
                                 }
                             >
-                                {hreflang.statusCode || "Fetch failed"}
+                                {hreflang.hreflangUrlStatusCode || "Fetch failed"}
                             </td>
 
                             <td style={{ textAlign: 'left' }}>
-                                <Link href={hreflang.finalUrl} target="_blank">{hreflang.finalUrl}</Link>
+                                {hreflang.hreflangUrlStatusCode !== 200
+                                    ? <Link
+                                        href={hreflang.finalUrl}
+                                        target="_blank"
+                                        rel="noreferrer noopener"
+                                    >{hreflang.finalUrl}</Link>
+                                    : "-"
+                                }
                             </td>
 
                             <td
                                 style={{ textAlign: 'center' }}
-                                className={hreflang.robotsTxtCheck?.allowed
+                                className={hreflang.hreflangUrlStatusCode === 200
+                                    ? ""
+                                    : hreflang.finalUrlStatusCode === 200                                    
+                                        ? "success-background"
+                                        : "error-background"
+                                }
+                            >
+                                {hreflang.hreflangUrlStatusCode === 200
+                                    ? "-"
+                                    : hreflang.finalUrlStatusCode || "Fetch failed"
+                                }
+                            </td>
+
+                            <td
+                                style={{ textAlign: 'center' }}
+                                className={hreflang.robotsTxt?.allowed
                                     ? "success-background"
                                     : "error-background"
                                 }
                             >
-                                {hreflang.robotsTxtCheck?.allowed ? "Yes" : "No"}
+                                {hreflang.robotsTxt?.allowed ? "Yes" : "No"}
                             </td>
 
                             <td
@@ -77,22 +100,24 @@ export default function Hreflang({ hreflang }) {
 
                             <td
                                 style={{ textAlign: 'center' }}
-                                className={utils.normaliseUrl(hreflang.url) === utils.normaliseUrl(hreflang.canonicalUrl)
+                                className={hreflang.canonicalData.matchesFirstCanonicalTag
                                     ? "success-background"
                                     : "warning-background"
                                 }
                             >
-                                {utils.normaliseUrl(hreflang.url) === utils.normaliseUrl(hreflang.canonicalUrl) ? "Yes" : "No"}
+                                {hreflang.canonicalData.matchesFirstCanonicalTag 
+                                    ? "Yes"
+                                    : "No"
+                                }
                             </td>
 
                             <td
                                 style={{ textAlign: 'center' }}
-                                className={hreflang.isIndexable
+                                className={hreflang.hreflangUrlIsIndexable
                                     ? "success-background"
                                     : "error-background"
                                 }
-                            >{hreflang.isIndexable ? "Yes" : "No"}</td>
-                            
+                            >{hreflang.hreflangUrlIsIndexable ? "Yes" : "No"}</td>
                         </tr>
                     )
                 })}

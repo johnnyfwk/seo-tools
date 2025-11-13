@@ -60,21 +60,25 @@ export default function ExternalLinks({ externalLinks }) {
                         </td>
 
                         <td style={{ textAlign: 'left' }}>
-                            <Link href={link.finalUrl || "#"} target="_blank">
-                                {link.finalUrl}
-                            </Link>
+                            {link.statusCode === 200
+                                ? "-"
+                                : <Link href={link.finalUrl} target="_blank">{link.finalUrl}</Link>
+                            }
                         </td>
 
                         <td
                             style={{ textAlign: 'center' }}
-                            className={link.finalUrlStatusCode === 200
-                                ? "success-background"
-                                : link.finalUrlStatusCode === null
-                                    ? ""
+                            className={link.statusCode === 200 || link.finalUrlStatusCode === null
+                                ? ""
+                                : link.finalUrlStatusCode === 200
+                                    ? "success-background"
                                     : "error-background"
                             }
                         >
-                            {link.finalUrlStatusCode || "N/A"}
+                            {link.statusCode === 200
+                                ? "-"
+                                : link.finalUrlStatusCode || "N/A"
+                            }
                         </td>
                     </tr>
                 ))}
