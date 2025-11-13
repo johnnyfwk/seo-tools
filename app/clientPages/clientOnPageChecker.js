@@ -11,7 +11,7 @@ import MetaDescription from "../components/metaDescription";
 import Headings from "../components/headings";
 import RobotsTxt from "../components/robotsTxt";
 import MetaRobotsTag from "../components/metaRobotsTag";
-import CanonicalTag from "../components/canonicalTag";
+import CanonicalTags from "../components/canonicalTags";
 import HtmlLanguageAttribute from "../components/htmlLanguageAttribute";
 import Viewport from "../components/viewport";
 import InternalLinks from "../components/internalLinks";
@@ -35,7 +35,7 @@ export default function ClientOnPageChecker() {
         redirectChain: [],
         robotsTxt: null,
         metaRobotsTag: null,
-        canonicalTag: {},
+        canonicalTags: [],
         htmlLanguageAttribute: null,
         viewport: null,
         metaTitle: [],
@@ -110,7 +110,7 @@ export default function ClientOnPageChecker() {
                 ...data,
                 scrapeDurationMs: elapsedMs,
                 metaRobotsTag: data.metaRobotsTag || "",
-                canonicalTag: data.canonicalTag || {},
+                canonicalTags: data.canonicalTags || [],
                 htmlLanguageAttribute: data.htmlLanguageAttribute || "",
                 viewport: data.viewport || "",
                 metaTitle: data.metaTitle || [],
@@ -157,7 +157,7 @@ export default function ClientOnPageChecker() {
                 statusCode={pageData.enteredUrlStatusCode}
                 isAllowedByRobotsTxt={pageData.robotsTxt?.allowed ?? true}
                 metaRobotsTagAllowsIndexing={pageData.metaRobotsTag?.allowsIndexing ?? true}
-                canonicalTagIsSelfReferential={pageData.canonicalTag?.isSelfReferential ?? true}
+                canonicalTagIsSelfReferential={pageData.canonicalTags?.isSelfReferential ?? true}
             />
         },
         {
@@ -222,8 +222,8 @@ export default function ClientOnPageChecker() {
 
         pageData.enteredUrlStatusCode === 200
             ? {
-                title: "Canonical Tag",
-                component: <CanonicalTag canonicalTag={pageData.canonicalTag} />,
+                title: "Canonical Tags",
+                component: <CanonicalTags canonicalTags={pageData.canonicalTags} />,
             }
             : null,
         

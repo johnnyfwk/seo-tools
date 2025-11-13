@@ -1,8 +1,10 @@
 import Link from "next/link";
 
 export default function OpenGraph({ openGraph }) {
-    if (Object.values(openGraph.data).every(value => !value)) {
-        return <p>No open graph tags found.</p>
+    const data = openGraph?.data;
+
+    if (!data || Object.values(data).every(value => !value)) {
+        return <p>No open graph tags found.</p>;
     }
 
     const ogUrlStatusCodeClassName = openGraph.ogUrlRedirectInfo.enteredUrlStatusCode === 200

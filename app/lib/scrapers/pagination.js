@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio';
-import { scrapeCanonicalTag } from './canonicalTag.js';
+import { scrapeCanonicalTags } from './canonicalTags.js';
 
 export async function scrapePagination($, pageUrl, headers = {}) {
     const paginationResults = [];
@@ -27,7 +27,7 @@ export async function scrapePagination($, pageUrl, headers = {}) {
     paginationSelectors.forEach((selector) => {
         $(selector).each((_, el) => {
             const href = $(el).attr('href');
-            const text = $(el).text().trim();
+            const text = $(el).text();
             const absUrl = resolveUrl(href);
             if (absUrl && !foundUrls.has(absUrl)) {
                 foundUrls.add(absUrl);
@@ -41,9 +41,10 @@ export async function scrapePagination($, pageUrl, headers = {}) {
             anchorText: link.text,
             url: link.href,
             statusCode: null,
-            canonicalUrl: null,
             finalUrl: null,
             finalUrlStatusCode: null,
+            canonicalTags: [],
+            pageIssues: [],
         };
 
         try {
@@ -63,8 +64,10 @@ export async function scrapePagination($, pageUrl, headers = {}) {
 
             const html = await res.text();
             const $$ = cheerio.load(html);
-            const canonicalData = await scrapeCanonicalTag($$, link.href);
-            entry.canonicalUrl = canonicalData.canonicalUrl || null;
+
+            const canonicalData = await scrapeCanonicalTags($$, link.href);
+            entry.canonicalTags = canonicalData.canonicalTags;
+            entry.pageIssues = canonicalData.pageIssues;
 
         } catch (err) {
             console.error(`Pagination fetch failed for ${link.href}:`, err.message);
