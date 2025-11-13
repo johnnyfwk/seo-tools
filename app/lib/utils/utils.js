@@ -110,3 +110,8 @@ export function createLimiter(maxConcurrency) {
         });
     };
 }
+
+export function determineIndexability({statusCode, isNoindex, robots}) {
+    if (statusCode === null || isNoindex === null || robots === null) return 'N/A';
+    return statusCode === 200 && !isNoindex && robots.allowed;
+}
