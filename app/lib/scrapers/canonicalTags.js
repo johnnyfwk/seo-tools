@@ -18,7 +18,14 @@ export async function scrapeCanonicalTags($, pageUrl) {
 
     const normalize = url => url.replace(/\/$/, '').toLowerCase();
 
+    const defaultHeaders = {
+        'User-Agent': 'Mozilla/5.0 (compatible; SEO-Checker/1.0; +https://example.com/bot)',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-GB,en;q=0.9',
+    };
+
     const results = [];
+
     for (const originalUrl of canonicalTags) {
         let resolvedUrl;
         const issues = [];
@@ -39,7 +46,10 @@ export async function scrapeCanonicalTags($, pageUrl) {
         let resolvedUrlStatusCode = null;
         try {
             if (resolvedUrl) {
-                const res = await fetch(resolvedUrl, { method: 'HEAD' });
+                const res = await fetch(resolvedUrl, {
+                    method: 'HEAD',
+                    headers: defaultHeaders,
+                });
                 resolvedUrlStatusCode = res.status;
                 if (resolvedUrlStatusCode >= 300 && resolvedUrlStatusCode < 400) issues.push(`Canonical URL redirects (${resolvedUrlStatusCode})`);
                 else if (resolvedUrlStatusCode >= 400) issues.push(`Canonical returns error (${resolvedUrlStatusCode})`);
