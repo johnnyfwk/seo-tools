@@ -1,3 +1,5 @@
+import * as utils from '@/app/lib/utils/utils';
+
 export async function scrapeCanonicalTags($, pageUrl) {
     const pageIssues = [];
 
@@ -15,8 +17,6 @@ export async function scrapeCanonicalTags($, pageUrl) {
         pageIssues.push("No canonical tag found.");
         return { canonicalTags: [], pageIssues };
     }
-
-    const normalize = url => url.replace(/\/$/, '').toLowerCase();
 
     const defaultHeaders = {
         'User-Agent': 'Mozilla/5.0 (compatible; SEO-Checker/1.0; +https://example.com/bot)',
@@ -39,7 +39,7 @@ export async function scrapeCanonicalTags($, pageUrl) {
 
         let resolvedUrlMatchesOriginalUrl = null;
         if (resolvedUrl) {
-            resolvedUrlMatchesOriginalUrl = normalize(resolvedUrl) === normalize(pageUrl);
+            resolvedUrlMatchesOriginalUrl = utils.normaliseUrlKeepSearch(resolvedUrl) === utils.normaliseUrlKeepSearch(pageUrl);
             if (!resolvedUrlMatchesOriginalUrl) issues.push(`Canonical URL points elsewhere: ${resolvedUrl}`);
         }
 
