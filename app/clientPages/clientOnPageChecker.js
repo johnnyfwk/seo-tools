@@ -14,8 +14,7 @@ import MetaRobotsTag from "../components/metaRobotsTag";
 import CanonicalTags from "../components/canonicalTags";
 import HtmlLanguageAttribute from "../components/htmlLanguageAttribute";
 import Viewport from "../components/viewport";
-import InternalLinks from "../components/internalLinks";
-import ExternalLinks from "../components/externalLinks";
+import Links from "../components/links";
 import SchemaMarkup from "../components/schemaMarkup";
 import Images from "../components/images";
 import Hreflang from "../components/hreflang";
@@ -272,14 +271,14 @@ export default function ClientOnPageChecker() {
         pageData.enteredUrlStatusCode === 200
             ? {
                 title: `Internal Links (${pageData.links?.internal?.length || 0})`,
-                component: <InternalLinks internalLinks={pageData.links?.internal || []} />,
+                component: <Links links={pageData.links?.internal || []} />,
             }
             : null,
 
         pageData.enteredUrlStatusCode === 200
             ? {
                 title: `External Links (${pageData.links?.external?.length || 0})`,
-                component: <ExternalLinks externalLinks={pageData.links?.external || []} />,
+                component: <Links links={pageData.links?.external || []} />,
             }
             : null,
         

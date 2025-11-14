@@ -111,7 +111,30 @@ export function createLimiter(maxConcurrency) {
     };
 }
 
-export function determineIndexability({statusCode, isNoindex, robots}) {
-    if (statusCode === null || isNoindex === null || robots === null) return 'N/A';
-    return statusCode === 200 && !isNoindex && robots.allowed;
+export function evaluateIndexability({ statusCode, robotsTxt, canonicalData, metaRobots }) {
+    const reasons = [];
+    let indexable = true;
+
+    if (statusCode !== 200) {
+        indexable = false;
+        reasons.push(`Non-200 final status (${statusCode})`);
+    }
+
+    if (robotsTxt && !robotsTxt.allowed) {
+        indexable = false;
+        reasons.push("Blocked by robots.txt");
+    }
+
+    if (metaRobots && !metaRobots.allowsIndexing) {
+        indexable = false;
+        reasons.push("Meta robots: noindex");
+    }
+
+    const canonical = canonicalData?.canonicalTags?.[0];
+    if (canonical && canonical.resolvedUrlMatchesOriginalUrl === false) {
+        indexable = false;
+        reasons.push(`Canonical points elsewhere (${canonical.resolvedUrl})`);
+    }
+
+    return { indexable, reasons };
 }
