@@ -71,11 +71,14 @@ export default function OpenGraph({ openGraph }) {
                         <tr>
                             <td>Final URL</td>
                             <td>
-                                <Link
-                                    href={openGraph.ogUrlRedirectInfo.finalUrl}
-                                    target="_blank"
-                                    rel="noreferrer noopener"
-                                >{openGraph.ogUrlRedirectInfo.finalUrl}</Link>
+                                {openGraph.ogUrlRedirectInfo?.finalUrl
+                                    ? <Link
+                                        href={openGraph.ogUrlRedirectInfo.finalUrl}
+                                        target="_blank"
+                                        rel="noreferrer noopener"
+                                    >{openGraph.ogUrlRedirectInfo.finalUrl}</Link>
+                                    : "-"
+                                }
                             </td>
                         </tr>
                         <tr>
