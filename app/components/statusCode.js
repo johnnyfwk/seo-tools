@@ -30,7 +30,7 @@ export default function StatusCode({ statusCode, fetchError }) {
         const message = statusMessages[code] || "Unknown Status";
         displayText = message;
     } else {
-        displayText = "No status code available";
+        displayText = "No status code available.";
     }
 
     return (
