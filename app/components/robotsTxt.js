@@ -14,12 +14,12 @@ export default function RobotsTxt({ robotsTxt }) {
     return (
         <div>
             <p>
-                <strong>URL:</strong>{" "}
+                <strong>URL: </strong>
                 {url ? <Link href={url} target="_blank" rel="noopener noreferrer">{url}</Link> : "N/A"}
             </p>
             <p>
-                <strong>URL is allowed to be crawled by bots?:</strong>{" "}
-                {allowed ? "✅ Yes" : "🚫 No"}
+                <strong>Allows crawling by bots?: </strong>
+                {allowed ? "Yes ✅" : "No 🚫"}
             </p>
 
             {fetchError
