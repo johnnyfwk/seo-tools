@@ -19,6 +19,7 @@ export default function RedirectChain({ redirectChain }) {
                     return (
                         <tr key={i}>
                             <td style={{ textAlign: 'center' }}>{i + 1}</td>
+
                             <td style={{ textAlign: 'left' }}>
                                 <Link
                                     href={redirect.url}
@@ -26,7 +27,18 @@ export default function RedirectChain({ redirectChain }) {
                                     rel="noopener noreferrer"
                                 >{redirect.url}</Link>
                             </td>
-                            <td style={{ textAlign: 'center' }}>{redirect.statusCode}</td>
+
+                            <td
+                                style={{ textAlign: 'center' }}
+                                className={redirect.statusCode === null
+                                    ? ""
+                                    : redirect.statusCode === 200
+                                        ? "success-background"
+                                        : redirect.statusCode >= 300 && redirect.statusCode < 400
+                                            ? "warning-background"
+                                            : "error-background"
+                                }
+                            >{redirect.statusCode}</td>
                         </tr>
                     )
                 })}
