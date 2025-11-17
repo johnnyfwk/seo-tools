@@ -1,4 +1,4 @@
-export default function StatusCode({ statusCode, fetchError }) {
+export default function StatusCode({ statusCode }) {
     const code = Number(statusCode);
 
     const statusMessages = {
@@ -24,9 +24,7 @@ export default function StatusCode({ statusCode, fetchError }) {
 
     let displayText;
 
-    if (fetchError) {
-        displayText = `Fetch error: ${fetchError}`;
-    } else if (code) {
+    if (code) {
         const message = statusMessages[code] || "Unknown Status";
         displayText = message;
     } else {
