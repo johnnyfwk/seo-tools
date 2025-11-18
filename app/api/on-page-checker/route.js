@@ -3,6 +3,11 @@ import { checkRobotsTxt } from "@/app/lib/utils/checkRobotsTxt";
 import { scrapeWithCheerio } from "@/app/lib/scrapers";
 
 export async function POST(request) {
+    let headers = {};
+    let enteredUrlStatusCode = null;
+    let finalUrl = null;
+    let finalUrlStatusCode = null;
+    
     try {
         const {
             enteredUrl,
@@ -21,24 +26,34 @@ export async function POST(request) {
 
         // FOLLOW REDIRECTS
         const {
-            finalUrl,
-            finalUrlStatusCode,
+            finalUrl: resolvedFinalUrl,
+            finalUrlStatusCode: resolvedFinalUrlStatusCode,
             redirects,
         } = await getRedirects(enteredUrl);
 
-        const enteredUrlStatusCode = redirects?.[0]?.statusCode ?? null;
+        finalUrl = resolvedFinalUrl;
+        finalUrlStatusCode = resolvedFinalUrlStatusCode;
+        enteredUrlStatusCode = redirects?.[0]?.statusCode ?? null;
 
         // CHECK ROBOTS.TXT
         const robotsTxt = await checkRobotsTxt(finalUrl);
 
         // FETCH PAGE HTML IF ALLOWED BY ROBOTS.TXT
         let html = null;
+        let htmlResponse = null;
+
         if (!robotsTxt.blocked || scrapeEvenIfBlocked) {
             try {
-                const htmlResponse = await fetch(finalUrl);
-                html = htmlResponse.ok
-                    ? await htmlResponse.text()
-                    : null;
+                htmlResponse = await fetch(finalUrl);
+                if (htmlResponse.ok) {
+                    html = await htmlResponse.text();
+                    // Extract headers to pass to scrapers (e.g., X-Robots-Tag)
+                    htmlResponse.headers.forEach((value, key) => {
+                        headers[key.toLowerCase()] = value;
+                    });
+                } else {
+                    finalUrlStatusCode = htmlResponse.status;
+                }
             } catch {
                 html = null;
             }
@@ -50,7 +65,7 @@ export async function POST(request) {
             scrapedData = await scrapeWithCheerio(
                 html,
                 finalUrl,
-                {},
+                headers,
                 scrapeOptions,
             )
         }
@@ -62,7 +77,7 @@ export async function POST(request) {
             finalUrlStatusCode,
             redirects,
             robotsTxt,
-            html,
+            html: html ? "HTML Content Fetched" : null,
             scrapedData,
             enteredUrlIsBlockedByRobots: robotsTxt.blocked,
         });

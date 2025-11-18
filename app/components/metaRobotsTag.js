@@ -5,7 +5,22 @@ export default function MetaRobotsTag({ metaRobotsTag }) {
 
     return (
         <div>
-            <p><strong>Content:</strong> <code>{metaRobotsTag.content}</code></p>
+            <p>
+                <strong>HTML Tag Content: </strong>
+                {metaRobotsTag.htmlTagContent
+                    ? <code>{metaRobotsTag.htmlTagContent}</code>
+                    : "N/A"
+                }
+                
+            </p>
+
+            <p>
+                <strong>X-Robots-Tag Content: </strong>
+                {metaRobotsTag.xRobotsTagContent
+                    ? <code>{metaRobotsTag.xRobotsTagContent}</code>
+                    : "N/A"
+                }
+            </p>
 
             <p>
                 <strong>Allows indexing?: </strong>

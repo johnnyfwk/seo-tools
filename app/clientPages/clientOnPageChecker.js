@@ -7,6 +7,7 @@ import RedirectChain from "../components/redirectChain";
 import RobotsTxt from "../components/robotsTxt";
 import RobotsDisclaimer from "../components/robotsDisclaimer";
 import MetaRobotsTag from "../components/metaRobotsTag";
+import CanonicalTags from "../components/canonicalTags";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -17,8 +18,10 @@ export default function ClientOnPageChecker() {
         finalUrl: "",
         redirects: [],
         robotsTxt: {},
-        scrapedData: {},
-        metaRobotsTag: {},
+        scrapedData: {
+            metaRobotsTag: {},
+            canonicalTags: {},
+        },
     };
 
     const [inputUrl, setInputUrl] = useState("");
@@ -69,7 +72,7 @@ export default function ClientOnPageChecker() {
             }
 
             const data = await response.json();
-            console.log("Data:", data);
+            // console.log("Data:", data);
 
             const endTime = performance.now();
             const elapsedMs = endTime - startTime;
@@ -84,8 +87,10 @@ export default function ClientOnPageChecker() {
                 finalUrl: data.finalUrl || "",
                 redirects: data.redirects || [],
                 robotsTxt: data.robotsTxt || {},
-                scrapedData:  data.scrapedData || {},
-                metaRobotsTag: data.scrapedData?.metaRobotsTag || {},
+                scrapedData:  data.scrapedData || {
+                    metaRobotsTag: data.scrapedData?.metaRobotsTag || {},
+                    canonicalTags: data.scrapedData?.canonicalTags || {},
+                },
             });
 
         } catch (err) {
@@ -140,11 +145,15 @@ export default function ClientOnPageChecker() {
     const contentSections = [
         {
             title: "Meta Robots Tag",
-            component: <MetaRobotsTag metaRobotsTag={pageData.metaRobotsTag} />,
+            component: <MetaRobotsTag metaRobotsTag={pageData.scrapedData?.metaRobotsTag} />,
         },
+        {
+            title: `Canonical Tags (${pageData.scrapedData?.canonicalTags?.tags?.length || 0})`,
+            component: <CanonicalTags canonicalTags={pageData.scrapedData?.canonicalTags} />
+        }
     ];
 
-    // console.log("Page Data:", pageData)
+    console.log("Page Data:", pageData)
 
     return (
         <>
@@ -193,8 +202,6 @@ export default function ClientOnPageChecker() {
                             }}
                         />
 
-                        <br />
-
                         <button
                             type="submit"
                             disabled={isCheckingPage || !inputUrl.trim() || !!error}
@@ -237,7 +244,7 @@ export default function ClientOnPageChecker() {
                                 <p>Entered URL is blocked by robots.txt. You have selected to ignore robots.txt.</p>
                                 {contentSections.map((s, i) => (
                                     <div key={i}>
-                                        <h3>{s.title}</h3>
+                                        <h3 style={{marginTop: "1rem", marginBottom: "0.5rem"}}>{s.title}</h3>
                                         {s.component}
                                     </div>
                                 ))}
@@ -254,7 +261,7 @@ export default function ClientOnPageChecker() {
                                 
                                 {contentSections.map((s, i) => (
                                     <div key={i}>
-                                        <h3>{s.title}</h3>
+                                        <h3 style={{marginTop: "1rem", marginBottom: "0.5rem"}}>{s.title}</h3>
                                         {s.component}
                                     </div>
                                 ))}

@@ -1,21 +1,29 @@
 import * as utils from '@/app/lib/utils/utils';
 
 export async function scrapeCanonicalTags($, pageUrl) {
-    const pageIssues = [];
+    const globalIssues = [];
 
     if (!pageUrl) {
-        pageIssues.push("Missing page URL parameter.");
-        return { canonicalTags: [], pageIssues };
+        globalIssues.push("Missing page URL parameter.");
+        return {
+            canonicalTags: {
+                tags: [],
+                globalIssues,
+            }
+        };
     }
 
-    const canonicalTags = $('link[rel="canonical"]')
+    const canonicalUrls = $('link[rel="canonical"]')
         .map((_, el) => $(el).attr('href')?.trim())
         .get()
         .filter(Boolean);
 
-    if (canonicalTags.length === 0) {
-        pageIssues.push("No canonical tag found.");
-        return { canonicalTags: [], pageIssues };
+    if (canonicalUrls.length === 0) {
+        globalIssues.push("No canonical tag found.");
+    }
+
+    if (canonicalUrls.length > 1) {
+        globalIssues.push(`Multiple canonical tags found (${canonicalUrls.length}). Search engines typically ignore all or the first one.`);
     }
 
     const defaultHeaders = {
@@ -24,48 +32,62 @@ export async function scrapeCanonicalTags($, pageUrl) {
         'Accept-Language': 'en-GB,en;q=0.9',
     };
 
-    const results = [];
+    const tags = [];
 
-    for (const originalUrl of canonicalTags) {
-        let resolvedUrl;
+    for (const originalUrl of canonicalUrls) {
+        let resolvedCanonicalUrl;
+        let resolvedCanonicalUrlStatusCode = null;
+        let resolvedCanonicalUrlMatchesOriginalUrl = null;
         const issues = [];
 
         try {
-            resolvedUrl = new URL(originalUrl, pageUrl).href;
+            resolvedCanonicalUrl = new URL(originalUrl, pageUrl).href;
         } catch {
-            resolvedUrl = originalUrl;
-            issues.push(`Invalid canonical URL: ${originalUrl}`);
+            resolvedCanonicalUrl = originalUrl;
+            issues.push(`Invalid canonical URL format: ${originalUrl}`);
         }
 
-        let resolvedUrlMatchesOriginalUrl = null;
-        if (resolvedUrl) {
-            resolvedUrlMatchesOriginalUrl = utils.normaliseUrlKeepSearch(resolvedUrl) === utils.normaliseUrlKeepSearch(pageUrl);
-            if (!resolvedUrlMatchesOriginalUrl) issues.push(`Canonical URL points elsewhere: ${resolvedUrl}`);
+        if (resolvedCanonicalUrl) {
+            resolvedCanonicalUrlMatchesOriginalUrl = 
+                utils.normaliseUrlKeepSearch(resolvedCanonicalUrl) === utils.normaliseUrlKeepSearch(pageUrl);
+            if (!resolvedCanonicalUrlMatchesOriginalUrl) {
+                issues.push(`Canonical URL points elsewhere: ${resolvedCanonicalUrl}`)
+            };
         }
 
-        let resolvedUrlStatusCode = null;
         try {
-            if (resolvedUrl) {
-                const res = await fetch(resolvedUrl, {
+            if (resolvedCanonicalUrl && !issues.includes(`Invalid canonical URL format: ${originalUrl}`)) {
+                const response = await fetch(resolvedCanonicalUrl, {
                     method: 'HEAD',
                     headers: defaultHeaders,
+                    redirect: 'manual',
                 });
-                resolvedUrlStatusCode = res.status;
-                if (resolvedUrlStatusCode >= 300 && resolvedUrlStatusCode < 400) issues.push(`Canonical URL redirects (${resolvedUrlStatusCode})`);
-                else if (resolvedUrlStatusCode >= 400) issues.push(`Canonical returns error (${resolvedUrlStatusCode})`);
+
+                resolvedCanonicalUrlStatusCode = response.status;
+
+                if (resolvedCanonicalUrlStatusCode >= 300 && resolvedCanonicalUrlStatusCode < 400) {
+                    issues.push(`Canonical URL redirects (${resolvedCanonicalUrlStatusCode}) Recommended: 200 OK.`)
+                } else if (resolvedCanonicalUrlStatusCode >= 400) {
+                    issues.push(`Canonical URL returns error (${resolvedCanonicalUrlStatusCode}). Recommended: 200 OK.`)
+                };
             }
         } catch (err) {
             issues.push(`Failed to fetch canonical URL: ${err.message}`);
         }
 
-        results.push({
+        tags.push({
             originalUrl,
-            resolvedUrl,
-            resolvedUrlStatusCode,
-            resolvedUrlMatchesOriginalUrl,
+            resolvedCanonicalUrl,
+            resolvedCanonicalUrlStatusCode,
+            resolvedCanonicalUrlMatchesOriginalUrl,
             issues
         });
     }
 
-    return { canonicalTags: results, pageIssues };
+    return {
+        canonicalTags: {
+            tags,
+            globalIssues,
+        }
+    };
 }
