@@ -144,7 +144,7 @@ export default function ClientOnPageChecker() {
         },
     ];
 
-    console.log("Page Data:", pageData)
+    // console.log("Page Data:", pageData)
 
     return (
         <>
@@ -247,7 +247,11 @@ export default function ClientOnPageChecker() {
 
                         {!pageData.enteredUrlIsBlockedByRobots
                             ? <>
-                                <p>Entered URL is allowed by robots.txt. Page data has been fetched.</p>
+                                {pageData.robotsTxt.exists
+                                    ? <p>Entered URL is allowed to be crawled by robots.txt. Page data has been fetched.</p>
+                                    : <p>Robots.txt could not be found. Entered URL is allowed to be crawled by bots by default. Page data has been fetched.</p>
+                                }
+                                
                                 {contentSections.map((s, i) => (
                                     <div key={i}>
                                         <h3>{s.title}</h3>
