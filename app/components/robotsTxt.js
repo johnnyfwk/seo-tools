@@ -5,7 +5,12 @@ export default function RobotsTxt({ robotsTxt }) {
         return <p>No robots.txt found. Entered URL is allowed to be crawled by bots by default.</p>;
     }
 
-    const { url, blocked, sitemaps } = robotsTxt;
+    const {
+        url,
+        blocked,
+        sitemaps,
+        determiningRule,
+    } = robotsTxt;
 
     return (
         <div>
@@ -24,7 +29,15 @@ export default function RobotsTxt({ robotsTxt }) {
                     : "❌ No"
                 }
             </p>
-            
+
+            {determiningRule
+                ? <p>
+                    <strong>Disallow rule: </strong>
+                    <code>{determiningRule.rule}</code>
+                </p>
+                : null
+            }
+
             <p>
                 <strong>Sitemaps:</strong>
             </p>
