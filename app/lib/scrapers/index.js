@@ -1,10 +1,10 @@
 import * as cheerio from 'cheerio';
 
 import { scrapeMetaRobotsTag } from './metaRobotsTag';
+import { scrapeCanonicalTags } from './canonicalTags';
 import { scrapeMetaTitle } from './metaTitle';
 import { scrapeMetaDescription } from './metaDescription';
 import { scrapeHeadings } from './headings';
-import { scrapeCanonicalTags } from './canonicalTags';
 import { scrapeHtmlLanguageAttribute } from './htmlLanguageAttribute';
 import { scrapeViewport } from './viewport';
 import { scrapeLinks } from './links';
@@ -42,13 +42,13 @@ export async function scrapeWithCheerio(
             Object.assign(results, scrapeMetaRobotsTag($, headers));
         }
 
-        // if (shouldScrape('canonicalTags', opts)) {
-        //     Object.assign(results, await scrapeCanonicalTags($, pageUrl));
-        // }
+        if (shouldScrape('canonicalTags', opts)) {
+            Object.assign(results, await scrapeCanonicalTags($, pageUrl));
+        }
 
-        // if (shouldScrape('htmlLanguageAttribute', opts)) {
-        //     Object.assign(results, scrapeHtmlLanguageAttribute($));
-        // }
+        if (shouldScrape('htmlLanguageAttribute', opts)) {
+            Object.assign(results, scrapeHtmlLanguageAttribute($));
+        }
 
         // if (shouldScrape('viewport', opts)) {
         //     Object.assign(results, scrapeViewport($));

@@ -1,11 +1,27 @@
 import Link from "next/link";
 
 export default function CanonicalTags({ canonicalTags }) {
-    if (canonicalTags.length === 0) return <p>No canonical tags found.</p>
+    if (canonicalTags.tags.length === 0) return <p>No canonical tags found.</p>
 
     return (
-        <>
-            {canonicalTags.length > 1
+        <div>
+            {canonicalTags.globalIssues.length > 0
+                ? <div>
+                    <p>
+                        <strong>Global canonical issues</strong>:
+                    </p>
+                    <ul>
+                        {canonicalTags.globalIssues.map((issue, i) => {
+                            return (
+                                <li key={i}>{issue}</li>
+                            )
+                        })}
+                    </ul>
+                </div>
+                : null
+            }
+
+            {canonicalTags.tags.length > 1
                 ? <p className="error-text">Multiple canonical tags found.</p>
                 : null
             }
@@ -16,48 +32,54 @@ export default function CanonicalTags({ canonicalTags }) {
                         <th style={{ textAlign: "center" }}>#</th>
                         <th style={{ textAlign: "left" }}>Canonical URL</th>
                         <th style={{ textAlign: "center" }}>Status Code</th>
-                        <th style={{ textAlign: "center" }}>Canonical URL matches page URL?</th>
+                        <th style={{ textAlign: "center" }}>Canonical URL matches entered URL?</th>
                         <th style={{ textAlign: "left" }}>Issues</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {canonicalTags.map((tag, i) => {
+                    {canonicalTags.tags.map((tag, i) => {
                         return (
                             <tr key={i}>
                                 <td style={{ textAlign: "center" }}>{i + 1}</td>
 
                                 <td style={{ textAlign: "left" }}>
                                     <Link
-                                        href={tag.resolvedUrl || "#"}
+                                        href={tag.resolvedCanonicalUrl || "#"}
                                         target="_blank"
                                         rel="noreferrer noopener"
                                     >
-                                        {tag.resolvedUrl || tag.originalUrl || "Invalid URL"}
+                                        {tag.originalUrl || "Invalid URL"}
                                     </Link>
                                 </td>
 
                                 <td
                                     style={{ textAlign: "center" }}
-                                    className={tag.resolvedUrlStatusCode === 200
-                                        ? "success-background"
-                                        : "error-background"
+                                    className={tag.resolvedCanonicalUrlStatusCode === 200
+                                        ? 'success-background'
+                                        : tag.resolvedCanonicalUrlStatusCode >= 300 && tag.resolvedCanonicalUrlStatusCode < 400
+                                            ? 'warning-background'
+                                            : tag.resolvedCanonicalUrlStatusCode >= 400
+                                                ? 'error-background'
+                                                : ''
                                     }
                                 >
-                                    {tag.resolvedUrlStatusCode ?? "-"}
+                                    {tag.resolvedCanonicalUrlStatusCode ?? "-"}
                                 </td>
 
                                 <td
                                     style={{ textAlign: "center" }}
-                                    className={tag.resolvedUrlMatchesOriginalUrl
-                                        ? "success-background"
-                                        : "warning-background"
+                                    className={tag.resolvedCanonicalUrlMatchesOriginalUrl === true
+                                        ? 'success-background'
+                                        : tag.resolvedCanonicalUrlMatchesOriginalUrl === false
+                                            ? 'warning-background'
+                                            : ''
                                     }
                                 >
-                                    {tag.resolvedUrlMatchesOriginalUrl === null
-                                        ? "Unknown"
-                                        : tag.resolvedUrlMatchesOriginalUrl
-                                            ? "Yes"
-                                            : "No"
+                                    {tag.resolvedCanonicalUrlMatchesOriginalUrl === true
+                                        ? "Yes"
+                                        : tag.resolvedCanonicalUrlMatchesOriginalUrl === false
+                                            ? "No"
+                                            : "Unknown"
                                     }
                                 </td>
 
@@ -81,7 +103,6 @@ export default function CanonicalTags({ canonicalTags }) {
                     })}
                 </tbody>
             </table>
-        </>
-        
+        </div>
     );
 }
