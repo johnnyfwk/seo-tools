@@ -1,7 +1,7 @@
 import * as cheerio from 'cheerio';
-import { fetchRedirectInfo } from '../utils/fetchRedirectInfo';
+// import { fetchRedirectInfo } from '../utils/fetchRedirectInfo';
 import { scrapeCanonicalTags } from './canonicalTags';
-import { checkRobotsTxt } from './robotsTxt';
+// import { checkRobotsTxt } from './robotsTxt';
 import { scrapeMetaRobotsTag } from './metaRobotsTag';
 
 export async function scrapeHreflang($, pageUrl, headers = {}) {

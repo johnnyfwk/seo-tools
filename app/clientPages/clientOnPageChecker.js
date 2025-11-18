@@ -5,15 +5,20 @@ import Url from "../components/url";
 import StatusCode from "../components/statusCode";
 import RedirectChain from "../components/redirectChain";
 import RobotsTxt from "../components/robotsTxt";
+import RobotsDisclaimer from "../components/robotsDisclaimer";
+import MetaRobotsTag from "../components/metaRobotsTag";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
         scrapeDuration: null,
         enteredUrl: "",
         enteredUrlStatusCode: null,
+        enteredUrlIsBlockedByRobots: null,
         finalUrl: "",
         redirects: [],
         robotsTxt: {},
+        scrapedData: {},
+        metaRobotsTag: {},
     };
 
     const [inputUrl, setInputUrl] = useState("");
@@ -54,7 +59,7 @@ export default function ClientOnPageChecker() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     enteredUrl: validatedUrl.href,
-                    scrapeEvenIfBlocked
+                    scrapeEvenIfBlocked,
                 }),
             });
 
@@ -75,9 +80,12 @@ export default function ClientOnPageChecker() {
                 scrapeDuration: elapsedMs,
                 enteredUrl: data.enteredUrl || "",
                 enteredUrlStatusCode: data.enteredUrlStatusCode || null,
+                enteredUrlIsBlockedByRobots: data.enteredUrlIsBlockedByRobots || null,
                 finalUrl: data.finalUrl || "",
                 redirects: data.redirects || [],
                 robotsTxt: data.robotsTxt || {},
+                scrapedData:  data.scrapedData || {},
+                metaRobotsTag: data.scrapedData?.metaRobotsTag || {},
             });
 
         } catch (err) {
@@ -95,62 +103,48 @@ export default function ClientOnPageChecker() {
         return seconds > 0 ? `${seconds}s ${milliseconds}ms` : `${milliseconds}ms`;
     }
 
-    const sections = [
-        pageData.scrapeDuration
-            ? {
-                title: "Scrape Duration",
-                component: <p>{formatDuration(pageData.scrapeDuration)}</p>,
-            }
-            : null,
-
-        pageData.enteredUrl
-            ? {
-                title: "Entered URL",
-                component: <Url url={pageData.enteredUrl} />,
-            }
-            : null,
-
-        pageData.enteredUrlStatusCode
-            ? {
-                title: "Status Code",
-                component: <StatusCode statusCode={pageData.enteredUrlStatusCode} />,
-            }
-            : null,
-
-        pageData.enteredUrlStatusCode >= 300 &&
-        pageData.enteredUrlStatusCode < 400 &&
-        pageData.redirects.length > 1
-            ? {
-                title: "Redirect URL",
-                component: <Url url={pageData.redirects[1].url} />,
-            }
-            : null,
-
-        pageData.enteredUrlStatusCode >= 300 &&
-        pageData.enteredUrlStatusCode < 400 &&
-        pageData.redirects.length > 2
-            ? {
-                title: "Final URL",
-                component: <Url url={pageData.finalUrl} />,
-            }
-            : null,
-
-        pageData.enteredUrlStatusCode >= 300 &&
-        pageData.enteredUrlStatusCode < 400 &&
-        pageData.redirects.length > 0
-            ? {
-                title: "Redirect Chain",
-                component: <RedirectChain redirectChain={pageData.redirects} />,
-            }
-            : null,
-
-        pageData.robotsTxt
-            ? {
-                title: "Robots.txt",
-                component: <RobotsTxt robotsTxt={pageData.robotsTxt} />,
-            }
-            : null,
+    const technicalSectionsAlwaysRender = [
+        {
+            title: "Scrape Duration",
+            component: <p>{formatDuration(pageData.scrapeDuration)}</p>,
+        },
+        {
+            title: "Entered URL",
+            component: <Url url={pageData.enteredUrl} />,
+        },
+        {
+            title: "Status Code",
+            component: <StatusCode statusCode={pageData.enteredUrlStatusCode} />,
+        },
+        {
+            title: "Robots.txt",
+            component: <RobotsTxt robotsTxt={pageData.robotsTxt} />,
+        },
     ];
+
+    const technicalRedirectsSections = [
+        {
+            title: "Redirect URL",
+            component: <Url url={pageData.redirects[1]?.url} />,
+        },
+        {
+            title: "Final URL",
+            component: <Url url={pageData.finalUrl} />,
+        },
+        {
+            title: "Redirect Chain",
+            component: <RedirectChain redirectChain={pageData.redirects} />,
+        },
+    ];
+
+    const contentSections = [
+        {
+            title: "Meta Robots Tag",
+            component: <MetaRobotsTag metaRobotsTag={pageData.metaRobotsTag} />,
+        },
+    ];
+
+    console.log("Page Data:", pageData)
 
     return (
         <>
@@ -191,14 +185,13 @@ export default function ClientOnPageChecker() {
                             : null
                         }
 
-                        <label>
-                            <input
-                                type="checkbox"
-                                checked={scrapeEvenIfBlocked}
-                                onChange={(e) => setScrapeEvenIfBlocked(e.target.checked)}
-                            />
-                            Ignore robots.txt
-                        </label>
+                        <RobotsDisclaimer
+                            checked={scrapeEvenIfBlocked}
+                            onChange={(value) => {
+                                setScrapeEvenIfBlocked(value);
+                                setHasCheckedPage(false); // reset until next fetch
+                            }}
+                        />
 
                         <br />
 
@@ -213,12 +206,59 @@ export default function ClientOnPageChecker() {
             </section>
 
             {hasCheckedPage
-                ? sections.filter(Boolean).map((s, i) => (
-                    <section key={i}>
-                        <h2>{s.title}</h2>
-                        {s.component}
+                ? <>
+                    {technicalSectionsAlwaysRender.map((s, i) => (
+                        <section key={i}>
+                            <h2>{s.title}</h2>
+                            {s.component}
+                        </section>
+                    ))}
+
+                    {pageData.redirects.length > 1
+                        ? technicalRedirectsSections.map((s, i) => (
+                            <section key={i}>
+                                <h2>{s.title}</h2>
+                                {s.component}
+                            </section>
+                        ))
+                        : null
+                    }
+
+                    <section>
+                        <h2>Page Data</h2>
+
+                        {pageData.enteredUrlIsBlockedByRobots && !scrapeEvenIfBlocked
+                            ? <p>Entered URL is blocked by robots.txt. Page data could not be fetched.</p>
+                            : null
+                        }
+
+                        {pageData.enteredUrlIsBlockedByRobots && scrapeEvenIfBlocked
+                            ? <>
+                                <p>Entered URL is blocked by robots.txt. You have selected to ignore robots.txt.</p>
+                                {contentSections.map((s, i) => (
+                                    <div key={i}>
+                                        <h3>{s.title}</h3>
+                                        {s.component}
+                                    </div>
+                                ))}
+                            </>
+                            : null
+                        }
+
+                        {!pageData.enteredUrlIsBlockedByRobots
+                            ? <>
+                                <p>Entered URL is allowed by robots.txt. Page data has been fetched.</p>
+                                {contentSections.map((s, i) => (
+                                    <div key={i}>
+                                        <h3>{s.title}</h3>
+                                        {s.component}
+                                    </div>
+                                ))}
+                            </>
+                            : null
+                        }
                     </section>
-                ))
+                </>
                 : null
             }
         </>

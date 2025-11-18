@@ -2,7 +2,7 @@ export default function StatusCode({ statusCode }) {
     const code = Number(statusCode);
 
     const statusMessages = {
-        200: "OK ✅",
+        200: "✅ OK",
         201: "Created",
         204: "No Content",
         301: "Moved Permanently",

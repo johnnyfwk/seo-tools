@@ -20,8 +20,8 @@ export default function RobotsTxt({ robotsTxt }) {
             <p>
                 <strong>Allows crawling of entered URL?: </strong>
                 {!blocked
-                    ? "Yes ✅"
-                    : "No 🚫"
+                    ? "✅ Yes"
+                    : "❌ No"
                 }
             </p>
             

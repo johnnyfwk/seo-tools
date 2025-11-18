@@ -1,5 +1,5 @@
 import * as cheerio from "cheerio";
-import { fetchRedirectInfo } from "../utils/fetchRedirectInfo";
+// import { fetchRedirectInfo } from "../utils/fetchRedirectInfo";
 
 export async function scrapeOpenGraph($, pageUrl) {
     if (!$) return {};
