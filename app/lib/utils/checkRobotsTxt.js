@@ -1,18 +1,51 @@
-export async function checkRobotsTxt(url, userAgent = "*") {
+export async function checkRobotsTxt(inputUrl, userAgent = "*") {
     try {
-        const { origin } = new URL(url);
+        const urlObj = new URL(inputUrl);
 
-        const urlObj = new URL(url);
-        const robotsTxtUrl = urlObj.origin.startsWith("https://")
-            ? urlObj.origin + "/robots.txt"
-            : "https://" + urlObj.hostname + "/robots.txt";
-        const pathWithQuery = urlObj.pathname + urlObj.search;
+        // Normalize host without "www."
+        const bareHost = urlObj.hostname.replace(/^www\./, "");
 
-        const response = await fetch(robotsTxtUrl, { redirect: "follow" });
+        // Generate all likely robots.txt URLs
+        const robotsCandidates = [
+            `https://${bareHost}/robots.txt`,
+            `https://www.${bareHost}/robots.txt`,
+            `http://${bareHost}/robots.txt`,
+            `http://www.${bareHost}/robots.txt`,
+        ];
 
-        if (!response.ok) {
+        let robotsTxtUrl = null;
+        let text = null;
+
+        // Try candidates in order until one succeeds
+        for (const candidate of robotsCandidates) {
+            try {
+                const res = await fetch(candidate, {
+                    redirect: "follow",
+                    headers: {
+                        "User-Agent":
+                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
+                        "Accept": "text/plain,*/*;q=0.8",
+                    },
+                });
+
+                // Only accept valid robots.txt content
+                const contentType = res.headers.get("content-type") || "";
+                const isPlainText = contentType.includes("text/plain");
+
+                if (res.ok && isPlainText) {
+                    text = await res.text();
+                    robotsTxtUrl = candidate;
+                    break;
+                }
+            } catch (e) {
+                // continue to next candidate
+            }
+        }
+
+        // If none worked → treat robots.txt as missing
+        if (!text) {
             return {
-                url: robotsTxtUrl,
+                url: null,
                 exists: false,
                 blocked: false,
                 allowRules: [],
@@ -21,11 +54,11 @@ export async function checkRobotsTxt(url, userAgent = "*") {
             };
         }
 
-        const text = await response.text();
+        // --- PARSE ROBOTS.TXT ---
         const lines = text.split("\n");
 
-        const sitemaps = [];
         const groups = [];
+        const sitemaps = [];
         let currentGroup = null;
 
         for (let line of lines) {
@@ -35,14 +68,10 @@ export async function checkRobotsTxt(url, userAgent = "*") {
             const lower = line.toLowerCase();
 
             if (lower.startsWith("sitemap:")) {
-                // Extract everything after 'Sitemap:'
                 let rawUrl = line.replace(/^sitemap:\s*/i, "").trim();
-
-                // Only prepend origin if it’s relative
                 if (!/^https?:\/\//i.test(rawUrl)) {
-                    rawUrl = new URL(rawUrl, origin).href;
+                    rawUrl = new URL(rawUrl, robotsTxtUrl).href;
                 }
-
                 sitemaps.push(rawUrl);
                 continue;
             }
@@ -67,41 +96,49 @@ export async function checkRobotsTxt(url, userAgent = "*") {
             }
         }
 
+        // --- RULE MATCHING ---
         const uaLower = userAgent.toLowerCase();
 
-        // Find the group matching the user-agent or '*'
         const matchedGroup =
             groups.find(g => g.userAgents.includes(uaLower)) ||
             groups.find(g => g.userAgents.includes("*")) ||
             { allow: [], disallow: [] };
 
-        const { allow: allowRules, disallow: disallowRules } = matchedGroup;
+        const allowRules = matchedGroup.allow;
+        const disallowRules = matchedGroup.disallow;
+
+        const pathWithQuery = urlObj.pathname + urlObj.search;
 
         const matchesRule = (rule, path) => {
-            if (!rule) return false; // empty disallow = allow everything
-            let regex = rule
-                .replace(/\*/g, ".*")   // wildcard
-                .replace(/\?/g, "\\?"); // literal ?
+            if (!rule || rule === "") return false;
 
-            if (!rule.startsWith("*")) regex = "^" + regex;
+            // Escape regex special chars except * and $
+            let pattern = rule
+                .replace(/[.+^${}()|[\]\\]/g, "\\$&")
+                .replace(/\*/g, ".*");
 
+            // '^' anchor if rule doesn’t start with *
+            if (!rule.startsWith("*")) pattern = "^" + pattern;
+
+            // If rule ends with '$', ensure correct end anchor
             if (rule.endsWith("$")) {
-                regex = regex.replace(/\$$/, "") + "$";
+                pattern = pattern.replace(/\\\$$/, "") + "$";
             }
 
-            return new RegExp("^" + regex).test(path);
+            return new RegExp(pattern).test(path);
         };
 
         const matchedAllow = allowRules.filter(r => matchesRule(r, pathWithQuery));
         const matchedDisallow = disallowRules.filter(r => matchesRule(r, pathWithQuery));
 
-        // longest match wins
         const longestAllow = matchedAllow.sort((a, b) => b.length - a.length)[0] || null;
-        const longestDisallow = matchedDisallow.sort((a, b) => b.length - a.length)[0] || null;
+        const longestDisallow =
+            matchedDisallow.sort((a, b) => b.length - a.length)[0] || null;
 
         let blocked = false;
         if (longestDisallow) blocked = true;
-        if (longestAllow && (!longestDisallow || longestAllow.length >= longestDisallow.length)) blocked = false;
+        if (longestAllow && (!longestDisallow || longestAllow.length >= longestDisallow.length))
+            blocked = false;
 
         return {
             url: robotsTxtUrl,

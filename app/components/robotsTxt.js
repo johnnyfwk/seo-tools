@@ -26,7 +26,7 @@ export default function RobotsTxt({ robotsTxt }) {
             </p>
             
             <p>
-                <strong>Sitemaps found:</strong>
+                <strong>Sitemaps:</strong>
             </p>
             {sitemaps.length > 0
                 ? <ul>
@@ -42,7 +42,7 @@ export default function RobotsTxt({ robotsTxt }) {
                         )
                     })}
                 </ul>
-                : null
+                : <p>No sitemaps found.</p>
             }    
         </div>
     )
