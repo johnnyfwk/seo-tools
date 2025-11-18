@@ -42,57 +42,57 @@ export async function scrapeWithCheerio(
             Object.assign(results, scrapeMetaRobotsTag($, headers));
         }
 
-        if (shouldScrape('canonicalTags', opts)) {
-            Object.assign(results, await scrapeCanonicalTags($, pageUrl));
-        }
+        // if (shouldScrape('canonicalTags', opts)) {
+        //     Object.assign(results, await scrapeCanonicalTags($, pageUrl));
+        // }
 
-        if (shouldScrape('htmlLanguageAttribute', opts)) {
-            Object.assign(results, scrapeHtmlLanguageAttribute($));
-        }
+        // if (shouldScrape('htmlLanguageAttribute', opts)) {
+        //     Object.assign(results, scrapeHtmlLanguageAttribute($));
+        // }
 
-        if (shouldScrape('viewport', opts)) {
-            Object.assign(results, scrapeViewport($));
-        }
+        // if (shouldScrape('viewport', opts)) {
+        //     Object.assign(results, scrapeViewport($));
+        // }
 
-        if (shouldScrape('metaTitle', opts)) {
-            Object.assign(results, scrapeMetaTitle($));
-        }
+        // if (shouldScrape('metaTitle', opts)) {
+        //     Object.assign(results, scrapeMetaTitle($));
+        // }
 
-        if (shouldScrape('metaDescription', opts)) {
-            Object.assign(results, scrapeMetaDescription($));
-        }
+        // if (shouldScrape('metaDescription', opts)) {
+        //     Object.assign(results, scrapeMetaDescription($));
+        // }
 
-        if (shouldScrape('headings', opts)) {
-            Object.assign(results, scrapeHeadings($));
-        }
+        // if (shouldScrape('headings', opts)) {
+        //     Object.assign(results, scrapeHeadings($));
+        // }
 
-        if (shouldScrape('links', opts)) {
-            Object.assign(results, await scrapeLinks($, pageUrl));
-        }
+        // if (shouldScrape('links', opts)) {
+        //     Object.assign(results, await scrapeLinks($, pageUrl));
+        // }
 
-        if (shouldScrape('schema', opts)) {
-            Object.assign(results, scrapeSchemaMarkup($));
-        }
+        // if (shouldScrape('schema', opts)) {
+        //     Object.assign(results, scrapeSchemaMarkup($));
+        // }
 
-        if (shouldScrape('images', opts)) {
-            Object.assign(results, await scrapeImages($, pageUrl, { checkStatus: true }));
-        }
+        // if (shouldScrape('images', opts)) {
+        //     Object.assign(results, await scrapeImages($, pageUrl, { checkStatus: true }));
+        // }
 
-        if (shouldScrape('hreflang', opts)) {
-            Object.assign(results, await scrapeHreflang($, pageUrl, headers));
-        }
+        // if (shouldScrape('hreflang', opts)) {
+        //     Object.assign(results, await scrapeHreflang($, pageUrl, headers));
+        // }
 
-        if (shouldScrape('openGraph', opts)) {
-            Object.assign(results, await scrapeOpenGraph($, pageUrl));
-        }
+        // if (shouldScrape('openGraph', opts)) {
+        //     Object.assign(results, await scrapeOpenGraph($, pageUrl));
+        // }
 
-        if (shouldScrape('xmlSitemap', opts)) {
-            Object.assign(results, await scrapeXmlSitemap(pageUrl));
-        }
+        // if (shouldScrape('xmlSitemap', opts)) {
+        //     Object.assign(results, await scrapeXmlSitemap(pageUrl));
+        // }
 
-        if (shouldScrape('pagination', opts)) {
-            Object.assign(results, await scrapePagination($, pageUrl, headers));
-        }
+        // if (shouldScrape('pagination', opts)) {
+        //     Object.assign(results, await scrapePagination($, pageUrl, headers));
+        // }
     } catch (err) {
         console.error(`Error scraping page ${pageUrl}:`, err);
     }

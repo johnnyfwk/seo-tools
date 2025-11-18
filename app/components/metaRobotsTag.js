@@ -8,7 +8,7 @@ export default function MetaRobotsTag({ metaRobotsTag }) {
             <p><strong>Content:</strong> <code>{metaRobotsTag.content}</code></p>
 
             <p>
-                <strong>Allows indexing of the URL?: </strong>
+                <strong>Allows indexing?: </strong>
                 {metaRobotsTag.allowsIndexing
                     ? <span>✅ Yes</span>
                     : <span>❌ No</span>
