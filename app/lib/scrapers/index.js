@@ -2,11 +2,11 @@ import * as cheerio from 'cheerio';
 
 import { scrapeMetaRobotsTag } from './metaRobotsTag';
 import { scrapeCanonicalTags } from './canonicalTags';
+import { scrapeHtmlLanguageAttribute } from './htmlLanguageAttribute';
+import { scrapeViewport } from './viewport';
 import { scrapeMetaTitles } from './metaTitles';
 import { scrapeMetaDescriptions } from './metaDescriptions';
 import { scrapeHeadings } from './headings';
-import { scrapeHtmlLanguageAttribute } from './htmlLanguageAttribute';
-import { scrapeViewport } from './viewport';
 import { scrapeLinks } from './links';
 import { scrapeSchemaMarkup } from './schemaMarkup';
 import { scrapeImages } from './images';
@@ -62,9 +62,9 @@ export async function scrapeWithCheerio(
             Object.assign(results, scrapeMetaDescriptions($));
         }
 
-        // if (shouldScrape('headings', opts)) {
-        //     Object.assign(results, scrapeHeadings($));
-        // }
+        if (shouldScrape('headings', opts)) {
+            Object.assign(results, scrapeHeadings($));
+        }
 
         // if (shouldScrape('links', opts)) {
         //     Object.assign(results, await scrapeLinks($, pageUrl));

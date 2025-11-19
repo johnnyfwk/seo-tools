@@ -12,6 +12,7 @@ import HtmlLanguageAttribute from "../components/htmlLanguageAttribute";
 import Viewport from "../components/viewport";
 import MetaTitles from "../components/metaTitles";
 import MetaDescriptions from "../components/metaDescriptions";
+import Headings from "../components/headings";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -54,6 +55,15 @@ export default function ClientOnPageChecker() {
             },
             metaTitles: [],
             metaDescriptions: [],
+            // headings: {
+            //     h1: [],
+            //     h2: [],
+            //     h3: [],
+            //     h4: [],
+            //     h5: [],
+            //     h6: [],
+            // }
+            headings: [],
         },
     };
 
@@ -152,6 +162,15 @@ export default function ClientOnPageChecker() {
                     },
                     metaTtitles: data.scrapedData?.metaTitles || [],
                     metaDescriptions: data.scrapedData?.metaDescriptions || [],
+                    // headings: data.scrapedData?.headings || {
+                    //     h1: data.scrapedData?.headings?.h1 || [],
+                    //     h2: data.scrapedData?.headings?.h2 || [],
+                    //     h3: data.scrapedData?.headings?.h3 || [],
+                    //     h4: data.scrapedData?.headings?.h4 || [],
+                    //     h5: data.scrapedData?.headings?.h5 || [],
+                    //     h6: data.scrapedData?.headings?.h6 || [],
+                    // },
+                    headings: data.scrapedData?.headings || [],
                 },
             });
 
@@ -228,6 +247,10 @@ export default function ClientOnPageChecker() {
         {
             title: `Meta Descriptions (${pageData.scrapedData.metaDescriptions.length})`,
             component: <MetaDescriptions metaDescriptions={pageData.scrapedData.metaDescriptions} />,
+        },
+        {
+            title: "Headings",
+            component: <Headings headings={pageData.scrapedData.headings} />,
         },
     ];
 
