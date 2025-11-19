@@ -192,15 +192,15 @@ export default function ClientOnPageChecker() {
     const contentSections = [
         {
             title: "Meta Robots Tag",
-            component: <MetaRobotsTag metaRobotsTag={pageData.scrapedData?.metaRobotsTag || {}} />,
+            component: <MetaRobotsTag metaRobotsTag={pageData.scrapedData.metaRobotsTag} />,
         },
         {
-            title: `Canonical Tags (${pageData.scrapedData?.canonicalTags?.tags?.length || 0})`,
-            component: <CanonicalTags canonicalTags={pageData.scrapedData?.canonicalTags || {}} />
+            title: `Canonical Tags (${pageData.scrapedData.canonicalTags.tags.length})`,
+            component: <CanonicalTags canonicalTags={pageData.scrapedData.canonicalTags} />
         },
         {
             title: "HTML Language Attribute",
-            component: <HtmlLanguageAttribute htmlLanguageAttribute={pageData.scrapedData?.htmlLanguageAttribute || {}} />
+            component: <HtmlLanguageAttribute htmlLanguageAttribute={pageData.scrapedData?.htmlLanguageAttribute} />
         }
     ];
 
