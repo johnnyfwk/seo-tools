@@ -1,6 +1,7 @@
 import { getRedirects } from "@/app/lib/utils/getRedirects";
 import { checkRobotsTxt } from "@/app/lib/utils/checkRobotsTxt";
 import { scrapeWithCheerio } from "@/app/lib/scrapers";
+import { browserHeaders } from "@/app/lib/utils/browserHeaders";
 
 export async function POST(request) {
     let headers = {};
@@ -44,7 +45,10 @@ export async function POST(request) {
 
         if (!robotsTxt.blocked || scrapeEvenIfBlocked) {
             try {
-                htmlResponse = await fetch(finalUrl);
+                htmlResponse = await fetch(finalUrl, {
+                    method: "GET",
+                    headers: browserHeaders,
+                });
                 if (htmlResponse.ok) {
                     html = await htmlResponse.text();
                     // Extract headers to pass to scrapers (e.g., X-Robots-Tag)

@@ -1,4 +1,5 @@
 import * as utils from '@/app/lib/utils/utils';
+import { browserHeaders } from '../utils/browserHeaders';
 
 export async function scrapeCanonicalTags($, pageUrl) {
     const globalIssues = [];
@@ -25,12 +26,6 @@ export async function scrapeCanonicalTags($, pageUrl) {
     if (canonicalUrls.length > 1) {
         globalIssues.push(`Multiple canonical tags found (${canonicalUrls.length}). Search engines typically ignore all or the first one.`);
     }
-
-    const defaultHeaders = {
-        'User-Agent': 'Mozilla/5.0 (compatible; SEO-Checker/1.0; +https://example.com/bot)',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-GB,en;q=0.9',
-    };
 
     const tags = [];
 
@@ -59,7 +54,7 @@ export async function scrapeCanonicalTags($, pageUrl) {
             if (resolvedCanonicalUrl && !issues.includes(`Invalid canonical URL format: ${originalUrl}`)) {
                 const response = await fetch(resolvedCanonicalUrl, {
                     method: 'HEAD',
-                    headers: defaultHeaders,
+                    headers: browserHeaders,
                     redirect: 'manual',
                 });
 

@@ -20,7 +20,10 @@ export default function ClientOnPageChecker() {
         robotsTxt: {},
         scrapedData: {
             metaRobotsTag: {},
-            canonicalTags: {},
+            canonicalTags: {
+                tags: [],
+                globalIssues: [],
+            },
         },
     };
 
@@ -72,7 +75,7 @@ export default function ClientOnPageChecker() {
             }
 
             const data = await response.json();
-            // console.log("Data:", data);
+            console.log("Data:", data);
 
             const endTime = performance.now();
             const elapsedMs = endTime - startTime;
@@ -89,7 +92,10 @@ export default function ClientOnPageChecker() {
                 robotsTxt: data.robotsTxt || {},
                 scrapedData:  data.scrapedData || {
                     metaRobotsTag: data.scrapedData?.metaRobotsTag || {},
-                    canonicalTags: data.scrapedData?.canonicalTags || {},
+                    canonicalTags: data.scrapedData?.canonicalTags || {
+                        tags: data.scrapedData?.canonicalTags?.tags || [],
+                        globalIssues: data.scrapedData?.canonicalTags?.globalIssues || [],
+                    },
                 },
             });
 
@@ -153,7 +159,7 @@ export default function ClientOnPageChecker() {
         }
     ];
 
-    console.log("Page Data:", pageData)
+    // console.log("Page Data:", pageData)
 
     return (
         <>

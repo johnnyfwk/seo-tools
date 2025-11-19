@@ -1,3 +1,5 @@
+import { browserHeaders } from "./browserHeaders";
+
 export async function getRedirects(inputUrl) {
     let currentUrl = inputUrl;
     const redirects = [];
@@ -19,7 +21,10 @@ export async function getRedirects(inputUrl) {
         let response;
 
         try {
-            response = await fetch(currentUrl, { redirect: "manual" });
+            response = await fetch(currentUrl, {
+                redirect: "manual",
+                headers: browserHeaders,
+            });
         } catch (err) {
             return {
                 error: "Failed to fetch URL",
