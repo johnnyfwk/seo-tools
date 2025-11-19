@@ -1,17 +1,22 @@
 import Link from "next/link";
 
 export default function CanonicalTags({ canonicalTags }) {
-    if (canonicalTags.tags.length === 0) return <p>No canonical tags found.</p>
+    const safe = {
+        tags: canonicalTags?.tags || [],
+        globalIssues: canonicalTags?.globalIssues || [],
+    };
+
+    if (safe.tags.length === 0) return <p>No canonical tags found.</p>;
 
     return (
         <div>
-            {canonicalTags.globalIssues.length > 0
+            {canonicalTags.globalIssues?.length > 0
                 ? <div>
                     <p>
                         <strong>Global canonical issues</strong>:
                     </p>
                     <ul>
-                        {canonicalTags.globalIssues.map((issue, i) => {
+                        {canonicalTags.globalIssues?.map((issue, i) => {
                             return (
                                 <li key={i}>{issue}</li>
                             )
@@ -21,7 +26,7 @@ export default function CanonicalTags({ canonicalTags }) {
                 : null
             }
 
-            {canonicalTags.tags.length > 1
+            {canonicalTags.tags?.length > 1
                 ? <p className="error-text">Multiple canonical tags found.</p>
                 : null
             }
@@ -37,7 +42,7 @@ export default function CanonicalTags({ canonicalTags }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {canonicalTags.tags.map((tag, i) => {
+                    {canonicalTags.tags?.map((tag, i) => {
                         return (
                             <tr key={i}>
                                 <td style={{ textAlign: "center" }}>{i + 1}</td>
@@ -84,9 +89,9 @@ export default function CanonicalTags({ canonicalTags }) {
                                 </td>
 
                                 <td>
-                                    {tag.issues.length > 0
+                                    {tag.issues?.length > 0
                                         ? <ul>
-                                            {tag.issues.map((issue, i) => {
+                                            {tag.issues?.map((issue, i) => {
                                                 return (
                                                     <li
                                                         key={i}
