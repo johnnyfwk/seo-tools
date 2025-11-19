@@ -38,7 +38,6 @@ export default function CanonicalTags({ canonicalTags }) {
                         <th style={{ textAlign: "left" }}>Canonical URL</th>
                         <th style={{ textAlign: "center" }}>Status Code</th>
                         <th style={{ textAlign: "center" }}>Canonical URL matches entered URL?</th>
-                        <th style={{ textAlign: "left" }}>Issues</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -85,22 +84,6 @@ export default function CanonicalTags({ canonicalTags }) {
                                         : tag.resolvedCanonicalUrlMatchesOriginalUrl === false
                                             ? "No"
                                             : "Unknown"
-                                    }
-                                </td>
-
-                                <td>
-                                    {tag.issues?.length > 0
-                                        ? <ul>
-                                            {tag.issues?.map((issue, i) => {
-                                                return (
-                                                    <li
-                                                        key={i}
-                                                        style={{ textAlign: "left" }}
-                                                    >{issue}</li>
-                                                )
-                                            })}
-                                        </ul>
-                                        : "-"
                                     }
                                 </td>
                             </tr>
