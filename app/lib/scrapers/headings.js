@@ -1,12 +1,16 @@
 export function scrapeHeadings($) {
-    return {
-        headings: {
-            h1s: $('h1').map((i, el) => $(el).text()).get(),
-            h2s: $('h2').map((i, el) => $(el).text()).get(),
-            h3s: $('h3').map((i, el) => $(el).text()).get(),
-            h4s: $('h4').map((i, el) => $(el).text()).get(),
-            h5s: $('h5').map((i, el) => $(el).text()).get(),
-            h6s: $('h6').map((i, el) => $(el).text()).get(),
-        }
-    };
+    const headingLevels = ['h1','h2','h3','h4','h5','h6'];
+    const headings = [];
+
+    // Select all headings at once
+    $('h1,h2,h3,h4,h5,h6').each((i, el) => {
+        const level = el.tagName.toLowerCase();
+        headings.push({
+            level,
+            text: $(el).text().trim(),
+            order: i + 1, // optional: DOM order
+        });
+    });
+
+    return { headings };
 }
