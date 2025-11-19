@@ -1,15 +1,15 @@
 import { ISO_REGIONS, ISO_LANGUAGES } from "../lib/utils/languageMaps";
 
-export default function HtmlLanguageAttribute({ htmlLanguageAttribute = {} }) {
+export default function HtmlLanguageAttribute({ htmlLanguageAttribute }) {
     const {
-        attribute = "",
-        isValid = null,
-        issues = []
+        attribute,
+        isValid,
+        issues
     } = htmlLanguageAttribute;
 
     if (!attribute) {
         return (
-            <p className="error-text">
+            <p>
                 No <code>lang</code> attribute found.
             </p>
         )
@@ -28,7 +28,7 @@ export default function HtmlLanguageAttribute({ htmlLanguageAttribute = {} }) {
 
             <p>
                 <strong>Language:</strong>{" "}
-                {languageCode?.toUpperCase() || "-"}
+                {languageCode.toUpperCase() || "-"}
                 {languageName ? ` (${languageName})` : ""}
             </p>
 

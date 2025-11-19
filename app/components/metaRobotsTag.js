@@ -1,6 +1,6 @@
 export default function MetaRobotsTag({ metaRobotsTag }) {
     if (!metaRobotsTag || !metaRobotsTag.content) {
-        return <p>ℹ️ No meta robots tag found. URL is indexable and links are followable by default.</p>;
+        return <p>No meta robots tag found. URL is indexable and links are followable by default.</p>;
     }
 
     return (
