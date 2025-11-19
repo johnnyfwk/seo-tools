@@ -1,4 +1,5 @@
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
+import { browserHeaders } from "../utils/browserHeaders";
 
 /**
  * Scrapes links from HTML and fetches HTTP info
@@ -62,18 +63,13 @@ export async function scrapeLinks(htmlOr$, pageUrl) {
             }
         }
 
-        // Optional URL fetch (limited for performance)
         let statusCode = null;
         let finalUrl = resolvedUrl;
-        let finalStatusCode = null;
 
-        try {
-            const res = await fetch(resolvedUrl, { method: "GET", redirect: "follow" });
-            statusCode = res.status;
-            finalUrl = res.url;
-            finalStatusCode = res.status;
-        } catch (err) {
-            console.warn(`Failed to fetch ${resolvedUrl}: ${err.message}`);
+        if (!uncrawlable) {
+            const { statusCode: s, finalUrl: f } = await getStatusWithRedirects(resolvedUrl);
+            statusCode = s;
+            finalUrl = f;
         }
 
         return {
@@ -94,15 +90,14 @@ export async function scrapeLinks(htmlOr$, pageUrl) {
 
             statusCode,
             finalUrl,
-            finalStatusCode,
         };
     }
 
     const linkElements = $("a").toArray();
 
-    const processed = await Promise.all(
+    const processed = (await Promise.all(
         linkElements.map(processLink)
-    );
+    )).filter(Boolean);
 
     return {
         links: {
@@ -114,6 +109,46 @@ export async function scrapeLinks(htmlOr$, pageUrl) {
 }
 
 /* -------------------- HELPERS -------------------- */
+
+async function getStatusWithRedirects(url, maxRedirects = 5) {
+    let currentUrl = url;
+    let lastStatus = null;
+
+    for (let i = 0; i < maxRedirects; i++) {
+        try {
+            // Try HEAD first
+            let res = await fetch(currentUrl, {
+                method: "HEAD",
+                headers: browserHeaders,
+                redirect: "manual"
+            });
+
+            // If HEAD is not allowed, fallback to GET
+            if (res.status === 405 || res.status === 501) {
+                res = await fetch(currentUrl, {
+                    method: "GET",
+                    headers: browserHeaders,
+                    redirect: "manual"
+                });
+            }
+
+            lastStatus = res.status;
+
+            if ([301,302,303,307,308].includes(res.status)) {
+                const loc = res.headers.get("location");
+                if (!loc) break;
+                currentUrl = new URL(loc, currentUrl).href;
+                continue;
+            }
+
+            return { statusCode: res.status, finalUrl: currentUrl };
+        } catch {
+            return { statusCode: null, finalUrl: currentUrl };
+        }
+    }
+
+    return { statusCode: lastStatus, finalUrl: currentUrl };
+}
 
 function classifyLink($, el, uncrawlable) {
     if (uncrawlable) return "uncrawlable";

@@ -1,77 +1,82 @@
 import { getRedirects } from "@/app/lib/utils/getRedirects";
 import { checkRobotsTxt } from "@/app/lib/utils/checkRobotsTxt";
-import { scrapeWithCheerio } from "@/app/lib/scrapers";
 import { browserHeaders } from "@/app/lib/utils/browserHeaders";
+import { scrapeWithCheerio } from "@/app/lib/scrapers";
+import { scrapeWithPlaywright } from "@/app/lib/scrapers/playwright";
+import { isLikelySPA } from "@/app/lib/utils/isLikelySPA";
 
 export async function POST(request) {
     let headers = {};
     let enteredUrlStatusCode = null;
     let finalUrl = null;
     let finalUrlStatusCode = null;
-    
+
     try {
         const {
             enteredUrl,
             scrapeEvenIfBlocked,
-            scrapeOptions = {
-                "all": true,
-            },
+            scrapeOptions = { all: true }
         } = await request.json();
 
-        if (!enteredUrl) {
-            return Response.json(
-                { error: "URL is required" },
-                { status: 400 }
-            );
-        }
+        if (!enteredUrl) return Response.json({ error: "URL is required" }, { status: 400 });
 
-        // FOLLOW REDIRECTS
         const {
             finalUrl: resolvedFinalUrl,
             finalUrlStatusCode: resolvedFinalUrlStatusCode,
-            redirects,
+            redirects
         } = await getRedirects(enteredUrl);
 
         finalUrl = resolvedFinalUrl;
         finalUrlStatusCode = resolvedFinalUrlStatusCode;
         enteredUrlStatusCode = redirects?.[0]?.statusCode ?? null;
 
-        // CHECK ROBOTS.TXT
         const robotsTxt = await checkRobotsTxt(finalUrl);
 
-        // FETCH PAGE HTML IF ALLOWED BY ROBOTS.TXT
         let html = null;
-        let htmlResponse = null;
 
         if (!robotsTxt.blocked || scrapeEvenIfBlocked) {
             try {
-                htmlResponse = await fetch(finalUrl, {
+                const res = await fetch(finalUrl, {
                     method: "GET",
-                    headers: browserHeaders,
+                    headers: browserHeaders
                 });
-                if (htmlResponse.ok) {
-                    html = await htmlResponse.text();
-                    // Extract headers to pass to scrapers (e.g., X-Robots-Tag)
-                    htmlResponse.headers.forEach((value, key) => {
-                        headers[key.toLowerCase()] = value;
-                    });
+                
+                if (res.ok) {
+                    html = await res.text();
+                    res.headers.forEach((value, key) => { headers[key.toLowerCase()] = value; });
                 } else {
-                    finalUrlStatusCode = htmlResponse.status;
+                    finalUrlStatusCode = res.status;
                 }
             } catch {
                 html = null;
             }
         }
 
-        // RUN SCRAPERS
         let scrapedData = null;
+        let usedPlaywright = false;
+
         if (html) {
-            scrapedData = await scrapeWithCheerio(
-                html,
-                finalUrl,
-                headers,
-                scrapeOptions,
-            )
+            const likelySPA = isLikelySPA(html);
+
+            if (likelySPA) {
+                usedPlaywright = true;
+                scrapedData = await scrapeWithPlaywright(finalUrl, scrapeOptions);
+            } else {
+                scrapedData = await scrapeWithCheerio(html, finalUrl, headers, scrapeOptions);
+
+                // Optional fallback if Cheerio still misses key elements
+                const missingH1 = !scrapedData.headings?.h1?.length;
+                const missingLinks = !scrapedData.links?.internal?.length;
+
+                if (missingH1 || missingLinks) {
+                    usedPlaywright = true;
+                    scrapedData = await scrapeWithPlaywright(finalUrl, scrapeOptions);
+                }
+            }
+        } else {
+            // Fetch failed, fallback immediately
+            usedPlaywright = true;
+            scrapedData = await scrapeWithPlaywright(finalUrl, scrapeOptions);
         }
 
         return Response.json({
@@ -83,16 +88,11 @@ export async function POST(request) {
             robotsTxt,
             html: html ? "HTML Content Fetched" : null,
             scrapedData,
+            usedPlaywright,
             enteredUrlIsBlockedByRobots: robotsTxt.blocked,
         });
     } catch (err) {
         console.error(err);
-        return Response.json(
-            {
-                error: "Internal Server Error",
-                details: err.message
-            },
-            { status: 500 }
-        );
+        return Response.json({ error: "Internal Server Error", details: err.message }, { status: 500 });
     }
 }
