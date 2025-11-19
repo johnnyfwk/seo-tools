@@ -50,9 +50,9 @@ export async function scrapeWithCheerio(
             Object.assign(results, scrapeHtmlLanguageAttribute($));
         }
 
-        // if (shouldScrape('viewport', opts)) {
-        //     Object.assign(results, scrapeViewport($));
-        // }
+        if (shouldScrape('viewport', opts)) {
+            Object.assign(results, scrapeViewport($));
+        }
 
         // if (shouldScrape('metaTitle', opts)) {
         //     Object.assign(results, scrapeMetaTitle($));

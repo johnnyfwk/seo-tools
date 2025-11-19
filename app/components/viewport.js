@@ -1,26 +1,42 @@
 export default function Viewport({ viewport }) {
     if (!viewport) {
-        return <p>No viewport tag found</p>;
+        return <p>No viewport tag found.</p>;
     }
+
+    const requiredProps = ['width', 'initial-scale'];
+    const missingRequired = requiredProps.filter(prop => !viewport.properties[prop]);
 
     return (
         <div>
             <p>
-                <strong>Content:</strong> <code>{viewport}</code>
+                <strong>Raw Content:</strong> <code>{viewport.content}</code>
             </p>
 
-            {viewport.includes("width=") && viewport.includes("initial-scale=")
-                ? <p>Viewport tag has both <em>width</em> and <em>initial-scale</em> properties.</p>
+            <p>
+                <strong>Properties:</strong>
+            </p>
+            <ul>
+                {Object.entries(viewport.properties).map(([key, value]) => (
+                    <li key={key}>
+                        <strong>{key}:</strong> {value}
+                    </li>
+                ))}
+            </ul>
+
+            {missingRequired.length === 0
+                ? <p>✅ Viewport includes required properties: <em>width</em> and <em>initial-scale</em>.</p>
+                : <p>
+                    ❌ Missing required viewport properties: {missingRequired.join(', ')}
+                </p>
+            }
+
+            {!viewport.properties['user-scalable']
+                ? <p>⚠️ Consider setting <em>user-scalable</em> to improve mobile accessibility.</p>
                 : null
             }
 
-            {!viewport.includes("width=")
-                ? <p className="error-text">Viewport tag missing <em>width</em> property.</p>
-                : null
-            }
-
-            {!viewport.includes("initial-scale=")
-                ? <p className="error-text">Viewport tag missing <em>initial-scale</em> property.</p>
+            {!viewport.properties['maximum-scale']
+                ? <p>⚠️ Consider setting <em>maximum-scale</em> to prevent unwanted zooming if needed.</p>
                 : null
             }
         </div>
