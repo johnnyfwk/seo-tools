@@ -2,8 +2,8 @@ import * as cheerio from 'cheerio';
 
 import { scrapeMetaRobotsTag } from './metaRobotsTag';
 import { scrapeCanonicalTags } from './canonicalTags';
-import { scrapeMetaTitle } from './metaTitle';
-import { scrapeMetaDescription } from './metaDescription';
+import { scrapeMetaTitles } from './metaTitles';
+import { scrapeMetaDescriptions } from './metaDescriptions';
 import { scrapeHeadings } from './headings';
 import { scrapeHtmlLanguageAttribute } from './htmlLanguageAttribute';
 import { scrapeViewport } from './viewport';
@@ -54,13 +54,13 @@ export async function scrapeWithCheerio(
             Object.assign(results, scrapeViewport($));
         }
 
-        if (shouldScrape('metaTitle', opts)) {
-            Object.assign(results, scrapeMetaTitle($));
+        if (shouldScrape('metaTitles', opts)) {
+            Object.assign(results, scrapeMetaTitles($));
         }
 
-        // if (shouldScrape('metaDescription', opts)) {
-        //     Object.assign(results, scrapeMetaDescription($));
-        // }
+        if (shouldScrape('metaDescriptions', opts)) {
+            Object.assign(results, scrapeMetaDescriptions($));
+        }
 
         // if (shouldScrape('headings', opts)) {
         //     Object.assign(results, scrapeHeadings($));

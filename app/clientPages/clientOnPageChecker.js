@@ -11,6 +11,7 @@ import CanonicalTags from "../components/canonicalTags";
 import HtmlLanguageAttribute from "../components/htmlLanguageAttribute";
 import Viewport from "../components/viewport";
 import MetaTitles from "../components/metaTitles";
+import MetaDescriptions from "../components/metaDescriptions";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -52,6 +53,7 @@ export default function ClientOnPageChecker() {
                 properties: {}
             },
             metaTitles: [],
+            metaDescriptions: [],
         },
     };
 
@@ -148,7 +150,8 @@ export default function ClientOnPageChecker() {
                         content: data.scrapedData?.viewport?.content || "",
                         properties: data.scrapedData?.viewport?.properties || {}
                     },
-                    metaTtitles: data.scrapedData?.metaTtitles || [],
+                    metaTtitles: data.scrapedData?.metaTitles || [],
+                    metaDescriptions: data.scrapedData?.metaDescriptions || [],
                 },
             });
 
@@ -221,6 +224,10 @@ export default function ClientOnPageChecker() {
         {
             title: `Meta Titles (${pageData.scrapedData.metaTitles.length})`,
             component: <MetaTitles metaTitles={pageData.scrapedData.metaTitles} />,
+        },
+        {
+            title: `Meta Descriptions (${pageData.scrapedData.metaDescriptions.length})`,
+            component: <MetaDescriptions metaDescriptions={pageData.scrapedData.metaDescriptions} />,
         },
     ];
 
