@@ -10,6 +10,7 @@ import MetaRobotsTag from "../components/metaRobotsTag";
 import CanonicalTags from "../components/canonicalTags";
 import HtmlLanguageAttribute from "../components/htmlLanguageAttribute";
 import Viewport from "../components/viewport";
+import MetaTitles from "../components/metaTitles";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -49,7 +50,8 @@ export default function ClientOnPageChecker() {
             viewport: {
                 content: "",
                 properties: {}
-            }
+            },
+            metaTitles: [],
         },
     };
 
@@ -145,7 +147,8 @@ export default function ClientOnPageChecker() {
                     viewport: data.scrapedData?.viewport || {
                         content: data.scrapedData?.viewport?.content || "",
                         properties: data.scrapedData?.viewport?.properties || {}
-                    }
+                    },
+                    metaTtitles: data.scrapedData?.metaTtitles || [],
                 },
             });
 
@@ -214,7 +217,11 @@ export default function ClientOnPageChecker() {
         {
             title: "Viewport",
             component: <Viewport viewport={pageData.scrapedData.viewport} />
-        }
+        },
+        {
+            title: `Meta Titles (${pageData.scrapedData.metaTitles.length})`,
+            component: <MetaTitles metaTitles={pageData.scrapedData.metaTitles} />,
+        },
     ];
 
     // console.log("Page Data:", pageData)

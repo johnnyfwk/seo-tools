@@ -54,9 +54,9 @@ export async function scrapeWithCheerio(
             Object.assign(results, scrapeViewport($));
         }
 
-        // if (shouldScrape('metaTitle', opts)) {
-        //     Object.assign(results, scrapeMetaTitle($));
-        // }
+        if (shouldScrape('metaTitle', opts)) {
+            Object.assign(results, scrapeMetaTitle($));
+        }
 
         // if (shouldScrape('metaDescription', opts)) {
         //     Object.assign(results, scrapeMetaDescription($));

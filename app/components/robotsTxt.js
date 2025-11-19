@@ -13,7 +13,7 @@ export default function RobotsTxt({ robotsTxt }) {
     } = robotsTxt;
 
     return (
-        <div>
+        <>
             <p>
                 <strong>URL: </strong>
                 {url
@@ -57,6 +57,6 @@ export default function RobotsTxt({ robotsTxt }) {
                 </ul>
                 : <p>No sitemaps found.</p>
             }    
-        </div>
+        </>
     )
 }

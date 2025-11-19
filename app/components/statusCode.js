@@ -32,7 +32,7 @@ export default function StatusCode({ statusCode }) {
     }
 
     return (
-        <div>
+        <>
             <p>
                 <strong>Code: </strong>
                 <span>{code || "N/A"}</span>
@@ -41,6 +41,6 @@ export default function StatusCode({ statusCode }) {
                 <strong>Definition: </strong>
                 <span>{displayText}</span>
             </p>
-        </div>
+        </>
     );
 }
