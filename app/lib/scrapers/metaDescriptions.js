@@ -1,6 +1,6 @@
-export function scrapeMetaDescription($) {
+export function scrapeMetaDescriptions($) {
     return {
-        metaDescription: $('meta[name="description"]')
+        metaDescriptions: $('meta[name="description"]')
             .map((i, element) => $(element).attr('content'))
             .get(),
     };
