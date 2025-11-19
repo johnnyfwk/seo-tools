@@ -117,17 +117,24 @@ export async function scrapeLinks(htmlOr$, pageUrl) {
 
 function classifyLink($, el, uncrawlable) {
     if (uncrawlable) return "uncrawlable";
+
     if ($(el).find("img").length > 0) return "image";
-    if ($(el).text()) return "text";
+
+    const text = $(el).text().trim();
+    if (text !== "") return "text";
+
     return "other";
 }
 
 function extractAnchorText($, el) {
-    const text = $(el).text(); // no trim — keep whitespace
-    if (text) return text;
+    const img = $(el).find("img").first();
+    if (img.length) {
+        const alt = img.attr("alt");
+        return alt && alt.trim() !== "" ? alt : "(image link)";
+    }
 
-    const imgAlt = $(el).find("img").attr("alt");
-    if (imgAlt) return imgAlt;
+    const text = $(el).text();
+    if (text.trim() !== "") return text;
 
     const aria = $(el).attr("aria-label");
     if (aria) return aria;
@@ -138,14 +145,19 @@ function extractAnchorText($, el) {
     const svgTitle = $(el).find("svg title").text();
     if (svgTitle) return svgTitle;
 
-    return null;
+    return "(no text)";
 }
 
 function extractImagePreview($, el, pageUrl) {
     const img = $(el).find("img").first();
     if (!img.length) return null;
 
-    const src = img.attr("src") || img.attr("data-src");
+    const src =
+        img.attr("src") ||
+        img.attr("data-src") ||
+        img.attr("data-lazy-src") ||
+        img.attr("data-original");
+
     if (!src) return null;
 
     try {
