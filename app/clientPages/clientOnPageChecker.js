@@ -8,6 +8,7 @@ import RobotsTxt from "../components/robotsTxt";
 import RobotsDisclaimer from "../components/robotsDisclaimer";
 import MetaRobotsTag from "../components/metaRobotsTag";
 import CanonicalTags from "../components/canonicalTags";
+import HtmlLanguageAttribute from "../components/htmlLanguageAttribute";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -17,13 +18,33 @@ export default function ClientOnPageChecker() {
         enteredUrlIsBlockedByRobots: null,
         finalUrl: "",
         redirects: [],
-        robotsTxt: {},
+        robotsTxt: {
+            blocked: null,
+            determiningRule: {
+                type: "",
+                rule: [],
+            },
+            exists: null,
+            sitemaps: [],
+            url: "",
+        },
         scrapedData: {
-            metaRobotsTag: {},
+            metaRobotsTag: {
+                allowsFollowing: null,
+                allowsIndexing: null,
+                content: "",
+                htmlTagContent: "",
+                xRobotsTagContent: "",
+            },
             canonicalTags: {
                 tags: [],
                 globalIssues: [],
             },
+            htmlLanguageAttribute: {
+                attribute: "",
+                isValid: null,
+                issues: [],
+            }
         },
     };
 
@@ -89,13 +110,33 @@ export default function ClientOnPageChecker() {
                 enteredUrlIsBlockedByRobots: data.enteredUrlIsBlockedByRobots || null,
                 finalUrl: data.finalUrl || "",
                 redirects: data.redirects || [],
-                robotsTxt: data.robotsTxt || {},
+                robotsTxt: data.robotsTxt || {
+                    blocked: data.robotsTxt?.blocked || null,
+                    determiningRule: data.robotsTxt?.determiningRule || {
+                        type: data.robotsTxt?.determiningRule?.type || "",
+                        rule: data.robotsTxt?.determiningRule?.rule || []
+                    },
+                    exists: data.robotsTxt?.exists || null,
+                    sitemaps: data.robotsTxt?.sitemaps || [],
+                    url: data.robotsTxt?.url || ""
+                },
                 scrapedData:  data.scrapedData || {
-                    metaRobotsTag: data.scrapedData?.metaRobotsTag || {},
+                    metaRobotsTag: data.scrapedData?.metaRobotsTag || {
+                        allowsFollowing: data.scrapedData?.allowsFollowing || null,
+                        allowsIndexing: data.scrapedData?.allowsIndexing || null,
+                        content: data.scrapedData?.content || "",
+                        htmlTagContent: data.scrapedData?.htmlTagContent || "",
+                        xRobotsTagContent: data.scrapedData?.xRobotsTagContent || ""
+                    },
                     canonicalTags: data.scrapedData?.canonicalTags || {
                         tags: data.scrapedData?.canonicalTags?.tags || [],
                         globalIssues: data.scrapedData?.canonicalTags?.globalIssues || [],
                     },
+                    htmlLanguageAttribute: data.scrapedData?.htmlLanguageAttribute || {
+                        attribute: data.scrapedData?.htmlLanguageAttribute?.attribute || "",
+                        isValid: data.scrapedData?.htmlLanguageAttribute?.isValid || null,
+                        issues: data.scrapedData?.htmlLanguageAttribute?.issues || [],
+                    }
                 },
             });
 
@@ -151,11 +192,15 @@ export default function ClientOnPageChecker() {
     const contentSections = [
         {
             title: "Meta Robots Tag",
-            component: <MetaRobotsTag metaRobotsTag={pageData.scrapedData?.metaRobotsTag} />,
+            component: <MetaRobotsTag metaRobotsTag={pageData.scrapedData?.metaRobotsTag || {}} />,
         },
         {
             title: `Canonical Tags (${pageData.scrapedData?.canonicalTags?.tags?.length || 0})`,
-            component: <CanonicalTags canonicalTags={pageData.scrapedData?.canonicalTags} />
+            component: <CanonicalTags canonicalTags={pageData.scrapedData?.canonicalTags || {}} />
+        },
+        {
+            title: "HTML Language Attribute",
+            component: <HtmlLanguageAttribute htmlLanguageAttribute={pageData.scrapedData?.htmlLanguageAttribute || {}} />
         }
     ];
 
