@@ -19,8 +19,15 @@ export default function Headings({ headings }) {
         }
     }
 
+    const multipleH1Warning = grouped.h1.length > 1;
+
     return (
         <>
+            {multipleH1Warning
+                ? <p>⚠️ Multiple &lt;h1&gt; tags found ({grouped.h1.length}). Pages should have only one &lt;h1&gt; tag.</p>
+                : null
+            }
+
             {missingLevels.length > 0
                 ? <div>
                     <p>Hierarchy issues found:</p>

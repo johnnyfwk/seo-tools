@@ -248,11 +248,11 @@ export default function ClientOnPageChecker() {
             component: <Headings headings={pageData.scrapedData.headings} />,
         },
         {
-            title: "Internal Links",
+            title: `Internal Links (${pageData.scrapedData.links.internal.length})`,
             component: <Links links={pageData.scrapedData.links.internal} />,
         },
         {
-            title: "External Links",
+            title: `External Links (${pageData.scrapedData.links.external.length})`,
             component: <Links links={pageData.scrapedData.links.external} />,
         },
     ];
