@@ -9,6 +9,7 @@ import RobotsDisclaimer from "../components/robotsDisclaimer";
 import MetaRobotsTag from "../components/metaRobotsTag";
 import CanonicalTags from "../components/canonicalTags";
 import HtmlLanguageAttribute from "../components/htmlLanguageAttribute";
+import Viewport from "../components/viewport";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -44,6 +45,10 @@ export default function ClientOnPageChecker() {
                 attribute: "",
                 isValid: null,
                 issues: [],
+            },
+            viewport: {
+                content: "",
+                properties: {}
             }
         },
     };
@@ -136,6 +141,10 @@ export default function ClientOnPageChecker() {
                         attribute: data.scrapedData?.htmlLanguageAttribute?.attribute || "",
                         isValid: data.scrapedData?.htmlLanguageAttribute?.isValid || null,
                         issues: data.scrapedData?.htmlLanguageAttribute?.issues || [],
+                    },
+                    viewport: data.scrapedData?.viewport || {
+                        content: data.scrapedData?.viewport?.content || "",
+                        properties: data.scrapedData?.viewport?.properties || {}
                     }
                 },
             });
@@ -201,6 +210,10 @@ export default function ClientOnPageChecker() {
         {
             title: "HTML Language Attribute",
             component: <HtmlLanguageAttribute htmlLanguageAttribute={pageData.scrapedData?.htmlLanguageAttribute} />
+        },
+        {
+            title: "Viewport",
+            component: <Viewport viewport={pageData.scrapedData.viewport} />
         }
     ];
 
