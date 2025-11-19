@@ -1,6 +1,6 @@
 export function scrapeMetaTitle($) {
     return {
-        metaTitle: $('title')
+        metaTitles: $('title')
             .map((i, element) => $(element).text())
             .get(),
     };

@@ -7,7 +7,7 @@ export default function Viewport({ viewport }) {
     const missingRequired = requiredProps.filter(prop => !viewport.properties[prop]);
 
     return (
-        <div>
+        <>
             <p>
                 <strong>Raw Content:</strong> <code>{viewport.content}</code>
             </p>
@@ -39,6 +39,6 @@ export default function Viewport({ viewport }) {
                 ? <p>⚠️ Consider setting <em>maximum-scale</em> to prevent unwanted zooming if needed.</p>
                 : null
             }
-        </div>
+        </>
     )
 }

@@ -4,7 +4,7 @@ export default function MetaRobotsTag({ metaRobotsTag }) {
     }
 
     return (
-        <div>
+        <>
             <p>
                 <strong>HTML Tag Content: </strong>
                 {metaRobotsTag.htmlTagContent
@@ -37,6 +37,6 @@ export default function MetaRobotsTag({ metaRobotsTag }) {
                     : <span>❌ No</span>
                 }
             </p>
-        </div>
+        </>
     )
 }

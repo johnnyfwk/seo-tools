@@ -9,7 +9,7 @@ export default function CanonicalTags({ canonicalTags }) {
     if (safe.tags.length === 0) return <p>No canonical tags found.</p>;
 
     return (
-        <div>
+        <>
             {canonicalTags.globalIssues?.length > 0
                 ? <div>
                     <p>
@@ -108,6 +108,6 @@ export default function CanonicalTags({ canonicalTags }) {
                     })}
                 </tbody>
             </table>
-        </div>
+        </>
     );
 }

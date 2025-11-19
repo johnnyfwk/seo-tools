@@ -21,7 +21,7 @@ export default function HtmlLanguageAttribute({ htmlLanguageAttribute }) {
     const regionName = regionCode ? ISO_REGIONS[regionCode.toUpperCase()] : null;
 
     return (
-        <div>
+        <>
             <p>
                 <strong>Raw value:</strong> <code>{attribute}</code>
             </p>
@@ -58,6 +58,6 @@ export default function HtmlLanguageAttribute({ htmlLanguageAttribute }) {
                 </ul>
                 : null
             }
-        </div>
+        </>
     )
 }
