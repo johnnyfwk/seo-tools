@@ -13,6 +13,7 @@ import Viewport from "../components/viewport";
 import MetaTitles from "../components/metaTitles";
 import MetaDescriptions from "../components/metaDescriptions";
 import Headings from "../components/headings";
+import Links from "../components/links";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -55,15 +56,12 @@ export default function ClientOnPageChecker() {
             },
             metaTitles: [],
             metaDescriptions: [],
-            // headings: {
-            //     h1: [],
-            //     h2: [],
-            //     h3: [],
-            //     h4: [],
-            //     h5: [],
-            //     h6: [],
-            // }
             headings: [],
+            links: {
+                internal: [],
+                external: [],
+                uncrawlable: [],
+            },
         },
     };
 
@@ -160,17 +158,14 @@ export default function ClientOnPageChecker() {
                         content: data.scrapedData?.viewport?.content || "",
                         properties: data.scrapedData?.viewport?.properties || {}
                     },
-                    metaTtitles: data.scrapedData?.metaTitles || [],
+                    metaTitles: data.scrapedData?.metaTitles || [],
                     metaDescriptions: data.scrapedData?.metaDescriptions || [],
-                    // headings: data.scrapedData?.headings || {
-                    //     h1: data.scrapedData?.headings?.h1 || [],
-                    //     h2: data.scrapedData?.headings?.h2 || [],
-                    //     h3: data.scrapedData?.headings?.h3 || [],
-                    //     h4: data.scrapedData?.headings?.h4 || [],
-                    //     h5: data.scrapedData?.headings?.h5 || [],
-                    //     h6: data.scrapedData?.headings?.h6 || [],
-                    // },
                     headings: data.scrapedData?.headings || [],
+                    links: data.scrapedData?.links || {
+                        internal: data.scrapedData?.links?.internal || [],
+                        external: data.scrapedData?.links?.external || [],
+                        uncrawlable: data.scrapedData?.links?.uncrawlable || [],
+                    }
                 },
             });
 
@@ -251,6 +246,14 @@ export default function ClientOnPageChecker() {
         {
             title: "Headings",
             component: <Headings headings={pageData.scrapedData.headings} />,
+        },
+        {
+            title: "Internal Links",
+            component: <Links links={pageData.scrapedData.links.internal} />,
+        },
+        {
+            title: "External Links",
+            component: <Links links={pageData.scrapedData.links.external} />,
         },
     ];
 

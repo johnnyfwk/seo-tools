@@ -39,10 +39,10 @@ export default function Headings({ headings }) {
             {headingLevels.map(level => (
                 <section key={level} id={level}>
                     <h4>{level.toUpperCase()} Tags ({grouped[level].length})</h4>
-                    {grouped[level].length === 0 ? (
-                        <p>No &lt;{level}&gt; tags found.</p>
-                    ) : (
-                        <table>
+                    
+                    {grouped[level].length === 0
+                        ? <p>No &lt;{level}&gt; tags found.</p>
+                        : <table>
                             <thead>
                                 <tr>
                                     <th style={{ textAlign: 'center' }}>#</th>
@@ -60,7 +60,7 @@ export default function Headings({ headings }) {
                                 ))}
                             </tbody>
                         </table>
-                    )}
+                    }
                 </section>
             ))}
         </>

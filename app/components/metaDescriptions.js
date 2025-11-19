@@ -20,6 +20,7 @@ export default function MetaDescriptions({ metaDescriptions }) {
                         <th scope="col" style={{ textAlign: 'center' }}>#</th>
                         <th scope="col" style={{ textAlign: 'left' }}>Text</th>
                         <th scope="col" style={{ textAlign: 'center' }}>Length</th>
+                        <th scope="col" style={{ textAlign: 'center' }}>Recommended Length</th>
                         <th scope="col"  style={{ textAlign: 'center' }}>Status</th>
                     </tr>
                 </thead>
@@ -34,8 +35,13 @@ export default function MetaDescriptions({ metaDescriptions }) {
                         return (
                             <tr key={i}>
                                 <td style={{ textAlign: 'center' }}>{i + 1}</td>
+
                                 <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(metaDesc)}</td>
+
                                 <td style={{ textAlign: 'center' }}>{metaDesc.length}</td>
+
+                                <td style={{ textAlign: 'center' }}>{recommendedMaxLength}</td>
+
                                 <td
                                     style={{ textAlign: 'center' }}
                                     className={statusTextAndClass.class}

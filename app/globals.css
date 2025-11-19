@@ -5,6 +5,7 @@
     --red: #ff0000;
     --orange: #ff9900;
     --green: #09ff00;
+    --blue: #00a2ff;
     --light-pink: #ffd3d3;
     --light-blue: #d0d0ff;
 
@@ -14,6 +15,7 @@
     --error: var(--red);
     --warning: var(--orange);
     --success: var(--green);
+    --neutral: var(--blue);
 }
 
 * {
@@ -50,6 +52,15 @@ img {
 
 .success-text {
     color: var(--success);
+}
+
+.neutral-background {
+    background-color: var(--neutral);
+    color: var(--white);
+}
+
+.neutral-text {
+    color: var(--neutral);
 }
 
 body {
