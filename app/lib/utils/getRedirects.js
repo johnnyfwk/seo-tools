@@ -11,6 +11,8 @@ export async function getRedirects(inputUrl) {
     } catch {
         return {
             error: "Invalid URL",
+            initialUrl: inputUrl,
+            initialStatusCode: null,
             finalUrl: inputUrl,
             finalUrlStatusCode: null,
             redirects: [],
@@ -28,6 +30,8 @@ export async function getRedirects(inputUrl) {
         } catch (err) {
             return {
                 error: "Failed to fetch URL",
+                initialUrl: inputUrl,
+                initialStatusCode: redirects[0]?.statusCode ?? null,
                 finalUrl: currentUrl,
                 finalUrlStatusCode: null,
                 redirects,
@@ -44,6 +48,8 @@ export async function getRedirects(inputUrl) {
         // Not a redirect → done
         if (![301, 302, 303, 307, 308].includes(statusCode)) {
             return {
+                initialUrl: inputUrl,
+                initialStatusCode: redirects[0].statusCode,
                 finalUrl: currentUrl,
                 finalUrlStatusCode: statusCode,
                 redirects,
@@ -53,6 +59,8 @@ export async function getRedirects(inputUrl) {
         const location = response.headers.get("location");
         if (!location) {
             return {
+                initialUrl: inputUrl,
+                initialStatusCode: redirects[0].statusCode,
                 finalUrl: currentUrl,
                 finalUrlStatusCode: statusCode,
                 redirects,
@@ -65,6 +73,8 @@ export async function getRedirects(inputUrl) {
 
     return {
         warning: "Max redirects reached",
+        initialUrl: inputUrl,
+        initialStatusCode: redirects[0]?.statusCode ?? null,
         finalUrl: currentUrl,
         finalUrlStatusCode: statusCode,
         redirects,

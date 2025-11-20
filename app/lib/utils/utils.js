@@ -111,7 +111,21 @@ export function createLimiter(maxConcurrency) {
     };
 }
 
-export function evaluateIndexability({ statusCode, robotsTxt, canonicalData, metaRobots }) {
+/**
+ * Evaluate if a URL is indexable.
+ * @param {Object} params
+ * @param {number} params.statusCode - Final HTTP status code of the URL
+ * @param {boolean} params.blockedByRobots - True if URL is blocked by robots.txt
+ * @param {boolean} params.canonicalMatches - True if canonical URL matches this URL
+ * @param {boolean} params.metaRobotsAllowsIndexing - True if meta robots allows indexing
+ * @returns {Object} { indexable: boolean, reasons: string[] }
+ */
+export function evaluateIndexability({
+    statusCode,
+    blockedByRobots,
+    canonicalMatches,
+    metaRobotsAllowsIndexing
+}) {
     const reasons = [];
     let indexable = true;
 
@@ -120,20 +134,19 @@ export function evaluateIndexability({ statusCode, robotsTxt, canonicalData, met
         reasons.push(`Non-200 final status (${statusCode})`);
     }
 
-    if (robotsTxt && !robotsTxt.allowed) {
+    if (blockedByRobots === true) {
         indexable = false;
         reasons.push("Blocked by robots.txt");
     }
 
-    if (metaRobots && !metaRobots.allowsIndexing) {
+    if (metaRobotsAllowsIndexing === false) {
         indexable = false;
         reasons.push("Meta robots: noindex");
     }
 
-    const canonical = canonicalData?.canonicalTags?.[0];
-    if (canonical && canonical.resolvedUrlMatchesOriginalUrl === false) {
+    if (canonicalMatches === false) { // explicitly check false
         indexable = false;
-        reasons.push(`Canonical points elsewhere (${canonical.resolvedUrl})`);
+        reasons.push("Canonical URL points elsewhere");
     }
 
     return { indexable, reasons };

@@ -32,7 +32,7 @@ export default function RobotsTxt({ robotsTxt }) {
 
             {determiningRule
                 ? <p>
-                    <strong>Disallow rule: </strong>
+                    <strong>Determining {blocked ? "disallow" : "allow"} rule: </strong>
                     <code>{determiningRule.rule}</code>
                 </p>
                 : null

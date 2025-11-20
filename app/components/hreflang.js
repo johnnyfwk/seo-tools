@@ -16,14 +16,95 @@ export default function Hreflang({ hreflang }) {
                     <th style={{ textAlign: 'center' }}>Status Code</th>
                     <th style={{ textAlign: 'left' }}>Final URL</th>
                     <th style={{ textAlign: 'center' }}>Final URL Status Code</th>
-                    <th style={{ textAlign: 'center' }}>Hreflang URL is allowed by Robots.txt?</th>
-                    <th style={{ textAlign: 'center' }}>Hreflang URL has noindex tag?</th>
+                    <th style={{ textAlign: 'center' }}>Blocked by Robots.txt?</th>
+                    <th style={{ textAlign: 'center' }}>Meta robots tag allows indexing?</th>
                     <th style={{ textAlign: 'center' }}>Canonical URL matches Hreflang URL?</th>
-                    <th style={{ textAlign: 'center' }}>Hreflang URL is indexable?</th>
+                    <th style={{ textAlign: 'center' }}>Is indexable?</th>
                 </tr>
             </thead>
             <tbody>
                 {hreflang.map((hreflang, index) => {
+                    let initialUrlStatusCodeClass;
+                    if (hreflang.initialUrlStatusCode >= 200 && hreflang.initialUrlStatusCode < 300) {
+                        initialUrlStatusCodeClass = "success-background";
+                    } else if (hreflang.initialUrlStatusCode === null) {
+                        initialUrlStatusCodeClass = "";
+                    } else {
+                        initialUrlStatusCodeClass = "error-background";
+                    }
+
+                    let finalUrlStatusCodeClass;
+                    if (hreflang.initialUrlStatusCode >= 200 && hreflang.initialUrlStatusCode < 300) {
+                        finalUrlStatusCodeClass = "";
+                    } else if (hreflang.finalUrlStatusCode >= 200 && hreflang.finalUrlStatusCode < 300) {
+                        finalUrlStatusCodeClass = "success-background";
+                    } else if (hreflang.finalUrlStatusCode === null) {
+                        finalUrlStatusCodeClass = "";
+                    } else {
+                        finalUrlStatusCodeClass = "error-background";
+                    }
+
+                    let robotsTextAndClass;
+                    if (hreflang.robotsTxtData?.blocked === false) {
+                        robotsTextAndClass = {
+                            text: "Yes",
+                            class: "success-background"
+                        }
+                    } else if (hreflang.robotsTxtData?.blocked === false) {
+                        robotsTextAndClass = {
+                            text: "No",
+                            class: "warning-background"
+                        }
+                    } else {
+                        robotsTextAndClass = {
+                            text: "N/A",
+                            class: ""
+                        }
+                    }
+
+                    let metaRobotsTagTextAndClass;
+                    if (hreflang.metaRobotsData?.allowsIndexing === true) {
+                        metaRobotsTagTextAndClass = {
+                            text: "Yes",
+                            class: "success-background"
+                        }
+                    } else if (hreflang.metaRobotsData?.allowsIndexing === false) {
+                        metaRobotsTagTextAndClass = {
+                            text: "No",
+                            class: "warning-background"
+                        }
+                    } else {
+                        metaRobotsTagTextAndClass = {
+                            text: "N/A",
+                            class: ""
+                        }
+                    }
+
+                    let canonicalTextAndClass;
+                    if (hreflang.canonicalData?.tags[0]?.resolvedCanonicalUrlMatchesOriginalUrl === true) {
+                        canonicalTextAndClass = {
+                            text: "Yes",
+                            class: "success-background"
+                        }
+                    } else if (hreflang.canonicalData?.tags[0]?.resolvedCanonicalUrlMatchesOriginalUrl === false) {
+                        canonicalTextAndClass = {
+                            text: "No",
+                            class: "warning-background"
+                        }
+                    } else {
+                        canonicalTextAndClass = {
+                            text: "Unknown",
+                            class: ""
+                        }
+                    }
+
+                    const isIndexable = utils.evaluateIndexability({
+                        statusCode: hreflang.initialUrlStatusCode,
+                        blockedByRobots: hreflang.robotsTxtData?.blocked,
+                        canonicalMatches: hreflang.metaRobotsData?.allowsIndexing,
+                        metaRobotsAllowsIndexing: hreflang.canonicalData?.tags[0]?.resolvedCanonicalUrlMatchesOriginalUrl === true,
+                    });
+
                     return (
                         <tr key={index}>
                             <td style={{ textAlign: 'center' }}>
@@ -36,24 +117,21 @@ export default function Hreflang({ hreflang }) {
 
                             <td style={{ textAlign: 'left' }}>
                                 <Link
-                                    href={hreflang.url}
+                                    href={hreflang.initialUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                >{hreflang.url}</Link>
+                                >{hreflang.initialUrl}</Link>
                             </td>
 
                             <td
                                 style={{ textAlign: 'center' }}
-                                className={hreflang.hreflangUrlStatusCode === 200
-                                    ? "success-background"
-                                    : "error-background"
-                                }
+                                className={initialUrlStatusCodeClass}
                             >
-                                {hreflang.hreflangUrlStatusCode || "Fetch failed"}
+                                {hreflang.initialUrlStatusCode || "N/A"}
                             </td>
 
                             <td style={{ textAlign: 'left' }}>
-                                {hreflang.hreflangUrlStatusCode !== 200
+                                {hreflang.initialUrlStatusCode < 200 || hreflang.initialUrlStatusCode >= 300
                                     ? <Link
                                         href={hreflang.finalUrl}
                                         target="_blank"
@@ -65,59 +143,44 @@ export default function Hreflang({ hreflang }) {
 
                             <td
                                 style={{ textAlign: 'center' }}
-                                className={hreflang.hreflangUrlStatusCode === 200
-                                    ? ""
-                                    : hreflang.finalUrlStatusCode === 200                                    
-                                        ? "success-background"
-                                        : "error-background"
-                                }
+                                className={finalUrlStatusCodeClass}
                             >
-                                {hreflang.hreflangUrlStatusCode === 200
+                                {hreflang.initialUrlStatusCode === 200
                                     ? "-"
-                                    : hreflang.finalUrlStatusCode || "Fetch failed"
+                                    : hreflang.finalUrlStatusCode || "N/A"
                                 }
                             </td>
 
                             <td
                                 style={{ textAlign: 'center' }}
-                                className={hreflang.robotsTxt?.allowed
+                                className={robotsTextAndClass.class}
+                            >
+                                {robotsTextAndClass.text}
+                            </td>
+
+                            <td
+                                style={{ textAlign: 'center' }}
+                                className={metaRobotsTagTextAndClass.class}
+                            >
+                                {metaRobotsTagTextAndClass.text}
+                            </td>
+
+                            <td
+                                style={{ textAlign: 'center' }}
+                                className={canonicalTextAndClass.class}
+                            >
+                                {canonicalTextAndClass.text}
+                            </td>
+
+                            <td
+                                style={{ textAlign: 'center' }}
+                                className={isIndexable
                                     ? "success-background"
                                     : "error-background"
                                 }
                             >
-                                {hreflang.robotsTxt?.allowed ? "Yes" : "No"}
+                                {isIndexable ? "Yes" : "No"}
                             </td>
-
-                            <td
-                                style={{ textAlign: 'center' }}
-                                className={!hreflang.isNoindex
-                                    ? "success-background"
-                                    : "error-background"
-                                }
-                            >
-                                {!hreflang.isNoindex ? "No" : "Yes"}
-                            </td>
-
-                            <td
-                                style={{ textAlign: 'center' }}
-                                className={hreflang.canonicalData.matchesFirstCanonicalTag
-                                    ? "success-background"
-                                    : "warning-background"
-                                }
-                            >
-                                {hreflang.canonicalData.matchesFirstCanonicalTag 
-                                    ? "Yes"
-                                    : "No"
-                                }
-                            </td>
-
-                            <td
-                                style={{ textAlign: 'center' }}
-                                className={hreflang.hreflangUrlIsIndexable
-                                    ? "success-background"
-                                    : "error-background"
-                                }
-                            >{hreflang.hreflangUrlIsIndexable ? "Yes" : "No"}</td>
                         </tr>
                     )
                 })}
