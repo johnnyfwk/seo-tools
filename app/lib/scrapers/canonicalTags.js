@@ -35,9 +35,12 @@ export async function scrapeCanonicalTags($, pageUrl) {
         let resolvedCanonicalUrlMatchesOriginalUrl = null;
         const issues = [];
 
+        let canonicalUrlValid = true;
+
         try {
             resolvedCanonicalUrl = new URL(originalUrl, pageUrl).href;
         } catch {
+            canonicalUrlValid = false;
             resolvedCanonicalUrl = originalUrl;
             issues.push(`Invalid canonical URL format: ${originalUrl}`);
         }
@@ -50,18 +53,49 @@ export async function scrapeCanonicalTags($, pageUrl) {
             };
         }
 
+        // try {
+        //     if (resolvedCanonicalUrl && canonicalUrlValid) {
+        //         const response = await fetch(resolvedCanonicalUrl, {
+        //             method: 'HEAD',
+        //             headers: browserHeaders,
+        //             redirect: 'manual',
+        //         });
+
+        //         resolvedCanonicalUrlStatusCode = response.status;
+
+        //         if (resolvedCanonicalUrlStatusCode >= 300 && resolvedCanonicalUrlStatusCode < 400) {
+        //             issues.push(`Canonical URL redirects (${resolvedCanonicalUrlStatusCode}) Recommended: 200 OK.`)
+        //         } else if (resolvedCanonicalUrlStatusCode >= 400) {
+        //             issues.push(`Canonical URL returns error (${resolvedCanonicalUrlStatusCode}). Recommended: 200 OK.`)
+        //         };
+        //     }
+        // } catch (err) {
+        //     issues.push(`Failed to fetch canonical URL: ${err.message}`);
+        // }
+
         try {
-            if (resolvedCanonicalUrl && !issues.includes(`Invalid canonical URL format: ${originalUrl}`)) {
-                const response = await fetch(resolvedCanonicalUrl, {
-                    method: 'HEAD',
-                    headers: browserHeaders,
-                    redirect: 'manual',
-                });
+            if (resolvedCanonicalUrl && canonicalUrlValid) {
+                let response;
+
+                try {
+                    response = await fetch(resolvedCanonicalUrl, {
+                        method: 'HEAD',
+                        headers: browserHeaders,
+                        redirect: 'manual',
+                    });
+                } catch {
+                    // Fallback: some servers block HEAD
+                    response = await fetch(resolvedCanonicalUrl, {
+                        method: 'GET',
+                        headers: browserHeaders,
+                        redirect: 'manual',
+                    });
+                }
 
                 resolvedCanonicalUrlStatusCode = response.status;
 
                 if (resolvedCanonicalUrlStatusCode >= 300 && resolvedCanonicalUrlStatusCode < 400) {
-                    issues.push(`Canonical URL redirects (${resolvedCanonicalUrlStatusCode}) Recommended: 200 OK.`)
+                    issues.push(`Canonical URL redirects (${resolvedCanonicalUrlStatusCode}) Generally OK, but Google may treat final URL as canonical.`)
                 } else if (resolvedCanonicalUrlStatusCode >= 400) {
                     issues.push(`Canonical URL returns error (${resolvedCanonicalUrlStatusCode}). Recommended: 200 OK.`)
                 };
