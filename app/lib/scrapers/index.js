@@ -74,9 +74,9 @@ export async function scrapeWithCheerio(
             Object.assign(results, scrapeSchemaMarkup($));
         }
 
-        // if (shouldScrape('images', opts)) {
-        //     Object.assign(results, await scrapeImages($, pageUrl, { checkStatus: true }));
-        // }
+        if (shouldScrape('images', opts)) {
+            Object.assign(results, await scrapeImages($, pageUrl, { checkStatus: true }));
+        }
 
         // if (shouldScrape('hreflang', opts)) {
         //     Object.assign(results, await scrapeHreflang($, pageUrl, headers));

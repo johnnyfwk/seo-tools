@@ -14,6 +14,7 @@ import MetaTitles from "../components/metaTitles";
 import MetaDescriptions from "../components/metaDescriptions";
 import Headings from "../components/headings";
 import Links from "../components/links";
+import Images from "../components/images";
 import SchemaMarkup from "../components/schemaMarkup";
 
 export default function ClientOnPageChecker() {
@@ -63,7 +64,8 @@ export default function ClientOnPageChecker() {
                 external: [],
                 uncrawlable: [],
             },
-            schemaMarkup: {},
+            images: [],
+            schemaMarkup: [],
         },
     };
 
@@ -168,7 +170,8 @@ export default function ClientOnPageChecker() {
                         external: data.scrapedData?.links?.external || [],
                         uncrawlable: data.scrapedData?.links?.uncrawlable || [],
                     },
-                    schemaMarkup: data.scrapedData?.schemaMarkup || {},
+                    images: data.scrapedData?.images || [],
+                    schemaMarkup: data.scrapedData?.schemaMarkup || [],
                 },
             });
 
@@ -259,7 +262,11 @@ export default function ClientOnPageChecker() {
             component: <Links links={pageData.scrapedData.links.external} />,
         },
         {
-            title: "Schema Markup",
+            title: `Images (${pageData.scrapedData.images.length})`,
+            component: <Images images={pageData.scrapedData.images} />,
+        },
+        {
+            title: `Schema Markup (${pageData.scrapedData.schemaMarkup.length})`,
             component: <SchemaMarkup schemaMarkup={pageData.scrapedData.schemaMarkup} />,
         },
     ];

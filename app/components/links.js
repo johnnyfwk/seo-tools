@@ -84,7 +84,7 @@ export default function Links({ links }) {
                                         <img
                                             src={link.imageSrc}
                                             alt={link.imageSrc || "Internal link image"}
-                                            style={{ maxHeight: "100px" }}
+                                            style={{ maxHeight: "70px" }}
                                         />
                                     </Link>
                                     : "-"
