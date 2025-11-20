@@ -14,6 +14,7 @@ import MetaTitles from "../components/metaTitles";
 import MetaDescriptions from "../components/metaDescriptions";
 import Headings from "../components/headings";
 import Links from "../components/links";
+import SchemaMarkup from "../components/schemaMarkup";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -62,6 +63,7 @@ export default function ClientOnPageChecker() {
                 external: [],
                 uncrawlable: [],
             },
+            schemaMarkup: {},
         },
     };
 
@@ -165,7 +167,8 @@ export default function ClientOnPageChecker() {
                         internal: data.scrapedData?.links?.internal || [],
                         external: data.scrapedData?.links?.external || [],
                         uncrawlable: data.scrapedData?.links?.uncrawlable || [],
-                    }
+                    },
+                    schemaMarkup: data.scrapedData?.schemaMarkup || {},
                 },
             });
 
@@ -248,12 +251,16 @@ export default function ClientOnPageChecker() {
             component: <Headings headings={pageData.scrapedData.headings} />,
         },
         {
-            title: "Internal Links",
+            title: `Internal Links (${pageData.scrapedData.links.internal.length})`,
             component: <Links links={pageData.scrapedData.links.internal} />,
         },
         {
-            title: "External Links",
+            title: `External Links (${pageData.scrapedData.links.external.length})`,
             component: <Links links={pageData.scrapedData.links.external} />,
+        },
+        {
+            title: "Schema Markup",
+            component: <SchemaMarkup schemaMarkup={pageData.scrapedData.schemaMarkup} />,
         },
     ];
 

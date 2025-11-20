@@ -1,8 +1,14 @@
 function handleSchema(schema, schemas) {
-    if (!schema || typeof schema !== 'object') return;
+    if (!schema) return;
+
+    if (Array.isArray(schema)) {
+        schema.forEach(s => handleSchema(s, schemas));
+        return;
+    }
+
+    if (typeof schema !== 'object') return;
 
     const type = schema['@type'];
-
     schemas.push({
         type: Array.isArray(type) ? type.join(', ') : type || 'Unknown',
         format: 'JSON-LD',
@@ -10,9 +16,10 @@ function handleSchema(schema, schemas) {
     });
 
     if (schema['@graph']) {
-        schema['@graph'].forEach(s => handleSchema(s, schemas));
+        handleSchema(schema['@graph'], schemas); // recursive for array
     }
 }
+
 
 export function scrapeSchemaMarkup($) {
     const schemas = [];
@@ -31,7 +38,9 @@ export function scrapeSchemaMarkup($) {
                 handleSchema(parsed, schemas);
             }
         } catch (e) {
-            // ignore invalid JSON
+            if (process.env.NODE_ENV !== 'production') {
+                console.warn('Invalid JSON-LD schema:', e.message);
+            }
         }
     });
 

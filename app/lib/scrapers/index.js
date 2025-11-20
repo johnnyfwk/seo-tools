@@ -70,9 +70,9 @@ export async function scrapeWithCheerio(
             Object.assign(results, await scrapeLinks($, pageUrl));
         }
 
-        // if (shouldScrape('schema', opts)) {
-        //     Object.assign(results, scrapeSchemaMarkup($));
-        // }
+        if (shouldScrape('schema', opts)) {
+            Object.assign(results, scrapeSchemaMarkup($));
+        }
 
         // if (shouldScrape('images', opts)) {
         //     Object.assign(results, await scrapeImages($, pageUrl, { checkStatus: true }));
