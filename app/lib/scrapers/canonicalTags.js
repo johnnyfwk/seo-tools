@@ -53,26 +53,6 @@ export async function scrapeCanonicalTags($, pageUrl) {
             };
         }
 
-        // try {
-        //     if (resolvedCanonicalUrl && canonicalUrlValid) {
-        //         const response = await fetch(resolvedCanonicalUrl, {
-        //             method: 'HEAD',
-        //             headers: browserHeaders,
-        //             redirect: 'manual',
-        //         });
-
-        //         resolvedCanonicalUrlStatusCode = response.status;
-
-        //         if (resolvedCanonicalUrlStatusCode >= 300 && resolvedCanonicalUrlStatusCode < 400) {
-        //             issues.push(`Canonical URL redirects (${resolvedCanonicalUrlStatusCode}) Recommended: 200 OK.`)
-        //         } else if (resolvedCanonicalUrlStatusCode >= 400) {
-        //             issues.push(`Canonical URL returns error (${resolvedCanonicalUrlStatusCode}). Recommended: 200 OK.`)
-        //         };
-        //     }
-        // } catch (err) {
-        //     issues.push(`Failed to fetch canonical URL: ${err.message}`);
-        // }
-
         try {
             if (resolvedCanonicalUrl && canonicalUrlValid) {
                 let response;

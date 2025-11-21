@@ -17,6 +17,7 @@ import Links from "../components/links";
 import Images from "../components/images";
 import SchemaMarkup from "../components/schemaMarkup";
 import Hreflang from "../components/hreflang";
+import OpenGraph from "../components/openGraph";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -68,6 +69,7 @@ export default function ClientOnPageChecker() {
             images: [],
             schemaMarkup: [],
             hreflang: [],
+            openGraph: {},
         },
     };
 
@@ -175,6 +177,7 @@ export default function ClientOnPageChecker() {
                     images: data.scrapedData?.images || [],
                     schemaMarkup: data.scrapedData?.schemaMarkup || [],
                     hreflang: data.scrapedData?.hreflang || [],
+                    openGraph: data.scrapedData?.openGraph || {},
                 },
             });
 
@@ -275,6 +278,10 @@ export default function ClientOnPageChecker() {
         {
             title: `Hreflang (${pageData.scrapedData.hreflang.length})`,
             component: <Hreflang hreflang={pageData.scrapedData.hreflang} />,
+        },
+        {
+            title: `Open Graph`,
+            component: <OpenGraph openGraph={pageData.scrapedData.openGraph} />,
         },
     ];
 

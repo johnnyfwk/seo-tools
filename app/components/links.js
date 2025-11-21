@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 export default function Links({ links }) {
     if (links.length === 0) {
         return <p>No links found.</p>;
@@ -76,7 +74,7 @@ export default function Links({ links }) {
 
                             <td style={{ textAlign: 'center' }}>
                                 {link.imageSrc
-                                    ? <Link
+                                    ? <a
                                         href={link.imageSrc}
                                         target="_blank"
                                         rel="noreferrer noopener"
@@ -86,7 +84,7 @@ export default function Links({ links }) {
                                             alt={link.imageSrc || "Internal link image"}
                                             style={{ maxHeight: "70px" }}
                                         />
-                                    </Link>
+                                    </a>
                                     : "-"
                                 }
                             </td>
@@ -130,13 +128,13 @@ export default function Links({ links }) {
                             </td>
 
                             <td style={{ textAlign: 'left' }}>
-                                <Link
+                                <a
                                     href={link.url}
                                     target="_blank"
                                     rel="noreferrer noopener"
                                 >
                                     {link.rawHref}
-                                </Link>
+                                </a>
                             </td>
 
                             <td
@@ -150,13 +148,13 @@ export default function Links({ links }) {
                                 {link.statusCode >= 200 && link.statusCode < 300
                                     ? "-"
                                     : link.finalUrl
-                                        ? <Link
+                                        ? <a
                                             href={link.finalUrl}
                                             target="_blank"
                                             rel="noreferrer noopener"
                                         >
                                             {link.finalUrl}
-                                        </Link>
+                                        </a>
                                         : "-"
                                 }
                             </td>
