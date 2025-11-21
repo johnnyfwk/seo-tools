@@ -144,7 +144,7 @@ export function evaluateIndexability({
         reasons.push("Meta robots: noindex");
     }
 
-    if (canonicalMatches === false) { // explicitly check false
+    if (canonicalMatches === false) {
         indexable = false;
         reasons.push("Canonical URL points elsewhere");
     }

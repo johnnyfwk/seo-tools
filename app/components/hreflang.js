@@ -98,7 +98,7 @@ export default function Hreflang({ hreflang }) {
                         }
                     }
 
-                    const isIndexable = utils.evaluateIndexability({
+                    const indexability = utils.evaluateIndexability({
                         statusCode: hreflang.initialUrlStatusCode,
                         blockedByRobots: hreflang.robotsTxtData?.blocked,
                         canonicalMatches: hreflang.metaRobotsData?.allowsIndexing,
@@ -174,12 +174,12 @@ export default function Hreflang({ hreflang }) {
 
                             <td
                                 style={{ textAlign: 'center' }}
-                                className={isIndexable
+                                className={indexability.indexable
                                     ? "success-background"
                                     : "error-background"
                                 }
                             >
-                                {isIndexable ? "Yes" : "No"}
+                                {indexability.indexable ? "Yes" : "No"}
                             </td>
                         </tr>
                     )
