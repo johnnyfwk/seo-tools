@@ -1,5 +1,4 @@
 export function scrapeHeadings($) {
-    const headingLevels = ['h1','h2','h3','h4','h5','h6'];
     const headings = [];
 
     // Select all headings at once

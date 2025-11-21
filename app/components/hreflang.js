@@ -16,10 +16,10 @@ export default function Hreflang({ hreflang }) {
                     <th style={{ textAlign: 'center' }}>Status Code</th>
                     <th style={{ textAlign: 'left' }}>Final URL</th>
                     <th style={{ textAlign: 'center' }}>Final URL Status Code</th>
-                    <th style={{ textAlign: 'center' }}>Blocked by Robots.txt?</th>
+                    <th style={{ textAlign: 'center' }}>Allowed by Robots.txt?</th>
                     <th style={{ textAlign: 'center' }}>Meta robots tag allows indexing?</th>
                     <th style={{ textAlign: 'center' }}>Canonical URL matches Hreflang URL?</th>
-                    <th style={{ textAlign: 'center' }}>Is indexable?</th>
+                    <th style={{ textAlign: 'center' }}>URL is indexable?</th>
                 </tr>
             </thead>
             <tbody>
