@@ -8,14 +8,28 @@ export default function Headings({ headings }) {
         return acc;
     }, {});
 
-    const firstLevelIndex = headingLevels.findIndex(level => grouped[level].length > 0);
-    const lastLevelIndex = headingLevels.slice().reverse().findIndex(level => grouped[level].length > 0);
-    const deepestLevelIndex = headingLevels.length - 1 - lastLevelIndex;
-
+    // Require H1 to exist
     const missingLevels = [];
-    for (let i = firstLevelIndex + 1; i < deepestLevelIndex; i++) {
-        if (grouped[headingLevels[i]].length === 0) {
-            missingLevels.push(headingLevels[i]);
+
+    // 1️⃣ Check for missing H1
+    if (grouped.h1.length === 0) {
+        missingLevels.push('h1');
+    }
+
+    // 2️⃣ Identify all used heading levels
+    const usedLevels = headingLevels.filter(level => grouped[level].length > 0);
+
+    if (usedLevels.length > 0) {
+        // Determine the lowest and highest used levels (e.g., h1 → h4)
+        const firstUsedIndex = headingLevels.indexOf(usedLevels[0]);
+        const lastUsedIndex = headingLevels.indexOf(usedLevels[usedLevels.length - 1]);
+
+        // 3️⃣ Check intermediate levels for gaps
+        for (let i = firstUsedIndex + 1; i < lastUsedIndex; i++) {
+            const level = headingLevels[i];
+            if (grouped[level].length === 0) {
+                missingLevels.push(level);
+            }
         }
     }
 
@@ -23,7 +37,7 @@ export default function Headings({ headings }) {
         <>
             {missingLevels.length > 0
                 ? <div>
-                    <p>Hierarchy issues found:</p>
+                    <p><strong>Hierarchy issues found</strong>:</p>
                     <ul>
                         {missingLevels.map(level => (
                             <li
