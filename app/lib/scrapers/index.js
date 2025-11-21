@@ -82,9 +82,9 @@ export async function scrapeWithCheerio(
             Object.assign(results, await scrapeHreflang($, pageUrl, headers));
         }
 
-        // if (shouldScrape('openGraph', opts)) {
-        //     Object.assign(results, await scrapeOpenGraph($, pageUrl));
-        // }
+        if (shouldScrape('openGraph', opts)) {
+            Object.assign(results, await scrapeOpenGraph($, pageUrl));
+        }
 
         // if (shouldScrape('xmlSitemap', opts)) {
         //     Object.assign(results, await scrapeXmlSitemap(pageUrl));

@@ -1,5 +1,7 @@
-import * as cheerio from "cheerio";
-// import { fetchRedirectInfo } from "../utils/fetchRedirectInfo";
+import * as cheerio from "cheerio"; 
+import { getRedirects } from "../utils/getRedirects";
+import { scrapeCanonicalTags } from "./canonicalTags";
+import { normaliseUrlKeepSearch } from "@/app/lib/utils/utils";
 
 export async function scrapeOpenGraph($, pageUrl) {
     if (!$) return {};
@@ -17,60 +19,78 @@ export async function scrapeOpenGraph($, pageUrl) {
     ];
 
     const openGraph = {};
-    expectedOgFields.forEach((key) => (openGraph[key] = ""));
+    expectedOgFields.forEach((key) => (openGraph[key] = null));
 
+    // Extract OG meta tags
     $("meta[property^='og:']").each((_, el) => {
         const property = $(el).attr("property");
         const content = $(el).attr("content")?.trim();
-
         if (!property || !content) return;
 
         let key = property.replace(/^og:/, "");
         if (key === "site_name") key = "siteName";
-        openGraph[key] = content;
+
+        if (openGraph[key] == null) {
+            openGraph[key] = content;
+        } else if (Array.isArray(openGraph[key])) {
+            openGraph[key].push(content);
+        } else {
+            openGraph[key] = [openGraph[key], content];
+        }
     });
 
-    let ogUrlCanonicalUrl = null;
-    let ogUrlRedirectInfo = null;
+    // Get page canonical URL
+    const canonicalData = await scrapeCanonicalTags($, pageUrl);
+    const pageCanonicalUrl = canonicalData.canonicalTags?.tags[0]?.resolvedCanonicalUrl || pageUrl;
 
-    if (openGraph.url) {
-        try {
-            // step 1: follow redirects manually
-            ogUrlRedirectInfo = await fetchRedirectInfo(openGraph.url);
+    // Handle og:url as array
+    const ogUrlsRaw = Array.isArray(openGraph.url) ? openGraph.url : [openGraph.url].filter(Boolean);
+    const ogUrlResults = [];
 
-            // step 2: fetch OG URL HTML and extract its canonical
-            const finalUrl = ogUrlRedirectInfo.finalUrl || openGraph.url;
+    for (const ogUrlRaw of ogUrlsRaw) {
+        let ogUrlValid = false;
+        let redirectData = {};
+        let statusCode = null;
+        let finalUrl = null;
+        let finalUrlStatusCode = null;
+        let visitableRawUrl = null; // The URL users can actually click
 
-            const res = await fetch(finalUrl, {
-                method: "GET",
-                redirect: "follow",
-                headers: {
-                    "User-Agent": "SEO-Checker",
-                    "Accept": "text/html",
-                },
-            });
+        if (ogUrlRaw) {
+            try {
+                const urlObj = new URL(ogUrlRaw); // validate & parse
+                ogUrlValid = true;
 
-            if (res.ok) {
-                const html = await res.text();
-                const $$ = cheerio.load(html);
-                ogUrlCanonicalUrl = $$("link[rel='canonical']").attr("href") || null;
+                visitableRawUrl = urlObj.href; // use this as the clickable link
+
+                // Follow redirects
+                redirectData = await getRedirects(ogUrlRaw);
+                statusCode = redirectData.initialStatusCode;
+                finalUrl = redirectData.finalUrl;
+                finalUrlStatusCode = redirectData.finalUrlStatusCode;
+            } catch {
+                ogUrlValid = false;
+                visitableRawUrl = null; // invalid URL, not visitable
             }
-        } catch (err) {
-            ogUrlRedirectInfo = {
-                error: err.message,
-                enteredUrl: openGraph.url,
-                enteredUrlStatusCode: null,
-                finalUrl: null,
-                finalUrlStatusCode: null,
-            };
         }
+
+        const matchesPageCanonical =
+            ogUrlValid &&
+            normaliseUrlKeepSearch(ogUrlRaw) === normaliseUrlKeepSearch(pageCanonicalUrl);
+
+        ogUrlResults.push({
+            rawUrl: ogUrlRaw,
+            visitableRawUrl, // Frontend can link to this
+            valid: ogUrlValid,
+            matchesPageCanonical,
+            statusCode,
+            finalUrl,
+            finalUrlStatusCode,
+            pageCanonicalUrl,
+        });
     }
 
-    return {
-        openGraph: {
-            data: openGraph,
-            ogUrlCanonicalUrl,
-            ogUrlRedirectInfo,
-        },
-    };
+    // Replace url property with the array of detailed results
+    openGraph.url = ogUrlResults;
+
+    return { openGraph };
 }

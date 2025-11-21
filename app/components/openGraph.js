@@ -1,110 +1,145 @@
-import Link from "next/link";
-
 export default function OpenGraph({ openGraph }) {
-    const data = openGraph?.data;
+    if (!openGraph) return null;
 
-    if (!data || Object.values(data).every(value => !value)) {
-        return <p>No open graph tags found.</p>;
+    // Check if any OG data exists
+    const hasOgData = Object.values(openGraph).some(
+        (v) => v !== null && v !== "" && !(Array.isArray(v) && v.length === 0)
+    );
+
+    if (!hasOgData) {
+        return <p>No Open Graph tags found.</p>;
     }
 
-    const ogUrlStatusCodeClassName = openGraph.ogUrlRedirectInfo.enteredUrlStatusCode === 200
-        ? "success-background"
-        : "error-background"
+    const expectedFields = Object.keys(openGraph);
+    const missingFields = expectedFields.filter((field) => {
+        const val = openGraph[field];
+        return val === null || val === "" || (Array.isArray(val) && val.length === 0);
+    });
 
-    const ogUrlFinalUrlStatusCodeClassName = openGraph.ogUrlRedirectInfo.finalUrlStatusCode === 200
-        ? "success-background"
-        : "error-background"
+    // Helper to render media arrays (images, videos, etc.)
+    const renderMediaArray = (key, arr) => arr.map((item, idx) => (
+        <tr key={`${key}-${idx}`}>
+            <td>
+                {key} [{idx + 1}]
+            </td>
+
+            <td>
+                {key === "image" ? (
+                    <div>
+                        <a href={item} target="_blank" rel="noopener noreferrer">
+                            <img
+                                src={item}
+                                alt={`OG ${key} preview`}
+                                style={{
+                                    maxWidth: "150px",
+                                    maxHeight: "150px",
+                                    display: "block",
+                                    marginBottom: "5px"
+                                }}
+                            />
+                            {item}
+                        </a>
+                    </div>
+                ) : (
+                    <a href={item} target="_blank" rel="noopener noreferrer">
+                        {item}
+                    </a>
+                )}
+            </td>
+        </tr>
+    ));
 
     return (
-        <table>
-            <thead>
-                <tr>
-                    <th style={{textAlign: "left"}}>Property</th>
-                    <th style={{textAlign: "left"}}>Content</th>
-                </tr>
-            </thead>
-            <tbody>
-                {Object.entries(openGraph.data).map(([key, value]) => (
-                    <tr key={key}>
-                        {key === "url"
-                            ? <>
-                                <td>url</td>
-                                <td>
-                                    <Link
-                                        href={value}
-                                        target="_blank"
-                                        rel="noreferrer noopener"
-                                    >{value}</Link>
-                                </td>
-                            </>
-                            : key === "image"
-                                ? <>
-                                    <td>image</td>
+        <div>
+            {missingFields.length > 0 && (
+                <div>
+                    <strong>Missing Open Graph Fields:</strong>
+                    <ul>
+                        {missingFields.map((field) => (
+                        <li key={field}>{field}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Value / URL Info</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {Object.entries(openGraph).map(([key, value]) => {
+                        // Handle og:url array with both rawUrl and finalUrl
+                        if (key === "url" && Array.isArray(value)) {
+                            return value.map((ogUrlObj, idx) => (
+                                <tr key={`${key}-${idx}`}>
+                                    <td>{key} [{idx + 1}]</td>
+
                                     <td>
-                                        <Link
-                                            href={value}
-                                            target="_blank"
-                                            rel="noreferrer noopener"
-                                        >{value}</Link>
+                                        <p>
+                                        <strong>Raw URL:</strong>{" "}
+                                            {ogUrlObj.visitableRawUrl
+                                                ? <a
+                                                    href={ogUrlObj.visitableRawUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                >
+                                                    {ogUrlObj.rawUrl}
+                                                </a>
+                                                : ogUrlObj.rawUrl || "N/A"
+                                            }
+                                        </p>
+
+                                        {ogUrlObj.finalUrl && ogUrlObj.finalUrl !== ogUrlObj.rawUrl 
+                                            ? <p>
+                                                <strong>Final URL:</strong>{" "}
+                                                <a
+                                                    href={ogUrlObj.finalUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                >
+                                                    {ogUrlObj.finalUrl}
+                                                </a>
+                                            </p>
+                                            : null
+                                        }
+
+                                        <p>
+                                            <strong>Status Code:</strong> {ogUrlObj.statusCode || "N/A"}
+                                        </p>
+
+                                        <p>
+                                            <strong>Matches Page Canonical URL:</strong>{" "}
+                                            {ogUrlObj.matchesPageCanonical ? "✅" : "❌"}
+                                        </p>
                                     </td>
-                                </>
-                                : <>
-                                    <td>{key}</td>
-                                    <td>{value || "-"}</td>
-                                </>
+                                </tr>
+                            ));
                         }
-                    </tr>
-                ))}
 
-                {openGraph.ogUrlRedirectInfo
-                    ? <tr>
-                        <td>URL Status Code</td>
-                        <td
-                            className={ogUrlStatusCodeClassName}
-                        >{openGraph.ogUrlRedirectInfo.enteredUrlStatusCode}</td>
-                    </tr>
-                    : null
-                }
+                        // Handle media arrays like images or videos
+                        if ((key === "image" || key === "video") && Array.isArray(value)) {
+                            return renderMediaArray(key, value);
+                        }
 
-                {openGraph.ogUrlRedirectInfo && openGraph.ogUrlRedirectInfo.enteredUrlStatusCode !== 200
-                    ? <>
-                        <tr>
-                            <td>Final URL</td>
-                            <td>
-                                {openGraph.ogUrlRedirectInfo?.finalUrl
-                                    ? <Link
-                                        href={openGraph.ogUrlRedirectInfo.finalUrl}
-                                        target="_blank"
-                                        rel="noreferrer noopener"
-                                    >{openGraph.ogUrlRedirectInfo.finalUrl}</Link>
-                                    : "-"
-                                }
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Final URL Status Code</td>
-                            <td
-                                className={ogUrlFinalUrlStatusCodeClassName}
-                            >{openGraph.ogUrlRedirectInfo.finalUrlStatusCode}</td>
-                        </tr>
-                    </>
-                    : null
-                }
+                        // Handle single image/video
+                        if ((key === "image" || key === "video") && typeof value === "string") {
+                            return renderMediaArray(key, [value]);
+                        }
 
-                {openGraph.ogUrlCanonicalUrl
-                    ? <tr>
-                        <td>Canonical URL of OG URL</td>
-                        <td>
-                            <Link
-                                href={openGraph.ogUrlCanonicalUrl}
-                                target="_blank"
-                                rel="noreferrer noopener"
-                            >{openGraph.ogUrlCanonicalUrl}</Link>
-                        </td>
-                    </tr>
-                    : null
-                }
-            </tbody>
-        </table>
+                        if (value === null || value === "") return null;
+
+                        return (
+                            <tr key={key}>
+                                <td>{key}</td>
+                                <td>{value}</td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </table>
+        </div>
     );
 }
