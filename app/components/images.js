@@ -1,4 +1,5 @@
 import Link from "next/link";
+import * as utils from '@/app/lib/utils/utils';
 
 export default function Images({ images }) {
     if (images.length === 0) {
@@ -12,8 +13,10 @@ export default function Images({ images }) {
                     <th style={{ textAlign: 'center' }}>#</th>
                     <th style={{ textAlign: 'left' }}>Image</th>
                     <th style={{ textAlign: 'left' }}>Alt Text</th>
-                    <th style={{ textAlign: 'left' }}>Source URL</th>
+                    <th style={{ textAlign: 'left' }}>URL</th>
                     <th style={{ textAlign: 'center' }}>Status Code</th>
+                    <th style={{ textAlign: 'left' }}>Final URL</th>
+                    <th style={{ textAlign: 'center' }}>Final URL Status Code</th>
                 </tr>
             </thead>
             <tbody>
@@ -22,7 +25,7 @@ export default function Images({ images }) {
                         <tr key={i}>
                             <td style={{ textAlign: 'center' }}>{i + 1}</td>
 
-                            <td>
+                            <td style={{ textAlign: 'center' }}>
                                 <img
                                     src={image.src || undefined}
                                     alt={image.alt || ""}
@@ -31,9 +34,14 @@ export default function Images({ images }) {
                                 />
                             </td>
 
-                            <td className={!image.alt ? "error-background" : undefined}>{image.alt}</td>
+                            <td
+                                style={{ textAlign: 'left' }}
+                                className={!image.alt ? "error-background" : undefined}
+                            >
+                                {image.alt}
+                            </td>
 
-                            <td>
+                            <td style={{ textAlign: 'left' }}>
                                 {image.src
                                     ? <Link
                                         href={image.src}
@@ -46,13 +54,38 @@ export default function Images({ images }) {
 
                             <td
                                 style={{ textAlign: 'center' }}
-                                className={image.statusCode === 200
-                                    ? "success-background"
-                                    : image.statusCode === null
-                                        ? ""
-                                        : "error-background"
+                                className={utils.getInitialUrlStatusCodeClass(image.initialUrlStatusCode)}
+                            >
+                                {image.initialUrlStatusCode || "N/A"}
+                            </td>
+
+                            <td style={{ textAlign: 'left' }}>
+                                {image.initialUrlStatusCode >= 200 && image.initialUrlStatusCode < 300
+                                    ? "-"
+                                    : image.finalUrl
+                                        ? <a
+                                            href={image.finalUrl}
+                                            target="_blank"
+                                            rel="noreferrer noopener"
+                                        >
+                                            {image.finalUrl}
+                                        </a>
+                                        : "N/A"
                                 }
-                            >{image.statusCode}</td>
+                            </td>
+
+                            <td
+                                style={{ textAlign: 'left' }}
+                                className={utils.getFinalUrlStatusCodeTextAndClass(
+                                    image.initialUrlStatusCode,
+                                    image.finalUrlStatusCode,
+                                ).class}
+                            >
+                                {utils.getFinalUrlStatusCodeTextAndClass(
+                                    image.initialUrlStatusCode,
+                                    image.finalUrlStatusCode,
+                                ).text}
+                            </td>
                         </tr>
                     )
                 })}

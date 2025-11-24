@@ -1,48 +1,5 @@
-// import * as utils from '@/app/lib/utils/utils';
-
-// export async function scrapeImages($, pageUrl, { checkStatus = false } = {}) {
-//     const limit = utils.createLimiter(5);
-//     const imageElements = $('img').toArray();
-
-//     const images = await Promise.all(
-//         imageElements.map(el => limit(async () => {
-//             const $el = $(el);
-
-//             let src =
-//                 $el.attr('src') ||
-//                 $el.attr('data-src') ||
-//                 $el.attr('data-lazy') ||
-//                 $el.attr('data-original') ||
-//                 $el.attr('data-srcset') ||
-//                 "";
-//             const alt = $el.attr('alt') || "";
-
-//             // Handle srcset with multiple URLs
-//             if (src.includes(',')) src = src.split(',').pop().trim().split(' ')[0];
-
-//             // Resolve relative URLs
-//             try { src = new URL(src, pageUrl).href; } catch {}
-
-//             let statusCode = null;
-
-//             if (checkStatus && src) {
-//                 try {
-//                     const res = await fetch(src, { method: "HEAD", redirect: "manual" });
-//                     statusCode = res.status;
-//                 } catch {
-//                     statusCode = null;
-//                 }
-//             }
-
-//             return { src, alt, statusCode };
-//         }))
-//     );
-
-//     return { images };
-// }
-
-
 import * as utils from '@/app/lib/utils/utils';
+import { getRedirects } from '../utils/getRedirects';
 
 export async function scrapeImages($, pageUrl, { checkStatus = false } = {}) {
     const limit = utils.createLimiter(5);
@@ -79,35 +36,53 @@ export async function scrapeImages($, pageUrl, { checkStatus = false } = {}) {
             }
 
             // Resolve relative URLs
-            urls = urls.map(u => {
+            urls = urls.map(url => {
                 try {
-                    return new URL(u, pageUrl).href;
+                    return new URL(url, pageUrl).href;
                 } catch {
-                    return u; // keep invalid URLs for reporting
+                    return url; // keep invalid URLs for reporting
                 }
             });
 
-            // Check status if requested
-            let statusCodes = [];
-            if (checkStatus) {
-                statusCodes = await Promise.all(
-                    urls.map(async (url) => {
-                        try {
-                            const res = await fetch(url, { method: 'HEAD', redirect: 'manual' });
-                            return res.status;
-                        } catch {
-                            return null;
-                        }
-                    })
-                );
-            } else {
-                statusCodes = urls.map(() => null);
+            if (!checkStatus) {
+                return urls.map(src => ({
+                    src,
+                    alt,
+                    initialUrl: src,
+                    initialUrlStatusCode: null,
+                    finalUrl: src,
+                    finalUrlStatusCode: null,
+                    redirects: []
+                }));
             }
 
-            return urls.map((src, i) => ({
-                src,
+            const redirectResults = await Promise.all(
+                urls.map(async (url) => {
+                    try {
+                        return await getRedirects(url);
+                    } catch (err) {
+                        return {
+                            initialUrl: url,
+                            initialStatusCode: null,
+                            finalUrl: url,
+                            finalUrlStatusCode: null,
+                            redirects: []
+                        };
+                    }
+                })
+            );
+
+            return redirectResults.map((result, i) => ({
+                src: urls[i],
                 alt,
-                statusCode: statusCodes[i]
+
+                initialUrl: result.initialUrl,
+                initialUrlStatusCode: result.initialStatusCode,
+
+                finalUrl: result.finalUrl,
+                finalUrlStatusCode: result.finalUrlStatusCode,
+
+                redirects: result.redirects
             }));
         }))
     );

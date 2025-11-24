@@ -151,3 +151,35 @@ export function evaluateIndexability({
 
     return { indexable, reasons };
 }
+
+export function getInitialUrlStatusCodeClass(statusCode) {
+    if (!statusCode) return "error-background";
+    if (statusCode >= 200 && statusCode < 300) return "success-background";
+    if (statusCode >= 300 && statusCode < 400) return "warning-background";
+    return "error-background"; // 400/500
+}
+
+export function getFinalUrlStatusCodeTextAndClass(initialStatusCode, finalStatusCode) {
+    // No redirect → hide final info
+    if (initialStatusCode >= 200 && initialStatusCode < 300) {
+        return { text: "-", class: "" };
+    }
+
+    // No final status → fetch error
+    if (!finalStatusCode) {
+        return { text: "N/A", class: "error-background" };
+    }
+
+    // Good final
+    if (finalStatusCode >= 200 && finalStatusCode < 300) {
+        return { text: finalStatusCode, class: "success-background" };
+    }
+
+    // Redirect
+    if (finalStatusCode >= 300 && finalStatusCode < 400) {
+        return { text: finalStatusCode, class: "warning-background" };
+    }
+
+    // Error
+    return { text: finalStatusCode, class: "error-background" };
+}
