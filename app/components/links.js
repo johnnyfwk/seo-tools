@@ -1,38 +1,8 @@
+import * as utils from '@/app/lib/utils/utils';
+
 export default function Links({ links }) {
     if (links.length === 0) {
         return <p>No links found.</p>;
-    }
-
-    function getStatusClass(code) {
-        if (!code) return "error-background"; // failed or null
-        if (code >= 200 && code < 300) return "success-background";
-        if (code >= 300 && code < 400) return "warning-background";
-        return "error-background"; // 400/500
-    }
-
-    function getFinalUrlStatusCodeTextAndClass(initialStatusCode, finalStatusCode) {
-        // No redirect → hide final info
-        if (initialStatusCode >= 200 && initialStatusCode < 300) {
-            return { text: "-", class: "" };
-        }
-
-        // No final status → fetch error
-        if (!finalStatusCode) {
-            return { text: "-", class: "error-background" };
-        }
-
-        // Good final
-        if (finalStatusCode >= 200 && finalStatusCode < 300) {
-            return { text: finalStatusCode, class: "success-background" };
-        }
-
-        // Redirect
-        if (finalStatusCode >= 300 && finalStatusCode < 400) {
-            return { text: finalStatusCode, class: "warning-background" };
-        }
-
-        // Error
-        return { text: finalStatusCode, class: "error-background" };
     }
 
     return (
@@ -137,9 +107,9 @@ export default function Links({ links }) {
 
                             <td
                                 style={{ textAlign: "center" }}
-                                className={getStatusClass(link.initialUrlStatusCode)}
+                                className={utils.getInitialUrlStatusCodeClass(link.initialUrlStatusCode)}
                             >
-                                {link.initialUrlStatusCode || "-"}
+                                {link.initialUrlStatusCode || "N/A"}
                             </td>
 
                             <td style={{ textAlign: "left" }}>
@@ -153,18 +123,18 @@ export default function Links({ links }) {
                                         >
                                             {link.finalUrl}
                                         </a>
-                                        : "-"
+                                        : "N/A"
                                 }
                             </td>
 
                             <td
                                 style={{ textAlign: "center" }}
-                                className={getFinalUrlStatusCodeTextAndClass(
+                                className={utils.getFinalUrlStatusCodeTextAndClass(
                                     link.initialUrlStatusCode,
                                     link.finalUrlStatusCode
                                 ).class}
                             >
-                                {getFinalUrlStatusCodeTextAndClass(
+                                {utils.getFinalUrlStatusCodeTextAndClass(
                                     link.initialUrlStatusCode,
                                     link.finalUrlStatusCode
                                 ).text}
