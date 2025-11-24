@@ -69,8 +69,8 @@ export default function OpenGraph({ openGraph }) {
             <table>
                 <thead>
                     <tr>
-                        <th>Property</th>
-                        <th>Value</th>
+                        <th style={{ textAlign: "left"}}>Property</th>
+                        <th style={{ textAlign: "left"}}>Value</th>
                     </tr>
                 </thead>
 
