@@ -101,8 +101,7 @@ export default function OpenGraph({ openGraph }) {
                             const indexability = utils.evaluateIndexability({
                                 statusCode: og.finalUrlStatusCode ?? og.initialUrlStatusCode,
                                 blockedByRobots: og.robotsTxt?.blocked ?? null,
-                                canonicalMatches:
-                                    og.canonical?.canonicalTags?.[0]?.isSelfCanonical ?? null,
+                                canonicalMatches: og.canonical?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl ?? null,
                                 metaRobotsAllowsIndexing: og.metaRobots?.allowsIndexing ?? null
                             });
 
@@ -157,7 +156,7 @@ export default function OpenGraph({ openGraph }) {
                                         {/* meta robots */}
                                         {og.metaRobots && (
                                             <div>
-                                                <strong>Meta robots allows indexing?:</strong>{" "}
+                                                <strong>Meta robots tag allows indexing?:</strong>{" "}
                                                 {og.metaRobots.allowsIndexing === null
                                                     ? "No meta robots tag"
                                                     : og.metaRobots.allowsIndexing
