@@ -72,7 +72,7 @@ export async function scrapeLinks(htmlOr$, pageUrl) {
         try {
             // const response = await fetch(initialUrl, { method: "GET", redirect: "follow" });
             const response = await getRedirects(initialUrl);
-            initialUrlStatusCode = response.initialStatusCode;
+            initialUrlStatusCode = response.initialUrlStatusCode;
             finalUrl = response.finalUrl;
             finalUrlStatusCode = response.finalUrlStatusCode;
             redirects = response.redirects;

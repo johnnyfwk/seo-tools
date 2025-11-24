@@ -153,7 +153,7 @@ export function evaluateIndexability({
 }
 
 export function getInitialUrlStatusCodeClass(statusCode) {
-    if (!statusCode) return "error-background";
+    if (!statusCode) return "";
     if (statusCode >= 200 && statusCode < 300) return "success-background";
     if (statusCode >= 300 && statusCode < 400) return "warning-background";
     return "error-background"; // 400/500
@@ -167,7 +167,7 @@ export function getFinalUrlStatusCodeTextAndClass(initialStatusCode, finalStatus
 
     // No final status → fetch error
     if (!finalStatusCode) {
-        return { text: "N/A", class: "error-background" };
+        return { text: "N/A", class: "" };
     }
 
     // Good final
@@ -182,4 +182,61 @@ export function getFinalUrlStatusCodeTextAndClass(initialStatusCode, finalStatus
 
     // Error
     return { text: finalStatusCode, class: "error-background" };
+}
+
+export function getRobotsTxtTextAndClass(blocked) {
+    if (blocked === true) {
+        return {
+            text: "Yes",
+            class: "error-background"
+        }
+    } else if (blocked === false) {
+        return {
+            text: "No",
+            class: "success-background"
+        }
+    } else {
+        return {
+            text: "N/A",
+            class: ""
+        }
+    }
+}
+
+export function getMetaRobotsTagTextAndClass(allowsIndexing) {
+    if (allowsIndexing === true) {
+        return {
+            text: "Yes",
+            class: "success-background"
+        }
+    } else if (allowsIndexing === false) {
+        return {
+            text: "No",
+            class: "error-background"
+        }
+    } else {
+        return {
+            text: "N/A",
+            class: ""
+        }
+    }
+}
+
+export function getCanonicalTextAndClass(canonicalUrlMatchesInitialUrl) {
+    if (canonicalUrlMatchesInitialUrl === true) {
+        return {
+            text: "Yes",
+            class: "success-background"
+        }
+    } else if (canonicalUrlMatchesInitialUrl === false) {
+        return {
+            text: "No",
+            class: "error-background"
+        }
+    } else {
+        return {
+            text: "N/A",
+            class: ""
+        }
+    }
 }
