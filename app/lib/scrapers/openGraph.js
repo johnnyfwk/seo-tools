@@ -64,7 +64,7 @@ export async function scrapeOpenGraph($, pageUrl) {
 
                 // Follow redirects
                 redirectData = await getRedirects(ogUrlRaw);
-                statusCode = redirectData.initialStatusCode;
+                statusCode = redirectData.initialUrlStatusCode;
                 finalUrl = redirectData.finalUrl;
                 finalUrlStatusCode = redirectData.finalUrlStatusCode;
             } catch {

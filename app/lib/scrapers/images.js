@@ -63,7 +63,7 @@ export async function scrapeImages($, pageUrl, { checkStatus = false } = {}) {
                     } catch (err) {
                         return {
                             initialUrl: url,
-                            initialStatusCode: null,
+                            initialUrlStatusCode: null,
                             finalUrl: url,
                             finalUrlStatusCode: null,
                             redirects: []
@@ -77,7 +77,7 @@ export async function scrapeImages($, pageUrl, { checkStatus = false } = {}) {
                 alt,
 
                 initialUrl: result.initialUrl,
-                initialUrlStatusCode: result.initialStatusCode,
+                initialUrlStatusCode: result.initialUrlStatusCode,
 
                 finalUrl: result.finalUrl,
                 finalUrlStatusCode: result.finalUrlStatusCode,

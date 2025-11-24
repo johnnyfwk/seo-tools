@@ -3,7 +3,6 @@ import { getRedirects } from '../utils/getRedirects';
 import { checkRobotsTxt } from '../utils/checkRobotsTxt';
 import { scrapeCanonicalTags } from './canonicalTags';
 import { scrapeMetaRobotsTag } from './metaRobotsTag';
-import * as utils from '@/app/lib/utils/utils';
 
 export async function scrapeHreflang($, pageUrl, headers = {}) {
     const hreflangs = [];
@@ -15,7 +14,8 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
         if (href && hreflang) {
             hreflangs.push({
                 source: '<link>',
-                hreflang, url: href
+                hreflang,
+                url: href,
             });
         }
     });
@@ -31,95 +31,68 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
             const href = match[1];
             hreflangs.push({
                 source: 'HTTP header',
-                hreflang, url: href
+                hreflang,
+                url: href
             });
         }
     }
 
     const results = [];
 
-    // Process each hreflang URL
     for (const item of hreflangs) {
         try {
-            if (!item.url) {
-                results.push({ ...item, error: 'Missing URL' });
-                continue;
-            }
-
             let absoluteUrl;
             try {
                 absoluteUrl = new URL(item.url, pageUrl).href;
-            } catch (err) {
+            } catch {
                 results.push({ ...item, error: `Invalid URL: ${item.url}` });
                 continue;
             }
 
-            // Get final URL and redirects
+            // Resolve redirects
             const redirectInfo = await getRedirects(absoluteUrl);
+
             const initialUrl = redirectInfo.initialUrl;
-            const initialUrlStatusCode = redirectInfo.initialStatusCode;
+            const initialUrlStatusCode = redirectInfo.initialUrlStatusCode;
             const finalUrl = redirectInfo.finalUrl;
             const finalUrlStatusCode = redirectInfo.finalUrlStatusCode;
 
-            let robotsTxtData = {
-                url: null,
-                exists: null,
-                blocked: null,
-                allowRules: [],
-                disallowRules: [],
-                sitemaps: [],
-            };
+            // Initial robots.txt
+            const robotsTxt = await checkRobotsTxt(finalUrl);
 
-            if (finalUrlStatusCode === 200) {
-                robotsTxtData = await checkRobotsTxt(finalUrl);
-            }
+            // Initial HTML (for meta robots + canonical)
+            let metaRobotsTag = null;
+            let canonicalTags = null;
 
-            let canonicalData = {
-                canonicalTags: {
-                    tags: [],
-                    globalIssues: [],
-                }
-            };
-
-            let metaRobotsData = {
-                metaRobotsTag: {
-                    content: "",
-                    htmlTagContent: "",
-                    xRobotsTagContent: "",
-                    allowsIndexing: null,
-                    allowsFollowing: null,
-                }
-            };
-
-            // Only fetch HTML if final URL is OK
-            if (finalUrlStatusCode === 200) {
-                try {
-                    const html = await fetch(finalUrl).then(r => r.text());
+            try {
+                const response = await fetch(finalUrl);
+                if (response.ok) {
+                    const html = await response.text();
                     const $page = cheerio.load(html);
-                    canonicalData = await scrapeCanonicalTags($page, finalUrl);
-                    metaRobotsData = scrapeMetaRobotsTag($page);
-                    // Optional: implement your robots.txt check here
-                } catch (err) {
-                    results.push({
-                        ...item,
-                        hreflangUrl: finalUrl,
-                        finalUrlStatusCode,
-                        error: `Failed to fetch HTML: ${err.message}`,
-                    });
-                    continue;
+
+                    metaRobotsTag = scrapeMetaRobotsTag($page);
+                    canonicalTags = (await scrapeCanonicalTags($page, finalUrl)).canonicalTags;
                 }
+            } catch {
+                // HTML fetch failed — skip
             }
 
             results.push({
                 ...item,
-                initialUrl: initialUrl,
-                initialUrlStatusCode: initialUrlStatusCode,
+
+                // Initial URL
+                initialUrl,
+                initialUrlStatusCode,
+                robotsTxt,
+                metaRobotsTag: metaRobotsTag?.metaRobotsTag || null,
+                canonicalTags,
+
+                // Final URL
                 finalUrl,
                 finalUrlStatusCode,
-                robotsTxtData,
-                metaRobotsData: metaRobotsData.metaRobotsTag,
-                canonicalData: canonicalData.canonicalTags,
-                redirects: redirectInfo.redirects || [],
+
+                // Redirects
+                redirects: redirectInfo.redirects
             });
 
         } catch (err) {
@@ -129,3 +102,4 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
 
     return { hreflang: results };
 }
+

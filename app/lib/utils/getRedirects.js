@@ -12,7 +12,7 @@ export async function getRedirects(inputUrl) {
         return {
             error: "Invalid URL",
             initialUrl: inputUrl,
-            initialStatusCode: null,
+            initialUrlStatusCode: null,
             finalUrl: inputUrl,
             finalUrlStatusCode: null,
             redirects: [],
@@ -31,7 +31,7 @@ export async function getRedirects(inputUrl) {
             return {
                 error: "Failed to fetch URL",
                 initialUrl: inputUrl,
-                initialStatusCode: redirects[0]?.statusCode ?? null,
+                initialUrlStatusCode: redirects[0]?.statusCode ?? null,
                 finalUrl: currentUrl,
                 finalUrlStatusCode: null,
                 redirects,
@@ -49,7 +49,7 @@ export async function getRedirects(inputUrl) {
         if (![301, 302, 303, 307, 308].includes(statusCode)) {
             return {
                 initialUrl: inputUrl,
-                initialStatusCode: redirects[0].statusCode,
+                initialUrlStatusCode: redirects[0].statusCode,
                 finalUrl: currentUrl,
                 finalUrlStatusCode: statusCode,
                 redirects,
@@ -60,7 +60,7 @@ export async function getRedirects(inputUrl) {
         if (!location) {
             return {
                 initialUrl: inputUrl,
-                initialStatusCode: redirects[0].statusCode,
+                initialUrlStatusCode: redirects[0].statusCode,
                 finalUrl: currentUrl,
                 finalUrlStatusCode: statusCode,
                 redirects,
@@ -74,7 +74,7 @@ export async function getRedirects(inputUrl) {
     return {
         warning: "Max redirects reached",
         initialUrl: inputUrl,
-        initialStatusCode: redirects[0]?.statusCode ?? null,
+        initialUrlStatusCode: redirects[0]?.statusCode ?? null,
         finalUrl: currentUrl,
         finalUrlStatusCode: statusCode,
         redirects,

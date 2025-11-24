@@ -49,6 +49,7 @@ export async function POST(request) {
                     method: "GET",
                     headers: browserHeaders,
                 });
+
                 if (htmlResponse.ok) {
                     html = await htmlResponse.text();
                     // Extract headers to pass to scrapers (e.g., X-Robots-Tag)
