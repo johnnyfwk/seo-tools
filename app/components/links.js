@@ -10,31 +10,29 @@ export default function Links({ links }) {
         return "error-background"; // 400/500
     }
 
-    function getFinalStatus(link) {
-        const final = link.finalStatusCode;
-
+    function getFinalUrlStatusCodeTextAndClass(initialStatusCode, finalStatusCode) {
         // No redirect → hide final info
-        if (link.statusCode >= 200 && link.statusCode < 300) {
+        if (initialStatusCode >= 200 && initialStatusCode < 300) {
             return { text: "-", class: "" };
         }
 
         // No final status → fetch error
-        if (!final) {
+        if (!finalStatusCode) {
             return { text: "-", class: "error-background" };
         }
 
         // Good final
-        if (final >= 200 && final < 300) {
-            return { text: final, class: "success-background" };
+        if (finalStatusCode >= 200 && finalStatusCode < 300) {
+            return { text: finalStatusCode, class: "success-background" };
         }
 
         // Redirect
-        if (final >= 300 && final < 400) {
-            return { text: final, class: "warning-background" };
+        if (finalStatusCode >= 300 && finalStatusCode < 400) {
+            return { text: finalStatusCode, class: "warning-background" };
         }
 
         // Error
-        return { text: final, class: "error-background" };
+        return { text: finalStatusCode, class: "error-background" };
     }
 
     return (
@@ -129,7 +127,7 @@ export default function Links({ links }) {
 
                             <td style={{ textAlign: 'left' }}>
                                 <a
-                                    href={link.url}
+                                    href={link.initialUrl}
                                     target="_blank"
                                     rel="noreferrer noopener"
                                 >
@@ -139,13 +137,13 @@ export default function Links({ links }) {
 
                             <td
                                 style={{ textAlign: "center" }}
-                                className={getStatusClass(link.statusCode)}
+                                className={getStatusClass(link.initialUrlStatusCode)}
                             >
-                                {link.statusCode || "-"}
+                                {link.initialUrlStatusCode || "-"}
                             </td>
 
                             <td style={{ textAlign: "left" }}>
-                                {link.statusCode >= 200 && link.statusCode < 300
+                                {link.initialUrlStatusCode >= 200 && link.initialUrlStatusCode < 300
                                     ? "-"
                                     : link.finalUrl
                                         ? <a
@@ -161,9 +159,15 @@ export default function Links({ links }) {
 
                             <td
                                 style={{ textAlign: "center" }}
-                                className={getFinalStatus(link).class}
+                                className={getFinalUrlStatusCodeTextAndClass(
+                                    link.initialUrlStatusCode,
+                                    link.finalUrlStatusCode
+                                ).class}
                             >
-                                {getFinalStatus(link).text}
+                                {getFinalUrlStatusCodeTextAndClass(
+                                    link.initialUrlStatusCode,
+                                    link.finalUrlStatusCode
+                                ).text}
                             </td>
                         </tr>
                     )
