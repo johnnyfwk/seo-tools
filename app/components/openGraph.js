@@ -1,7 +1,8 @@
+import * as utils from '@/app/lib/utils/utils';
+
 export default function OpenGraph({ openGraph }) {
     if (!openGraph) return null;
 
-    // Check if any OG data exists
     const hasOgData = Object.values(openGraph).some(
         (v) => v !== null && v !== "" && !(Array.isArray(v) && v.length === 0)
     );
@@ -10,126 +11,81 @@ export default function OpenGraph({ openGraph }) {
         return <p>No Open Graph tags found.</p>;
     }
 
-    const expectedFields = Object.keys(openGraph);
-    const missingFields = expectedFields.filter((field) => {
+    // --- Missing OG fields ---
+    const expectedOgFields = [
+        "title",
+        "type",
+        "url",
+        "description",
+        "image",
+        "siteName",
+        "video",
+        "audio",
+        "locale",
+    ];
+
+    const missingFields = expectedOgFields.filter((field) => {
         const val = openGraph[field];
         return val === null || val === "" || (Array.isArray(val) && val.length === 0);
     });
 
-    // Helper to render media arrays (images, videos, etc.)
-    const renderMediaArray = (key, arr) => arr.map((item, idx) => (
-        <tr key={`${key}-${idx}`}>
-            <td>
-                {key} [{idx + 1}]
-            </td>
-
-            <td>
-                {key === "image" ? (
-                    <div>
+    const renderMediaArray = (label, values) =>
+        values.map((item, idx) => (
+            <tr key={`${label}-${idx}`}>
+                <td>{label} [{idx + 1}]</td>
+                <td>
+                    {label === "image" ? (
                         <a href={item} target="_blank" rel="noopener noreferrer">
                             <img
                                 src={item}
-                                alt={`OG ${key} preview`}
-                                style={{
-                                    maxWidth: "150px",
-                                    maxHeight: "150px",
-                                    display: "block",
-                                    marginBottom: "5px"
-                                }}
+                                alt=""
+                                style={{ maxWidth: "150px", maxHeight: "150px" }}
                             />
-                            {item}
+                            <div>{item}</div>
                         </a>
-                    </div>
-                ) : (
-                    <a href={item} target="_blank" rel="noopener noreferrer">
-                        {item}
-                    </a>
-                )}
-            </td>
-        </tr>
-    ));
+                    ) : (
+                        <a href={item} target="_blank" rel="noopener noreferrer">{item}</a>
+                    )}
+                </td>
+            </tr>
+        ));
 
     return (
         <div>
+            {/* Missing OG fields */}
             {missingFields.length > 0 && (
-                <div>
+                <div style={{ marginBottom: "1rem" }}>
                     <strong>Missing Open Graph Fields:</strong>
                     <ul>
                         {missingFields.map((field) => (
-                        <li key={field}>{field}</li>
+                            <li key={field}>{field}</li>
                         ))}
                     </ul>
                 </div>
             )}
 
+            <strong>Open Graph Metadata</strong>
+
             <table>
                 <thead>
                     <tr>
                         <th>Property</th>
-                        <th>Value / URL Info</th>
+                        <th>Value</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     {Object.entries(openGraph).map(([key, value]) => {
-                        // Handle og:url array with both rawUrl and finalUrl
-                        if (key === "url" && Array.isArray(value)) {
-                            return value.map((ogUrlObj, idx) => (
-                                <tr key={`${key}-${idx}`}>
-                                    <td>{key} [{idx + 1}]</td>
+                        if (key === "url") return null;
+                        if (!value) return null;
 
-                                    <td>
-                                        <p>
-                                        <strong>Raw URL:</strong>{" "}
-                                            {ogUrlObj.visitableRawUrl
-                                                ? <a
-                                                    href={ogUrlObj.visitableRawUrl}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    {ogUrlObj.rawUrl}
-                                                </a>
-                                                : ogUrlObj.rawUrl || "N/A"
-                                            }
-                                        </p>
-
-                                        {ogUrlObj.finalUrl && ogUrlObj.finalUrl !== ogUrlObj.rawUrl 
-                                            ? <p>
-                                                <strong>Final URL:</strong>{" "}
-                                                <a
-                                                    href={ogUrlObj.finalUrl}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    {ogUrlObj.finalUrl}
-                                                </a>
-                                            </p>
-                                            : null
-                                        }
-
-                                        <p>
-                                            <strong>Status Code:</strong> {ogUrlObj.statusCode || "N/A"}
-                                        </p>
-
-                                        <p>
-                                            <strong>Matches Page Canonical URL:</strong>{" "}
-                                            {ogUrlObj.matchesPageCanonical ? "✅" : "❌"}
-                                        </p>
-                                    </td>
-                                </tr>
-                            ));
-                        }
-
-                        // Handle media arrays like images or videos
                         if ((key === "image" || key === "video") && Array.isArray(value)) {
                             return renderMediaArray(key, value);
                         }
 
-                        // Handle single image/video
                         if ((key === "image" || key === "video") && typeof value === "string") {
                             return renderMediaArray(key, [value]);
                         }
-
-                        if (value === null || value === "") return null;
 
                         return (
                             <tr key={key}>
@@ -138,6 +94,124 @@ export default function OpenGraph({ openGraph }) {
                             </tr>
                         );
                     })}
+                    
+                    {Array.isArray(openGraph.url) &&
+                        openGraph.url.map((og, idx) => {
+                            // Compute indexability
+                            const indexability = utils.evaluateIndexability({
+                                statusCode: og.finalUrlStatusCode ?? og.initialUrlStatusCode,
+                                blockedByRobots: og.robotsTxt?.blocked ?? null,
+                                canonicalMatches:
+                                    og.canonical?.canonicalTags?.[0]?.isSelfCanonical ?? null,
+                                metaRobotsAllowsIndexing: og.metaRobots?.allowsIndexing ?? null
+                            });
+
+                            return (
+                                <tr key={`ogurl-${idx}`}>
+                                    <td>og:url [{idx + 1}]</td>
+
+                                    <td>
+                                        {/* RAW URL */}
+                                        <div>
+                                            <strong>URL:</strong>{" "}
+                                            <a href={og.initialUrl} target="_blank" rel="noopener noreferrer">
+                                                {og.initialUrl}
+                                            </a>
+                                        </div>
+
+                                        <div>
+                                            <strong>Status Code:</strong>{" "}
+                                            {og.initialUrlStatusCode ?? "N/A"}
+                                        </div>
+
+                                        {/* FINAL URL */}
+                                        {og.finalUrl && og.finalUrl !== og.initialUrl && (
+                                            <>
+                                                <div>
+                                                    <strong>Final URL:</strong>{" "}
+                                                    <a href={og.finalUrl} target="_blank" rel="noopener noreferrer">
+                                                        {og.finalUrl}
+                                                    </a>
+                                                </div>
+
+                                                <div>
+                                                    <strong>Final URL Status Code:</strong>{" "}
+                                                    {og.finalUrlStatusCode ?? "N/A"}
+                                                </div>
+                                            </>
+                                        )}
+
+                                        {/* robots.txt */}
+                                        {og.robotsTxt && (
+                                            <div>
+                                                <strong>Blocked by robots.txt?:</strong>{" "}
+                                                {og.robotsTxt.blocked === null
+                                                    ? "No robots.txt"
+                                                    : og.robotsTxt.blocked
+                                                        ? "⛔ Yes"
+                                                        : "✅ No"
+                                                }
+                                            </div>
+                                        )}
+
+                                        {/* meta robots */}
+                                        {og.metaRobots && (
+                                            <div>
+                                                <strong>Meta robots allows indexing?:</strong>{" "}
+                                                {og.metaRobots.allowsIndexing === null
+                                                    ? "No meta robots tag"
+                                                    : og.metaRobots.allowsIndexing
+                                                        ? "✅ Yes"
+                                                        : "⛔ No"
+                                                }
+                                            </div>
+                                        )}
+
+                                        {/* canonical */}
+                                        {og.canonical && (
+                                            <>
+                                                <div>
+                                                    <strong>Canonical URL:</strong>{" "}
+                                                    {og.canonical.tags?.[0]?.resolvedCanonicalUrl
+                                                        ? (
+                                                            <a
+                                                                href={
+                                                                    og.canonical.tags[0].resolvedCanonicalUrl
+                                                                }
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                            >
+                                                                {og.canonical.tags[0].resolvedCanonicalUrl}
+                                                            </a>
+                                                        )
+                                                        : "No canonical tag"
+                                                    }
+                                                </div>
+
+                                                <div>
+                                                    <strong>URL matches canonical URL?:</strong>{" "}
+                                                    {og.canonical.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl === null
+                                                        ? "N/A"
+                                                        : og.canonical.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl === true
+                                                            ? "✅ Yes"
+                                                            : "⛔ No"
+                                                    }
+                                                </div>
+                                            </>
+                                        )}
+
+                                        {/* INDEXABILITY */}
+                                        <div>
+                                            <strong>Indexable?:</strong>{" "}
+                                            {indexability.indexable
+                                                ? "✅ Yes"
+                                                : "⛔ No"
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            );
+                        })}
                 </tbody>
             </table>
         </div>
