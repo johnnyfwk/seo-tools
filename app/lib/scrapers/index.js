@@ -86,12 +86,12 @@ export async function scrapeWithCheerio(
             Object.assign(results, await scrapeOpenGraph($, pageUrl));
         }
 
+        if (shouldScrape('pagination', opts)) {
+            Object.assign(results, await scrapePagination($, pageUrl, headers));
+        }
+
         // if (shouldScrape('xmlSitemap', opts)) {
         //     Object.assign(results, await scrapeXmlSitemap(pageUrl));
-        // }
-
-        // if (shouldScrape('pagination', opts)) {
-        //     Object.assign(results, await scrapePagination($, pageUrl, headers));
         // }
     } catch (err) {
         console.error(`Error scraping page ${pageUrl}:`, err);
