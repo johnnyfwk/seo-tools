@@ -28,15 +28,18 @@ export async function checkRobotsTxt(inputUrl, userAgent = "*") {
                     },
                 });
 
-                // Only accept valid robots.txt content
-                const contentType = res.headers.get("content-type") || "";
-                const isPlainText = contentType.includes("text/plain");
+                if (res.ok) {
+                    // Always try to read it — almost all robots.txt are plain text even if content-type is wrong
+                    const body = await res.text();
 
-                if (res.ok && isPlainText) {
-                    text = await res.text();
-                    robotsTxtUrl = candidate;
-                    break;
+                    // Simple sanity check: must at least contain User-agent or Sitemap
+                    if (body.length > 0) {
+                        text = body;
+                        robotsTxtUrl = candidate;
+                        break;
+                    }
                 }
+
             } catch (e) {
                 // continue to next candidate
             }

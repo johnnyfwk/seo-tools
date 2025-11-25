@@ -19,6 +19,7 @@ import SchemaMarkup from "../components/schemaMarkup";
 import Hreflang from "../components/hreflang";
 import OpenGraph from "../components/openGraph";
 import Pagination from "../components/pagination";
+import XmlSitemaps from "../components/xmlSitemaps";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -72,6 +73,14 @@ export default function ClientOnPageChecker() {
             hreflang: [],
             openGraph: {},
             pagination: [],
+            xmlSitemaps: {
+                hasSitemap: null,
+                message: "",
+                robotsTxtChecked: "",
+                sitemapsChecked: [],
+                sitemapsContainingUrl: [],
+                urlFound: null,
+            },
         },
     };
 
@@ -181,6 +190,7 @@ export default function ClientOnPageChecker() {
                     hreflang: data.scrapedData?.hreflang || [],
                     openGraph: data.scrapedData?.openGraph || {},
                     pagination: data.scrapedData?.pagination || [],
+                    xmlSitemaps: data.scrapedData?.xmlSitemaps || {},
                 },
             });
 
@@ -234,6 +244,10 @@ export default function ClientOnPageChecker() {
     ];
 
     const contentSections = [
+        {
+            title: `XML Sitemaps`,
+            component: <XmlSitemaps xmlSitemaps={pageData.scrapedData.xmlSitemaps} />,
+        },
         {
             title: "Meta Robots Tag",
             component: <MetaRobotsTag metaRobotsTag={pageData.scrapedData.metaRobotsTag} />,
