@@ -125,12 +125,19 @@ export default function Hreflang({ hreflang }) {
 
                             <td
                                 style={{ textAlign: 'center' }}
-                                className={indexability.indexable
+                                className={indexability.indexable === true
                                     ? "success-background"
-                                    : "error-background"
+                                    : indexability.indexable === false
+                                        ? "error-background"
+                                        : ""
                                 }
                             >
-                                {indexability.indexable ? "Yes" : "No"}
+                                {indexability.indexable === true
+                                    ? "Yes"
+                                    : indexability.indexable === false
+                                        ? "No"
+                                        : "N/A"
+                                }
                             </td>
                         </tr>
                     )

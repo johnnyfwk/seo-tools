@@ -127,6 +127,21 @@ export function evaluateIndexability({
     metaRobotsAllowsIndexing
 }) {
     const reasons = [];
+
+    const signals = [
+        statusCode,
+        blockedByRobots,
+        canonicalMatches,
+        metaRobotsAllowsIndexing
+    ];
+
+    if (signals.some(v => v === null || v === undefined)) {
+        return {
+            indexable: null,
+            reasons: ["Insufficient data to determine indexability"]
+        };
+    }
+
     let indexable = true;
 
     if (statusCode !== 200) {
