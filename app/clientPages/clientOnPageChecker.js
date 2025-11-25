@@ -18,6 +18,7 @@ import Images from "../components/images";
 import SchemaMarkup from "../components/schemaMarkup";
 import Hreflang from "../components/hreflang";
 import OpenGraph from "../components/openGraph";
+import Pagination from "../components/pagination";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -70,6 +71,7 @@ export default function ClientOnPageChecker() {
             schemaMarkup: [],
             hreflang: [],
             openGraph: {},
+            pagination: [],
         },
     };
 
@@ -178,6 +180,7 @@ export default function ClientOnPageChecker() {
                     schemaMarkup: data.scrapedData?.schemaMarkup || [],
                     hreflang: data.scrapedData?.hreflang || [],
                     openGraph: data.scrapedData?.openGraph || {},
+                    pagination: data.scrapedData?.pagination || [],
                 },
             });
 
@@ -282,6 +285,10 @@ export default function ClientOnPageChecker() {
         {
             title: `Open Graph`,
             component: <OpenGraph openGraph={pageData.scrapedData.openGraph} />,
+        },
+        {
+            title: `Pagination (${pageData.scrapedData.pagination.length})`,
+            component: <Pagination pagination={pageData.scrapedData.pagination} />,
         },
     ];
 

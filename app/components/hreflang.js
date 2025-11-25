@@ -18,7 +18,7 @@ export default function Hreflang({ hreflang }) {
                     <th style={{ textAlign: 'center' }}>Final URL Status Code</th>
                     <th style={{ textAlign: 'center' }}>URL is blocked by robots.txt?</th>
                     <th style={{ textAlign: 'center' }}>URL's meta robots tag allows indexing?</th>
-                    <th style={{ textAlign: 'center' }}>URL matches its canonical URL?</th>
+                    <th style={{ textAlign: 'center' }}>Canonical URL matches URL?</th>
                     <th style={{ textAlign: 'center' }}>URL is indexable?</th>
                 </tr>
             </thead>
@@ -104,23 +104,23 @@ export default function Hreflang({ hreflang }) {
                             <td
                                 style={{ textAlign: 'center' }}
                                 className={utils.getMetaRobotsTagTextAndClass(
-                                    hreflang.metaRobotsTag.allowsIndexing
-                                ).class}
+                                    hreflang.metaRobotsTag?.allowsIndexing
+                                ).class || ""}
                             >
                                 {utils.getMetaRobotsTagTextAndClass(
-                                    hreflang.metaRobotsTag.allowsIndexing
-                                ).text}
+                                    hreflang.metaRobotsTag?.allowsIndexing
+                                ).text || "N/A"}
                             </td>
 
                             <td
                                 style={{ textAlign: 'center' }}
                                 className={utils.getCanonicalTextAndClass(
-                                    hreflang.canonicalTags.tags[0].resolvedCanonicalUrlMatchesOriginalUrl
-                                ).class}
+                                    hreflang.canonicalTags?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl
+                                ).class || ""}
                             >
                                 {utils.getCanonicalTextAndClass(
-                                    hreflang.canonicalTags.tags[0].resolvedCanonicalUrlMatchesOriginalUrl
-                                ).text}
+                                    hreflang.canonicalTags?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl
+                                ).text || "N/A"}
                             </td>
 
                             <td
