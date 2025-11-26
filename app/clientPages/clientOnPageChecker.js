@@ -20,6 +20,7 @@ import Hreflang from "../components/hreflang";
 import OpenGraph from "../components/openGraph";
 import Pagination from "../components/pagination";
 import XmlSitemaps from "../components/xmlSitemaps";
+import HttpRedirectsToHttps from "../components/httpRedirectsToHttps";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -226,12 +227,20 @@ export default function ClientOnPageChecker() {
             title: "Robots.txt",
             component: <RobotsTxt robotsTxt={pageData.robotsTxt} />,
         },
+                {
+            title: `XML Sitemaps`,
+            component: <XmlSitemaps xmlSitemaps={pageData.scrapedData.xmlSitemaps} />,
+        },
     ];
 
     const technicalRedirectsSections = [
         {
             title: "Redirect URL",
             component: <Url url={pageData.redirects[1]?.url} />,
+        },
+                {
+            title: "HTTP -> HTTPS",
+            component: <HttpRedirectsToHttps redirectChain={pageData.redirects} />,
         },
         {
             title: "Final URL",
@@ -244,10 +253,6 @@ export default function ClientOnPageChecker() {
     ];
 
     const contentSections = [
-        {
-            title: `XML Sitemaps`,
-            component: <XmlSitemaps xmlSitemaps={pageData.scrapedData.xmlSitemaps} />,
-        },
         {
             title: "Meta Robots Tag",
             component: <MetaRobotsTag metaRobotsTag={pageData.scrapedData.metaRobotsTag} />,
@@ -396,10 +401,10 @@ export default function ClientOnPageChecker() {
                             ? <>
                                 <p>Entered URL is blocked by robots.txt. You have selected to ignore robots.txt.</p>
                                 {contentSections.map((s, i) => (
-                                    <div key={i}>
+                                    <section key={i}>
                                         <h3 style={{marginTop: "1rem", marginBottom: "0.5rem"}}>{s.title}</h3>
                                         {s.component}
-                                    </div>
+                                    </section>
                                 ))}
                             </>
                             : null
@@ -413,10 +418,10 @@ export default function ClientOnPageChecker() {
                                 }
                                 
                                 {contentSections.map((s, i) => (
-                                    <div key={i}>
+                                    <section key={i}>
                                         <h3 style={{marginTop: "1rem", marginBottom: "0.5rem"}}>{s.title}</h3>
                                         {s.component}
-                                    </div>
+                                    </section>
                                 ))}
                             </>
                             : null
