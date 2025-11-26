@@ -9,12 +9,14 @@ export async function POST(request) {
     let enteredUrlStatusCode = null;
     let finalUrl = null;
     let finalUrlStatusCode = null;
+    let redirects = [];
+    let contentType = null;
     
     try {
         const {
             enteredUrl,
             scrapeEvenIfBlocked,
-            scrapeOptions = { all: true },
+            scrapeOptions = { all: true }
         } = await request.json();
 
         if (!enteredUrl) {
@@ -24,53 +26,60 @@ export async function POST(request) {
             );
         }
 
-        // FOLLOW REDIRECTS
-        const {
-            finalUrl: resolvedFinalUrl,
-            finalUrlStatusCode: resolvedFinalUrlStatusCode,
-            redirects,
-        } = await getRedirects(enteredUrl);
+        // --- FOLLOW REDIRECTS ---
+        const redirectData = await getRedirects(enteredUrl);
+        enteredUrlStatusCode = redirectData.initialUrlStatusCode;
+        finalUrl = redirectData.finalUrl;
+        finalUrlStatusCode = redirectData.finalUrlStatusCode;
+        redirects = redirectData.redirects;
 
-        finalUrl = resolvedFinalUrl;
-        finalUrlStatusCode = resolvedFinalUrlStatusCode;
-        enteredUrlStatusCode = redirects?.[0]?.statusCode ?? null;
-
+        // --- ROBOTS.TXT ---
         const robotsTxt = await checkRobotsTxt(finalUrl);
 
+        // --- XML SITEMAPS ---
         const xmlSitemaps = await scrapeXmlSitemaps(finalUrl);
 
-        // FETCH PAGE HTML IF ALLOWED BY ROBOTS.TXT
-        let html = null;
-        let htmlResponse = null;
+        // --- FETCH RESOURCE ---
+        let resourceData = null;
+        let resourceExists = false;
+        let isHtml = false;
+        let isPdf = false;
+        let isImage = false;
+        let isOther = false;
 
         if (!robotsTxt.blocked || scrapeEvenIfBlocked) {
             try {
-                htmlResponse = await fetch(finalUrl, {
+                const response = await fetch(finalUrl, {
                     method: "GET",
-                    headers: browserHeaders,
+                    headers: browserHeaders
                 });
 
-                if (htmlResponse.ok) {
-                    html = await htmlResponse.text();
-                    // Extract headers to pass to scrapers (e.g., X-Robots-Tag)
-                    htmlResponse.headers.forEach((value, key) => {
-                        headers[key.toLowerCase()] = value;
-                    });
+                finalUrlStatusCode = response.status;
+                resourceExists = response.ok;
+
+                contentType = response.headers.get("content-type") || "";
+
+                // Categorize content type
+                isHtml = contentType.includes("text/html");
+                isPdf = contentType.includes("application/pdf");
+                isImage = contentType.startsWith("image/");
+                isOther = !isHtml && !isPdf && !isImage;
+
+                headers = {};
+                response.headers.forEach((value, key) => headers[key.toLowerCase()] = value);
+
+                if (isHtml && resourceExists) {
+                    const html = await response.text();
+                    resourceData = await scrapeWithCheerio(html, finalUrl, headers, scrapeOptions);
                 } else {
-                    finalUrlStatusCode = htmlResponse.status;
+                    resourceData = null; // For PDFs, images, or other resources
                 }
+
             } catch (err) {
-                console.warn("HTML fetch failed:", err.message);
-                html = null;
+                console.warn("Resource fetch failed:", err.message);
+                resourceExists = false;
             }
         }
-
-        const htmlExists = Boolean(html?.trim());
-
-        // RUN SCRAPERS
-        const scrapedData = htmlExists
-            ? await scrapeWithCheerio(html, finalUrl, headers, scrapeOptions)
-            : {};
 
         return Response.json({
             enteredUrl,
@@ -80,17 +89,21 @@ export async function POST(request) {
             redirects,
             robotsTxt,
             xmlSitemaps,
-            htmlExists,
-            scrapedData,
+            resourceExists,
+            contentType,
+            isHtml,
+            isPdf,
+            isImage,
+            isOther,
+            headers,
+            scrapedData: resourceData,
             enteredUrlIsBlockedByRobots: robotsTxt.blocked,
         });
+
     } catch (err) {
         console.error(err);
         return Response.json(
-            {
-                error: "Internal Server Error",
-                details: err.message
-            },
+            { error: "Internal Server Error", details: err.message },
             { status: 500 }
         );
     }

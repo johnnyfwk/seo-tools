@@ -125,20 +125,22 @@ export function evaluateIndexability({
     statusCode,
     blockedByRobots,
     canonicalMatches,
-    metaRobotsAllowsIndexing
+    metaRobotsAllowsIndexing,
+    contentType,
+    xRobotsNoindex
 }) {
     const reasons = [];
     let indexable = true;
 
-    // --- Hard signals ---
-    if (statusCode !== null && statusCode !== undefined) {
+    // --- HARD FAILS (only if statusCode exists) ---
+    if (typeof statusCode === "number") {
         if (statusCode >= 300 && statusCode < 400) {
             indexable = false;
             reasons.push(`HTTP status code is ${statusCode} (redirect)`);
         } else if (statusCode >= 400) {
             indexable = false;
             reasons.push(`HTTP status code is ${statusCode} (client/server error)`);
-        } else if (statusCode !== 200) {
+        } else if (statusCode < 200 || statusCode >= 300) {
             indexable = false;
             reasons.push(`HTTP status code is ${statusCode}, not 200`);
         }
@@ -149,23 +151,38 @@ export function evaluateIndexability({
         reasons.push("Blocked by robots.txt");
     }
 
-    // --- Soft signals ---
-    if (metaRobotsAllowsIndexing === false) {
+    if (typeof xRobotsNoindex === "string" && xRobotsNoindex.toLowerCase().includes("noindex")) {
         indexable = false;
-        reasons.push("Meta robots tag has noindex value");
+        reasons.push("X-Robots-Tag header has noindex");
     }
 
-    if (canonicalMatches === false) {
-        indexable = false;
-        reasons.push("Canonical URL points elsewhere");
+    // --- Determine resource type ---
+    const isHtml = contentType?.includes("text/html");
+    const isPdf = contentType?.includes("application/pdf");
+    const isImage = contentType?.startsWith("image/");
+    const isOther = !isHtml && !isPdf && !isImage;
+
+    // --- HTML-specific soft rules ---
+    if (isHtml) {
+        if (metaRobotsAllowsIndexing === false) {
+            indexable = false;
+            reasons.push("Meta robots tag has noindex value");
+        }
+
+        if (canonicalMatches === false) {
+            indexable = false;
+            reasons.push("Canonical URL points elsewhere");
+        }
     }
 
-    // --- Handle missing signals ---
+    // --- Missing Signals ---
     const allSignalsMissing = [
         statusCode,
         blockedByRobots,
-        metaRobotsAllowsIndexing,
-        canonicalMatches
+        contentType,
+        xRobotsNoindex,
+        canonicalMatches,
+        metaRobotsAllowsIndexing
     ].every(v => v === null || v === undefined);
 
     if (allSignalsMissing) {

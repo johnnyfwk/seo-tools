@@ -1,11 +1,9 @@
-import Link from "next/link";
-
 export default function Url({ url }) {
     return (
-        <Link
+        <a
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-        >{url}</Link>
+        >{url}</a>
     )
 }
