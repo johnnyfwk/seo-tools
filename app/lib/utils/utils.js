@@ -146,7 +146,7 @@ export function evaluateIndexability({
 
     if (statusCode !== 200) {
         indexable = false;
-        reasons.push(`Non-200 final status (${statusCode})`);
+        reasons.push(`HTTP status code is ${statusCode}, not 200`);
     }
 
     if (blockedByRobots === true) {
@@ -156,7 +156,7 @@ export function evaluateIndexability({
 
     if (metaRobotsAllowsIndexing === false) {
         indexable = false;
-        reasons.push("Meta robots: noindex");
+        reasons.push("Meta robots tag has noindex value.");
     }
 
     if (canonicalMatches === false) {

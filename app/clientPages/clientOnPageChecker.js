@@ -21,11 +21,17 @@ import OpenGraph from "../components/openGraph";
 import Pagination from "../components/pagination";
 import XmlSitemaps from "../components/xmlSitemaps";
 import HttpRedirectsToHttps from "../components/httpRedirectsToHttps";
+import * as utils from '@/app/lib/utils/utils';
+import Indexability from "../components/indexability";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
         scrapeDuration: null,
         enteredUrl: "",
+        indexability: {
+            indexable: null,
+            reasons: [],
+        },
         enteredUrlStatusCode: null,
         enteredUrlIsBlockedByRobots: null,
         finalUrl: "",
@@ -138,11 +144,28 @@ export default function ClientOnPageChecker() {
             const endTime = performance.now();
             const elapsedMs = endTime - startTime;
 
+            console.log("Status Code:", data.enteredUrlStatusCode);
+            console.log("Blocked by robots.txt?:", data.robotsTxt?.blocked);
+            console.log("Canonical URL matches URL?:", data.scrapedData?.canonicalTags?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl);
+            console.log("Meta robots tag allows indexing?:", data.scrapedData?.metaRobotsTag?.allowsIndexing);
+
+            const urlIndexability = utils.evaluateIndexability({
+                statusCode: data.enteredUrlStatusCode,
+                blockedByRobots: data.robotsTxt?.blocked,
+                canonicalMatches: data.scrapedData?.canonicalTags?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl,
+                metaRobotsAllowsIndexing: data.scrapedData?.metaRobotsTag?.allowsIndexing
+        });
+            console.log("urlIndexability:", urlIndexability);
+
             setPageData({
                 ...initialPageData,
                 ...data,
                 scrapeDuration: elapsedMs,
                 enteredUrl: data.enteredUrl || "",
+                indexability: urlIndexability || {
+                    indexable: null,
+                    reasons: [],
+                },
                 enteredUrlStatusCode: data.enteredUrlStatusCode || null,
                 enteredUrlIsBlockedByRobots: data.enteredUrlIsBlockedByRobots || null,
                 finalUrl: data.finalUrl || "",
@@ -218,6 +241,10 @@ export default function ClientOnPageChecker() {
         {
             title: "Entered URL",
             component: <Url url={pageData.enteredUrl} />,
+        },
+        {
+            title: "Indexability",
+            component: <Indexability indexability={pageData.indexability} />,
         },
         {
             title: "Status Code",
