@@ -54,7 +54,8 @@ export default function ClientOnPageChecker() {
             sitemapsContainingUrl: [],
             urlFound: null,
         },
-        htmlExists: null,
+        headers: {},
+        isHtml: null,
         scrapedData: {
             metaRobotsTag: {
                 allowsFollowing: null,
@@ -149,7 +150,9 @@ export default function ClientOnPageChecker() {
                 statusCode: data.enteredUrlStatusCode,
                 blockedByRobots: data.robotsTxt?.blocked,
                 canonicalMatches: data.scrapedData?.canonicalTags?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl,
-                metaRobotsAllowsIndexing: data.scrapedData?.metaRobotsTag?.allowsIndexing
+                metaRobotsAllowsIndexing: data.scrapedData?.metaRobotsTag?.allowsIndexing,
+                contentType: data.contentType,
+                xRobotsNoindex: data.headers?.["x-robots-tag"] || data.headers?.["X-Robots-Tag"] || "",
             });
 
             setPageData({
@@ -173,7 +176,8 @@ export default function ClientOnPageChecker() {
                     ...initialPageData.xmlSitemaps,
                     ...data.xmlSitemaps
                 },
-                htmlExists: data.htmlExists || initialPageData.htmlExists,
+                headers: data.headers || {},
+                isHtml: data.isHtml || null,
                 scrapedData: {
                     ...initialPageData.scrapedData,
                     ...data.scrapedData,
@@ -258,7 +262,16 @@ export default function ClientOnPageChecker() {
         },
         {
             title: "Indexability",
-            component: <Indexability indexability={pageData.indexability} />,
+            component: (
+                <Indexability
+                    indexability={pageData.indexability}
+                    contentType={pageData.contentType}
+                    isHtml={pageData.isHtml}
+                    isPdf={pageData.isPdf}
+                    isImage={pageData.isImage}
+                    isOther={pageData.isOther}
+                />
+            ),
         },
         {
             title: "Status Code",
@@ -434,7 +447,7 @@ export default function ClientOnPageChecker() {
                             <h2>Page Data</h2>
                             <p>Entered URL is blocked by robots.txt. Page data could not be fetched.</p>
                         </section>
-                        : pageData.htmlExists
+                        : pageData.isHtml
                             ? <RenderSections sections={contentSections}/>
                             : <section>
                                 <h2>Page Data</h2>
