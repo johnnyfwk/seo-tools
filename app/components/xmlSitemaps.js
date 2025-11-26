@@ -31,21 +31,19 @@ export default function XmlSitemaps({ xmlSitemaps }) {
             </div>
             
             <div>
-                <p>
-                    <strong>Sitemaps containing entered URL ({containing.length}):</strong>{" "}
-                    {containing.length > 0
-                        ? <ul>
-                            {containing.map((sitemap, i) => (
-                                <li key={i}>
-                                    <Link href={sitemap} target="_blank" rel="noopener noreferrer">
-                                        {sitemap}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                        : <span>URL not found in any sitemap.</span>
-                    }
-                </p>
+                <strong>Sitemaps containing entered URL ({containing.length}):</strong>{" "}
+                {containing.length > 0
+                    ? <ul>
+                        {containing.map((sitemap, i) => (
+                            <li key={i}>
+                                <Link href={sitemap} target="_blank" rel="noopener noreferrer">
+                                    {sitemap}
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                    : <span>URL not found in any sitemap.</span>
+                }
             </div>
 
             <div>

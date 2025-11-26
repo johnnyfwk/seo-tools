@@ -9,7 +9,7 @@ export default function HttpRedirectsToHttps({ redirectChain }) {
     if (!firstUrl) return <p>⚠️ Could not determine URL.</p>;
 
     if (firstUrl.startsWith("https://")) {
-        return <p>ℹ️ URL entered uses HTTPS protocol.</p>;
+        return <p>URL entered uses HTTPS protocol.</p>;
     }
 
     if (firstUrl.startsWith("http://") && secondUrl?.startsWith("https://")) {

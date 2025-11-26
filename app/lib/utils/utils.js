@@ -119,7 +119,8 @@ export function createLimiter(maxConcurrency) {
  * @param {boolean} params.canonicalMatches - True if canonical URL matches this URL
  * @param {boolean} params.metaRobotsAllowsIndexing - True if meta robots allows indexing
  * @returns {Object} { indexable: boolean, reasons: string[] }
- */
+*/
+
 export function evaluateIndexability({
     statusCode,
     blockedByRobots,
@@ -127,26 +128,20 @@ export function evaluateIndexability({
     metaRobotsAllowsIndexing
 }) {
     const reasons = [];
-
-    const signals = [
-        statusCode,
-        blockedByRobots,
-        canonicalMatches,
-        metaRobotsAllowsIndexing
-    ];
-
-    if (signals.some(v => v === null || v === undefined)) {
-        return {
-            indexable: null,
-            reasons: ["Insufficient data to determine indexability"]
-        };
-    }
-
     let indexable = true;
 
-    if (statusCode !== 200) {
-        indexable = false;
-        reasons.push(`HTTP status code is ${statusCode}, not 200`);
+    // --- Hard signals ---
+    if (statusCode !== null && statusCode !== undefined) {
+        if (statusCode >= 300 && statusCode < 400) {
+            indexable = false;
+            reasons.push(`HTTP status code is ${statusCode} (redirect)`);
+        } else if (statusCode >= 400) {
+            indexable = false;
+            reasons.push(`HTTP status code is ${statusCode} (client/server error)`);
+        } else if (statusCode !== 200) {
+            indexable = false;
+            reasons.push(`HTTP status code is ${statusCode}, not 200`);
+        }
     }
 
     if (blockedByRobots === true) {
@@ -154,14 +149,30 @@ export function evaluateIndexability({
         reasons.push("Blocked by robots.txt");
     }
 
+    // --- Soft signals ---
     if (metaRobotsAllowsIndexing === false) {
         indexable = false;
-        reasons.push("Meta robots tag has noindex value.");
+        reasons.push("Meta robots tag has noindex value");
     }
 
     if (canonicalMatches === false) {
         indexable = false;
         reasons.push("Canonical URL points elsewhere");
+    }
+
+    // --- Handle missing signals ---
+    const allSignalsMissing = [
+        statusCode,
+        blockedByRobots,
+        metaRobotsAllowsIndexing,
+        canonicalMatches
+    ].every(v => v === null || v === undefined);
+
+    if (allSignalsMissing) {
+        return {
+            indexable: null,
+            reasons: ["Insufficient data to determine indexability"]
+        };
     }
 
     return { indexable, reasons };
