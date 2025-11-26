@@ -1,6 +1,14 @@
 import Link from "next/link";
 
 export default function XmlSitemaps({ xmlSitemaps }) {
+    if (!xmlSitemaps) {
+        return <p>N/A</p>;
+    }
+
+    if (xmlSitemaps.hasSitemap === null) {
+        return <p>N/A</p>;
+    }
+
     if (xmlSitemaps.hasSitemap === false) {
         return <p>No XML sitemaps found.</p>;
     }
@@ -27,8 +35,8 @@ export default function XmlSitemaps({ xmlSitemaps }) {
                     <strong>Sitemaps containing entered URL ({containing.length}):</strong>{" "}
                     {containing.length > 0
                         ? <ul>
-                            {containing.map(sitemap => (
-                                <li key={sitemap}>
+                            {containing.map((sitemap, i) => (
+                                <li key={i}>
                                     <Link href={sitemap} target="_blank" rel="noopener noreferrer">
                                         {sitemap}
                                     </Link>
@@ -44,8 +52,8 @@ export default function XmlSitemaps({ xmlSitemaps }) {
                 <strong>Sitemaps checked ({checked.length}):</strong>{" "}
                 {checked.length > 0
                     ? <ul>
-                        {checked.map(sitemap => (
-                            <li key={sitemap}>
+                        {checked.map((sitemap, i) => (
+                            <li key={i}>
                                 <Link href={sitemap} target="_blank" rel="noopener noreferrer">
                                     {sitemap}
                                 </Link>

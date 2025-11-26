@@ -46,6 +46,14 @@ export default function ClientOnPageChecker() {
             sitemaps: [],
             url: "",
         },
+        xmlSitemaps: {
+            hasSitemap: null,
+            message: "",
+            robotsTxtChecked: "",
+            sitemapsChecked: [],
+            sitemapsContainingUrl: [],
+            urlFound: null,
+        },
         htmlExists: null,
         scrapedData: {
             metaRobotsTag: {
@@ -81,14 +89,6 @@ export default function ClientOnPageChecker() {
             hreflang: [],
             openGraph: {},
             pagination: [],
-            xmlSitemaps: {
-                hasSitemap: null,
-                message: "",
-                robotsTxtChecked: "",
-                sitemapsChecked: [],
-                sitemapsContainingUrl: [],
-                urlFound: null,
-            },
         },
     };
 
@@ -155,62 +155,80 @@ export default function ClientOnPageChecker() {
             setPageData({
                 ...initialPageData,
                 ...data,
-                scrapeDuration: elapsedMs,
-                enteredUrl: data.enteredUrl || "",
-                indexability: urlIndexability || {
-                    indexable: null,
-                    reasons: [],
+                scrapeDuration: elapsedMs || initialPageData.scrapeDuration,
+                enteredUrl: data.enteredUrl || initialPageData.enteredUrl,
+                indexability: urlIndexability || initialPageData.indexability,
+                enteredUrlStatusCode: data.enteredUrlStatusCode || initialPageData.enteredUrlStatusCode,
+                enteredUrlIsBlockedByRobots: data.enteredUrlIsBlockedByRobots || initialPageData.enteredUrlIsBlockedByRobots,
+                finalUrl: data.finalUrl || initialPageData.finalUrl,
+                redirects: [
+                    ...initialPageData.redirects,
+                    ...(data.redirects || [])
+                ],
+                robotsTxt: {
+                    ...initialPageData.robotsTxt,
+                    ...data.robotsTxt,
                 },
-                enteredUrlStatusCode: data.enteredUrlStatusCode || null,
-                enteredUrlIsBlockedByRobots: data.enteredUrlIsBlockedByRobots || null,
-                finalUrl: data.finalUrl || "",
-                redirects: data.redirects || [],
-                robotsTxt: data.robotsTxt || {
-                    blocked: data.robotsTxt?.blocked || null,
-                    determiningRule: data.robotsTxt?.determiningRule || {
-                        type: data.robotsTxt?.determiningRule?.type || "",
-                        rule: data.robotsTxt?.determiningRule?.rule || []
-                    },
-                    exists: data.robotsTxt?.exists || null,
-                    sitemaps: data.robotsTxt?.sitemaps || [],
-                    url: data.robotsTxt?.url || ""
+                xmlSitemaps: {
+                    ...initialPageData.xmlSitemaps,
+                    ...data.xmlSitemaps
                 },
-                htmlExists: data.htmlExists || null,
-                scrapedData:  data.scrapedData || {
-                    metaRobotsTag: data.scrapedData?.metaRobotsTag || {
-                        allowsFollowing: data.scrapedData?.allowsFollowing || null,
-                        allowsIndexing: data.scrapedData?.allowsIndexing || null,
-                        content: data.scrapedData?.content || "",
-                        htmlTagContent: data.scrapedData?.htmlTagContent || "",
-                        xRobotsTagContent: data.scrapedData?.xRobotsTagContent || ""
+                htmlExists: data.htmlExists || initialPageData.htmlExists,
+                scrapedData: {
+                    ...initialPageData.scrapedData,
+                    ...data.scrapedData,
+                    metaRobotsTag: {
+                        ...initialPageData.scrapedData.metaRobotsTag,
+                        ...data.scrapedData?.metaRobotsTag
                     },
-                    canonicalTags: data.scrapedData?.canonicalTags || {
-                        tags: data.scrapedData?.canonicalTags?.tags || [],
-                        globalIssues: data.scrapedData?.canonicalTags?.globalIssues || [],
+                    canonicalTags: {
+                        ...initialPageData.scrapedData.canonicalTags,
+                        ...data.scrapedData?.canonicalTags,
                     },
-                    htmlLanguageAttribute: data.scrapedData?.htmlLanguageAttribute || {
-                        attribute: data.scrapedData?.htmlLanguageAttribute?.attribute || "",
-                        isValid: data.scrapedData?.htmlLanguageAttribute?.isValid || null,
-                        issues: data.scrapedData?.htmlLanguageAttribute?.issues || [],
+                    htmlLanguageAttribute: {
+                        ...initialPageData.scrapedData.htmlLanguageAttribute,
+                        ...data.scrapedData?.htmlLanguageAttribute
                     },
-                    viewport: data.scrapedData?.viewport || {
-                        content: data.scrapedData?.viewport?.content || "",
-                        properties: data.scrapedData?.viewport?.properties || {}
+                    viewport: {
+                        ...initialPageData.scrapedData.viewport,
+                        ...data.scrapedData?.viewport
                     },
-                    metaTitles: data.scrapedData?.metaTitles || [],
-                    metaDescriptions: data.scrapedData?.metaDescriptions || [],
-                    headings: data.scrapedData?.headings || [],
-                    links: data.scrapedData?.links || {
-                        internal: data.scrapedData?.links?.internal || [],
-                        external: data.scrapedData?.links?.external || [],
-                        uncrawlable: data.scrapedData?.links?.uncrawlable || [],
+                    metaTitles: [
+                        ...initialPageData.scrapedData.metaTitles,
+                        ...(data.scrapedData?.metaTitles || [])
+                    ],
+                    metaDescriptions: [
+                        ...initialPageData.scrapedData.metaDescriptions,
+                        ...(data.scrapedData?.metaDescriptions || [])
+                    ],
+                    headings: [
+                        ...initialPageData.scrapedData.headings,
+                        ...(data.scrapedData?.headings || [])
+                    ],
+                    links: {
+                        ...initialPageData.scrapedData.links,
+                        ...data.scrapedData?.links
                     },
-                    images: data.scrapedData?.images || [],
-                    schemaMarkup: data.scrapedData?.schemaMarkup || [],
-                    hreflang: data.scrapedData?.hreflang || [],
-                    openGraph: data.scrapedData?.openGraph || {},
-                    pagination: data.scrapedData?.pagination || [],
-                    xmlSitemaps: data.scrapedData?.xmlSitemaps || {},
+                    images: [
+                        ...initialPageData.scrapedData.images,
+                        ...(data.scrapedData?.images || [])
+                    ],
+                    schemaMarkup: [
+                        ...initialPageData.scrapedData.schemaMarkup,
+                        ...(data.scrapedData?.schemaMarkup || [])
+                    ],
+                    hreflang: [
+                        ...initialPageData.scrapedData.hreflang,
+                        ...(data.scrapedData?.hreflang || [])
+                    ],
+                    openGraph: {
+                        ...initialPageData.scrapedData.openGraph,
+                        ...data.scrapedData?.openGraph
+                    },
+                    pagination: [
+                        ...initialPageData.scrapedData.pagination,
+                        ...(data.scrapedData?.pagination || [])
+                    ],
                 },
             });
 
@@ -252,7 +270,7 @@ export default function ClientOnPageChecker() {
         },
                 {
             title: `XML Sitemaps`,
-            component: <XmlSitemaps xmlSitemaps={pageData.scrapedData.xmlSitemaps} />,
+            component: <XmlSitemaps xmlSitemaps={pageData.xmlSitemaps} />,
         },
     ];
 
