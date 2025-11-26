@@ -12,7 +12,7 @@ import { scrapeSchemaMarkup } from './schemaMarkup';
 import { scrapeImages } from './images';
 import { scrapeHreflang } from './hreflang';
 import { scrapeOpenGraph } from './openGraph';
-import { scrapeXmlSitemaps } from './xmlSitemaps';
+// import { scrapeXmlSitemaps } from './xmlSitemaps';
 import { scrapePagination } from './pagination';
 
 function shouldScrape(optionKey, opts) {
@@ -90,9 +90,9 @@ export async function scrapeWithCheerio(
             Object.assign(results, await scrapePagination($, pageUrl, headers));
         }
 
-        if (shouldScrape('xmlSitemap', opts)) {
-            Object.assign(results, await scrapeXmlSitemaps(pageUrl));
-        }
+        // if (shouldScrape('xmlSitemap', opts)) {
+        //     Object.assign(results, await scrapeXmlSitemaps(pageUrl));
+        // }
     } catch (err) {
         console.error(`Error scraping page ${pageUrl}:`, err);
     }

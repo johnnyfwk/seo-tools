@@ -1,5 +1,6 @@
 import { getRedirects } from "@/app/lib/utils/getRedirects";
 import { checkRobotsTxt } from "@/app/lib/utils/checkRobotsTxt";
+import { scrapeXmlSitemaps } from "@/app/lib/scrapers/xmlSitemaps";
 import { scrapeWithCheerio } from "@/app/lib/scrapers";
 import { browserHeaders } from "@/app/lib/utils/browserHeaders";
 
@@ -13,9 +14,7 @@ export async function POST(request) {
         const {
             enteredUrl,
             scrapeEvenIfBlocked,
-            scrapeOptions = {
-                "all": true,
-            },
+            scrapeOptions = { all: true },
         } = await request.json();
 
         if (!enteredUrl) {
@@ -36,8 +35,9 @@ export async function POST(request) {
         finalUrlStatusCode = resolvedFinalUrlStatusCode;
         enteredUrlStatusCode = redirects?.[0]?.statusCode ?? null;
 
-        // CHECK ROBOTS.TXT
         const robotsTxt = await checkRobotsTxt(finalUrl);
+
+        const xmlSitemaps = await scrapeXmlSitemaps(finalUrl);
 
         // FETCH PAGE HTML IF ALLOWED BY ROBOTS.TXT
         let html = null;
@@ -59,23 +59,18 @@ export async function POST(request) {
                 } else {
                     finalUrlStatusCode = htmlResponse.status;
                 }
-            } catch {
+            } catch (err) {
+                console.warn("HTML fetch failed:", err.message);
                 html = null;
             }
         }
 
-        const htmlExists = !!html && html.trim().length > 0;
+        const htmlExists = Boolean(html?.trim());
 
         // RUN SCRAPERS
-        let scrapedData = null;
-        if (htmlExists) {
-            scrapedData = await scrapeWithCheerio(
-                html,
-                finalUrl,
-                headers,
-                scrapeOptions,
-            )
-        }
+        const scrapedData = htmlExists
+            ? await scrapeWithCheerio(html, finalUrl, headers, scrapeOptions)
+            : {};
 
         return Response.json({
             enteredUrl,
@@ -84,6 +79,7 @@ export async function POST(request) {
             finalUrlStatusCode,
             redirects,
             robotsTxt,
+            xmlSitemaps,
             htmlExists,
             scrapedData,
             enteredUrlIsBlockedByRobots: robotsTxt.blocked,
