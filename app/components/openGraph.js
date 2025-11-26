@@ -21,7 +21,7 @@ export default function OpenGraph({ openGraph }) {
     );
 
     if (!hasOgData) {
-        return <p>No Open Graph tags found.</p>;
+        return <p>No open graph tags found.</p>;
     }
 
     // ------------------------------
