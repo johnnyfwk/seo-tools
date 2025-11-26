@@ -313,6 +313,15 @@ export default function ClientOnPageChecker() {
 
     // console.log("Page Data:", pageData)
 
+    function RenderSections({ sections }) {
+         return sections.map((s, i) => (
+            <section key={i}>
+                <h3>{s.title}</h3>
+                {s.component}
+            </section>
+        ));
+    }
+
     return (
         <>
             <section>
@@ -372,20 +381,10 @@ export default function ClientOnPageChecker() {
 
             {hasCheckedPage
                 ? <>
-                    {technicalSectionsAlwaysRender.map((s, i) => (
-                        <section key={i}>
-                            <h2>{s.title}</h2>
-                            {s.component}
-                        </section>
-                    ))}
+                    <RenderSections sections={technicalSectionsAlwaysRender}/>
 
                     {pageData.redirects.length > 1
-                        ? technicalRedirectsSections.map((s, i) => (
-                            <section key={i}>
-                                <h2>{s.title}</h2>
-                                {s.component}
-                            </section>
-                        ))
+                        ? <RenderSections sections={technicalRedirectsSections}/>
                         : null
                     }
 
@@ -400,12 +399,7 @@ export default function ClientOnPageChecker() {
                         {pageData.enteredUrlIsBlockedByRobots && scrapeEvenIfBlocked
                             ? <>
                                 <p>Entered URL is blocked by robots.txt. You have selected to ignore robots.txt.</p>
-                                {contentSections.map((s, i) => (
-                                    <section key={i}>
-                                        <h3 style={{marginTop: "1rem", marginBottom: "0.5rem"}}>{s.title}</h3>
-                                        {s.component}
-                                    </section>
-                                ))}
+                                <RenderSections sections={contentSections}/>
                             </>
                             : null
                         }
@@ -416,13 +410,8 @@ export default function ClientOnPageChecker() {
                                     ? <p>Entered URL is allowed to be crawled by robots.txt. Page data has been fetched.</p>
                                     : <p>Robots.txt could not be found. Entered URL is allowed to be crawled by bots by default. Page data has been fetched.</p>
                                 }
-                                
-                                {contentSections.map((s, i) => (
-                                    <section key={i}>
-                                        <h3 style={{marginTop: "1rem", marginBottom: "0.5rem"}}>{s.title}</h3>
-                                        {s.component}
-                                    </section>
-                                ))}
+
+                                <RenderSections sections={contentSections}/>
                             </>
                             : null
                         }
