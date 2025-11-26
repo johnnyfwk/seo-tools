@@ -160,7 +160,9 @@ export function evaluateIndexability({
     const isHtml = contentType?.includes("text/html");
     const isPdf = contentType?.includes("application/pdf");
     const isImage = contentType?.startsWith("image/");
-    const isOther = !isHtml && !isPdf && !isImage;
+    const isCss = contentType?.includes("text/css");
+    const isJs = contentType?.includes("application/javascript") || contentType?.includes("text/javascript")
+    const isOther = !isHtml && !isPdf && !isImage && !isCss && !isJs;
 
     // --- HTML-specific soft rules ---
     if (isHtml) {

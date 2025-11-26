@@ -23,6 +23,7 @@ import XmlSitemaps from "../components/xmlSitemaps";
 import HttpRedirectsToHttps from "../components/httpRedirectsToHttps";
 import * as utils from '@/app/lib/utils/utils';
 import Indexability from "../components/indexability";
+import ContentType from "../components/contentType";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -55,7 +56,13 @@ export default function ClientOnPageChecker() {
             urlFound: null,
         },
         headers: {},
+        contentType: "",
         isHtml: null,
+        isImage: null,
+        isPdf: null,
+        isCss: null,
+        isJs: null,
+        isOther: null,
         scrapedData: {
             metaRobotsTag: {
                 allowsFollowing: null,
@@ -177,7 +184,13 @@ export default function ClientOnPageChecker() {
                     ...data.xmlSitemaps
                 },
                 headers: data.headers || {},
+                contentType: data.contentType || "",
                 isHtml: data.isHtml || null,
+                isImage: data.isImage || null,
+                isPdf: data.isPdf || null,
+                isCss: data.isCss || null,
+                isJs: data.isJs || null,
+                isOther: data.isOther || null,
                 scrapedData: {
                     ...initialPageData.scrapedData,
                     ...data.scrapedData,
@@ -261,17 +274,20 @@ export default function ClientOnPageChecker() {
             component: <Url url={pageData.enteredUrl} />,
         },
         {
+            title: "Content Type",
+            component: <ContentType
+                contentType={pageData.contentType}
+                isHtml={pageData.isHtml}
+                isPdf={pageData.isPdf}
+                isImage={pageData.isImage}
+                isCss={pageData.isCss}
+                isJs={pageData.isJs}
+                isOther={pageData.isOther}
+            />
+        },
+        {
             title: "Indexability",
-            component: (
-                <Indexability
-                    indexability={pageData.indexability}
-                    contentType={pageData.contentType}
-                    isHtml={pageData.isHtml}
-                    isPdf={pageData.isPdf}
-                    isImage={pageData.isImage}
-                    isOther={pageData.isOther}
-                />
-            ),
+            component: <Indexability indexability={pageData.indexability} />,
         },
         {
             title: "Status Code",
