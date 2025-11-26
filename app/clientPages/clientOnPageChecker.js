@@ -46,6 +46,7 @@ export default function ClientOnPageChecker() {
             sitemaps: [],
             url: "",
         },
+        htmlExists: null,
         scrapedData: {
             metaRobotsTag: {
                 allowsFollowing: null,
@@ -144,18 +145,12 @@ export default function ClientOnPageChecker() {
             const endTime = performance.now();
             const elapsedMs = endTime - startTime;
 
-            console.log("Status Code:", data.enteredUrlStatusCode);
-            console.log("Blocked by robots.txt?:", data.robotsTxt?.blocked);
-            console.log("Canonical URL matches URL?:", data.scrapedData?.canonicalTags?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl);
-            console.log("Meta robots tag allows indexing?:", data.scrapedData?.metaRobotsTag?.allowsIndexing);
-
             const urlIndexability = utils.evaluateIndexability({
                 statusCode: data.enteredUrlStatusCode,
                 blockedByRobots: data.robotsTxt?.blocked,
                 canonicalMatches: data.scrapedData?.canonicalTags?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl,
                 metaRobotsAllowsIndexing: data.scrapedData?.metaRobotsTag?.allowsIndexing
-        });
-            console.log("urlIndexability:", urlIndexability);
+            });
 
             setPageData({
                 ...initialPageData,
@@ -180,6 +175,7 @@ export default function ClientOnPageChecker() {
                     sitemaps: data.robotsTxt?.sitemaps || [],
                     url: data.robotsTxt?.url || ""
                 },
+                htmlExists: data.htmlExists || null,
                 scrapedData:  data.scrapedData || {
                     metaRobotsTag: data.scrapedData?.metaRobotsTag || {
                         allowsFollowing: data.scrapedData?.allowsFollowing || null,
@@ -343,7 +339,7 @@ export default function ClientOnPageChecker() {
     function RenderSections({ sections }) {
          return sections.map((s, i) => (
             <section key={i}>
-                <h3>{s.title}</h3>
+                <h2>{s.title}</h2>
                 {s.component}
             </section>
         ));
@@ -415,34 +411,18 @@ export default function ClientOnPageChecker() {
                         : null
                     }
 
-                    <section>
-                        <h2>Page Data</h2>
-
-                        {pageData.enteredUrlIsBlockedByRobots && !scrapeEvenIfBlocked
-                            ? <p>Entered URL is blocked by robots.txt. Page data could not be fetched.</p>
-                            : null
-                        }
-
-                        {pageData.enteredUrlIsBlockedByRobots && scrapeEvenIfBlocked
-                            ? <>
-                                <p>Entered URL is blocked by robots.txt. You have selected to ignore robots.txt.</p>
-                                <RenderSections sections={contentSections}/>
-                            </>
-                            : null
-                        }
-
-                        {!pageData.enteredUrlIsBlockedByRobots
-                            ? <>
-                                {pageData.robotsTxt.exists
-                                    ? <p>Entered URL is allowed to be crawled by robots.txt. Page data has been fetched.</p>
-                                    : <p>Robots.txt could not be found. Entered URL is allowed to be crawled by bots by default. Page data has been fetched.</p>
-                                }
-
-                                <RenderSections sections={contentSections}/>
-                            </>
-                            : null
-                        }
-                    </section>
+                    {pageData.enteredUrlIsBlockedByRobots && !scrapeEvenIfBlocked
+                        ? <section>
+                            <h2>Page Data</h2>
+                            <p>Entered URL is blocked by robots.txt. Page data could not be fetched.</p>
+                        </section>
+                        : pageData.htmlExists
+                            ? <RenderSections sections={contentSections}/>
+                            : <section>
+                                <h2>Page Data</h2>
+                                <p>No HTML found.</p>
+                            </section>
+                    }
                 </>
                 : null
             }

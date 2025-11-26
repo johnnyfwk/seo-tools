@@ -64,9 +64,11 @@ export async function POST(request) {
             }
         }
 
+        const htmlExists = !!html && html.trim().length > 0;
+
         // RUN SCRAPERS
         let scrapedData = null;
-        if (html) {
+        if (htmlExists) {
             scrapedData = await scrapeWithCheerio(
                 html,
                 finalUrl,
@@ -82,7 +84,7 @@ export async function POST(request) {
             finalUrlStatusCode,
             redirects,
             robotsTxt,
-            html: html ? "HTML Content Fetched" : null,
+            htmlExists,
             scrapedData,
             enteredUrlIsBlockedByRobots: robotsTxt.blocked,
         });

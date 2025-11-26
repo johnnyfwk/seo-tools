@@ -2,7 +2,7 @@ import * as utils from '@/app/lib/utils/utils';
 
 export default function MetaTitles({ metaTitles }) {
     if (metaTitles.length === 0) {
-        return <p>No &lt;title&gt; tag found.</p>
+        return <p>No title tag found.</p>
     }
 
     const recommendedMaxLength = 60;
@@ -10,7 +10,7 @@ export default function MetaTitles({ metaTitles }) {
     return (
         <>
             {metaTitles.length > 1
-                ? <p className="warning-text">Multiple &lt;title&gt; tags found.</p>
+                ? <p className="warning-text">Multiple title tags found.</p>
                 : null
             }
 

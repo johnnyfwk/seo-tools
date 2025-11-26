@@ -14,49 +14,57 @@ export default function RobotsTxt({ robotsTxt }) {
 
     return (
         <>
-            <p>
-                <strong>URL: </strong>
-                {url
-                    ? <Link href={url} target="_blank" rel="noopener noreferrer">{url}</Link>
-                    : "N/A"
-                }
-            </p>
-
-            <p>
-                <strong>Allows crawling of entered URL?: </strong>
-                {!blocked
-                    ? "✅ Yes"
-                    : "❌ No"
-                }
-            </p>
-
-            {determiningRule
-                ? <p>
-                    <strong>Determining {blocked ? "disallow" : "allow"} rule: </strong>
-                    <code>{determiningRule.rule}</code>
+            <div>
+                <p>
+                    <strong>URL: </strong>
+                    {url
+                        ? <Link href={url} target="_blank" rel="noopener noreferrer">{url}</Link>
+                        : "N/A"
+                    }
                 </p>
+            </div>
+            
+            <div>
+                <p>
+                    <strong>Allows crawling of entered URL?: </strong>
+                    {!blocked
+                        ? "✅ Yes"
+                        : "❌ No"
+                    }
+                </p>
+            </div>
+            
+            {determiningRule
+                ? <div>
+                    <p>
+                        <strong>Determining {blocked ? "disallow" : "allow"} rule: </strong>
+                        <code>{determiningRule.rule}</code>
+                    </p>
+                </div>
                 : null
             }
 
-            <p>
-                <strong>Sitemaps:</strong>
-            </p>
-            {sitemaps.length > 0
-                ? <ul>
-                    {sitemaps.map((sitemap, i) => {
-                        return (
-                            <li key={i}>
-                                <Link
-                                    href={sitemap}
-                                    target="_blank"
-                                    rel="noreferrer noopener"
-                                >{sitemap}</Link>
-                            </li>
-                        )
-                    })}
-                </ul>
-                : <p>No sitemaps found.</p>
-            }    
+            <div>
+                <p>
+                    <strong>Sitemaps:</strong>
+                </p>
+                {sitemaps.length > 0
+                    ? <ul>
+                        {sitemaps.map((sitemap, i) => {
+                            return (
+                                <li key={i}>
+                                    <Link
+                                        href={sitemap}
+                                        target="_blank"
+                                        rel="noreferrer noopener"
+                                    >{sitemap}</Link>
+                                </li>
+                            )
+                        })}
+                    </ul>
+                    : <p>No sitemaps found.</p>
+                }
+            </div>
         </>
     )
 }

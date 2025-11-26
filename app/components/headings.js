@@ -43,7 +43,7 @@ export default function Headings({ headings }) {
                             <li
                                 key={level}
                                 className="error-text"
-                            >&lt;{level}&gt; tag missing</li>
+                            >{level} tag missing</li>
                         ))}
                     </ul>
                 </div>
@@ -55,7 +55,7 @@ export default function Headings({ headings }) {
                     <h4>{level.toUpperCase()} Tags ({grouped[level].length})</h4>
                     
                     {grouped[level].length === 0
-                        ? <p>No &lt;{level}&gt; tags found.</p>
+                        ? <p>No {level} tags found.</p>
                         : <table>
                             <thead>
                                 <tr>
