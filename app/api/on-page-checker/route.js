@@ -45,6 +45,8 @@ export async function POST(request) {
         let isHtml = false;
         let isPdf = false;
         let isImage = false;
+        let isCss = false;
+        let isJs = false;
         let isOther = false;
 
         if (!robotsTxt.blocked || scrapeEvenIfBlocked) {
@@ -59,11 +61,19 @@ export async function POST(request) {
 
                 contentType = response.headers.get("content-type") || "";
 
+                const urlExtension = finalUrl.split('.').pop().toLowerCase();
+                const isCssFallback = urlExtension === 'css';
+                const isJsFallback = urlExtension === 'js';
+
                 // Categorize content type
-                isHtml = contentType.includes("text/html");
+                isHtml = contentType.includes("text/html") && !isCssFallback && !isJsFallback;
                 isPdf = contentType.includes("application/pdf");
                 isImage = contentType.startsWith("image/");
-                isOther = !isHtml && !isPdf && !isImage;
+                isCss = contentType.includes("text/css") || isCssFallback;
+                isJs = contentType.includes("application/javascript") ||
+                    contentType.includes("text/javascript") ||
+                    isJsFallback;
+                isOther = !isHtml && !isPdf && !isImage && !isCss && !isJs;
 
                 headers = {};
                 response.headers.forEach((value, key) => headers[key.toLowerCase()] = value);
@@ -94,6 +104,8 @@ export async function POST(request) {
             isHtml,
             isPdf,
             isImage,
+            isCss,
+            isJs,
             isOther,
             headers,
             scrapedData: resourceData,

@@ -1,14 +1,7 @@
-export default function Indexability({ indexability, contentType, isHtml, isPdf, isImage, isOther }) {
+export default function Indexability({ indexability }) {
     if (!indexability) return null;
 
     const { indexable, reasons = [] } = indexability;
-
-    // Determine human-readable resource type
-    let resourceType = "Unknown";
-    if (isHtml) resourceType = "HTML Page";
-    else if (isPdf) resourceType = "PDF Document";
-    else if (isImage) resourceType = "Image File";
-    else if (isOther) resourceType = "Other File Type";
 
     const indexableIcon = indexable === true 
         ? "✅ URL is Indexable"
@@ -17,11 +10,8 @@ export default function Indexability({ indexability, contentType, isHtml, isPdf,
             : "⚠️ Indexability Unknown";
 
     return (
-        <div className="indexability-box">
-            <h3>{indexableIcon}</h3>
-
-            <p><strong>Content-Type:</strong> {contentType || "Unknown"}</p>
-            <p><strong>Detected Resource Type:</strong> {resourceType}</p>
+        <>
+            <p>{indexableIcon}</p>
 
             {reasons.length > 0 && (
                 <div>
@@ -33,12 +23,6 @@ export default function Indexability({ indexability, contentType, isHtml, isPdf,
                     </ul>
                 </div>
             )}
-
-            {isOther && (
-                <p>
-                    Canonical tags and meta robots tags do not apply to this resource type.
-                </p>
-            )}
-        </div>
+        </>
     );
 }
