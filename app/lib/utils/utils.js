@@ -403,3 +403,9 @@ export function getCanonicalTextAndClass(canonicalUrlMatchesInitialUrl) {
         }
     }
 }
+
+export function formatScrapeDuration(ms) {
+    const seconds = Math.floor(ms / 1000);
+    const milliseconds = Math.floor(ms % 1000);
+    return seconds > 0 ? `${seconds}s ${milliseconds}ms` : `${milliseconds}ms`;
+}

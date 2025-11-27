@@ -1,16 +1,19 @@
 import { getRedirects } from "@/app/lib/utils/getRedirects";
 import { checkRobotsTxt } from "@/app/lib/utils/checkRobotsTxt";
-import { scrapeXmlSitemaps } from "@/app/lib/scrapers/xmlSitemaps";
 import { scrapeWithCheerio } from "@/app/lib/scrapers";
 import { fetchResource } from "@/app/lib/utils/fetchResource";
 import * as utils from '@/app/lib/utils/utils';
 
-export async function POST(request) {    
+export async function POST(request) {
     try {
         const {
             enteredUrl,
             scrapeEvenIfBlocked,
-            scrapeOptions = { all: true }
+            scrapeOptions = {
+                all: false,
+                titleTags: true,
+                metaDescriptions: true,
+            }
         } = await request.json();
 
         const {
@@ -18,9 +21,12 @@ export async function POST(request) {
             error,
             url: normalisedUrl
         } = utils.validateUrlBackend(enteredUrl);
-        
+
         if (!valid) {
-            return Response.json({ error }, { status: 400 });
+            return Response.json(
+                { error },
+                { status: 400 }
+            );
         }
 
         let redirectData;
@@ -32,8 +38,8 @@ export async function POST(request) {
                     error: "Failed to fetch URL (redirect resolution failed)",
                     details: err.message,
                 },
-                { status: 400 }
-            );
+                { status: 400 },
+            )
         }
 
         const {
@@ -43,13 +49,8 @@ export async function POST(request) {
             redirects
         } = redirectData;
 
-        // --- ROBOTS.TXT ---
         const robotsTxt = await checkRobotsTxt(finalUrl);
 
-        // --- XML SITEMAPS ---
-        const xmlSitemaps = await scrapeXmlSitemaps(finalUrl);
-
-        // --- FETCH RESOURCE ---
         let resource = {
             headers: {},
             data: null,
@@ -68,7 +69,7 @@ export async function POST(request) {
                 resource = await fetchResource(
                     finalUrl,
                     scrapeOptions,
-                    scrapeWithCheerio
+                    scrapeWithCheerio,
                 );
 
             } catch (err) {
@@ -89,11 +90,9 @@ export async function POST(request) {
             finalUrlStatusCode,
             redirects,
             robotsTxt,
-            enteredUrlIsBlockedByRobots: robotsTxt.blocked,
-            xmlSitemaps,
             resource,
             scrapedData: resource.data,
-        });
+        })
 
     } catch (err) {
         console.error(err);
@@ -103,4 +102,3 @@ export async function POST(request) {
         );
     }
 }
-

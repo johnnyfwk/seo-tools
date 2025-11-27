@@ -1,5 +1,5 @@
 export const metadata = {
-    title: "This is the meta title for the About page | SEO Tools",
+    title: "This is the title tag for the About page | SEO Tools",
     description: "This is the meta description for the About page.",
 }
 

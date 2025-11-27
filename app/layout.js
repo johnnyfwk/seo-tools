@@ -5,7 +5,7 @@ import Footer from "./components/footer";
 import BackToTopButton from "./components/backToTopButton";
 
 export const metadata = {
-  title: "This is the default meta title | SEO Tools",
+  title: "This is the default title tag | SEO Tools",
   description: "This is the default meta description.",
 };
 
