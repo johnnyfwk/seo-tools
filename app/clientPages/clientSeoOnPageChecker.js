@@ -25,7 +25,7 @@ import Indexability from "../components/indexability";
 import ContentType from "../components/contentType";
 import * as utils from '@/app/lib/utils/utils';
 
-export default function ClientOnPageChecker() {
+export default function ClientSeoOnPageChecker() {
     const initialPageData = {
         scrapeDuration: null,
         enteredUrl: "",
@@ -407,7 +407,7 @@ export default function ClientOnPageChecker() {
     return (
         <>
             <section>
-                <h1>On-Page Checker</h1>
+                <h1>Free SEO On-Page Checker</h1>
 
                 <InputUrl
                     inputUrl={inputUrl}
