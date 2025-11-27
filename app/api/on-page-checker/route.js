@@ -2,7 +2,7 @@ import { getRedirects } from "@/app/lib/utils/getRedirects";
 import { checkRobotsTxt } from "@/app/lib/utils/checkRobotsTxt";
 import { scrapeXmlSitemaps } from "@/app/lib/scrapers/xmlSitemaps";
 import { scrapeWithCheerio } from "@/app/lib/scrapers";
-import { browserHeaders } from "@/app/lib/utils/browserHeaders";
+import { fetchResource } from "@/app/lib/utils/fetchResource";
 import * as utils from '@/app/lib/utils/utils';
 
 export async function POST(request) {    
@@ -16,23 +16,16 @@ export async function POST(request) {
         const {
             valid,
             error,
-            url: normalizedUrl
+            url: normalisedUrl
         } = utils.validateUrlBackend(enteredUrl);
         
         if (!valid) {
             return Response.json({ error }, { status: 400 });
         }
 
-        let headers = {};
-        let enteredUrlStatusCode = null;
-        let finalUrl = null;
-        let finalUrlStatusCode = null;
-        let redirects = [];
-        let contentType = null;
-
         let redirectData;
         try {
-            redirectData = await getRedirects(normalizedUrl);
+            redirectData = await getRedirects(normalisedUrl);
         } catch (err) {
             return Response.json(
                 {
@@ -43,10 +36,12 @@ export async function POST(request) {
             );
         }
 
-        enteredUrlStatusCode = redirectData.initialUrlStatusCode;
-        finalUrl = redirectData.finalUrl;
-        finalUrlStatusCode = redirectData.finalUrlStatusCode;
-        redirects = redirectData.redirects;
+        const {
+            initialUrlStatusCode,
+            finalUrl,
+            finalUrlStatusCode,
+            redirects
+        } = redirectData;
 
         // --- ROBOTS.TXT ---
         const robotsTxt = await checkRobotsTxt(finalUrl);
@@ -55,55 +50,28 @@ export async function POST(request) {
         const xmlSitemaps = await scrapeXmlSitemaps(finalUrl);
 
         // --- FETCH RESOURCE ---
-        let resourceData = null;
-        let resourceExists = false;
-        let isHtml = false;
-        let isPdf = false;
-        let isImage = false;
-        let isCss = false;
-        let isJs = false;
-        let isOther = false;
+        let resource = {
+            headers: {},
+            data: null,
+            exists: false,
+            contentType: null,
+            isHtml: false,
+            isPdf: false,
+            isImage: false,
+            isCss: false,
+            isJs: false,
+            isOther: false
+        };
 
         if (!robotsTxt.blocked || scrapeEvenIfBlocked) {
             try {
-                const response = await fetch(finalUrl, {
-                    method: "GET",
-                    headers: browserHeaders
-                });
-
-                finalUrlStatusCode = response.status;
-                resourceExists = response.ok;
-
-                contentType = response.headers.get("content-type") || "";
-
-                const urlExtension = finalUrl.split('.').pop().toLowerCase();
-                const isCssFallback = urlExtension === 'css';
-                const isJsFallback = urlExtension === 'js';
-
-                // Categorize content type
-                isHtml = contentType.includes("text/html") && !isCssFallback && !isJsFallback;
-                isPdf = contentType.includes("application/pdf");
-                isImage = contentType.startsWith("image/");
-                isCss = contentType.includes("text/css") || isCssFallback;
-                isJs = contentType.includes("application/javascript") ||
-                    contentType.includes("text/javascript") ||
-                    isJsFallback;
-                isOther = !isHtml && !isPdf && !isImage && !isCss && !isJs;
-
-                headers = {};
-                response.headers.forEach((value, key) => headers[key.toLowerCase()] = value);
-
-                if (isHtml && resourceExists) {
-                    const html = await response.text();
-                    resourceData = await scrapeWithCheerio(html, finalUrl, headers, scrapeOptions);
-                } else {
-                    resourceData = null; // For PDFs, images, or other resources
-                }
+                resource = await fetchResource(
+                    finalUrl,
+                    scrapeOptions,
+                    scrapeWithCheerio
+                );
 
             } catch (err) {
-                console.warn("Resource fetch failed:", err.message);
-                resourceExists = false;
-
                 return Response.json(
                     {
                         error: "Failed to fetch the target page.",
@@ -115,24 +83,16 @@ export async function POST(request) {
         }
 
         return Response.json({
-            enteredUrl,
-            enteredUrlStatusCode,
+            enteredUrl: normalisedUrl,
+            enteredUrlStatusCode: initialUrlStatusCode,
             finalUrl,
             finalUrlStatusCode,
             redirects,
             robotsTxt,
-            xmlSitemaps,
-            resourceExists,
-            contentType,
-            isHtml,
-            isPdf,
-            isImage,
-            isCss,
-            isJs,
-            isOther,
-            headers,
-            scrapedData: resourceData,
             enteredUrlIsBlockedByRobots: robotsTxt.blocked,
+            xmlSitemaps,
+            resource,
+            scrapedData: resource.data,
         });
 
     } catch (err) {
@@ -143,3 +103,4 @@ export async function POST(request) {
         );
     }
 }
+
