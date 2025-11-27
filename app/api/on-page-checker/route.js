@@ -3,15 +3,9 @@ import { checkRobotsTxt } from "@/app/lib/utils/checkRobotsTxt";
 import { scrapeXmlSitemaps } from "@/app/lib/scrapers/xmlSitemaps";
 import { scrapeWithCheerio } from "@/app/lib/scrapers";
 import { browserHeaders } from "@/app/lib/utils/browserHeaders";
+import * as utils from '@/app/lib/utils/utils';
 
-export async function POST(request) {
-    let headers = {};
-    let enteredUrlStatusCode = null;
-    let finalUrl = null;
-    let finalUrlStatusCode = null;
-    let redirects = [];
-    let contentType = null;
-    
+export async function POST(request) {    
     try {
         const {
             enteredUrl,
@@ -19,15 +13,36 @@ export async function POST(request) {
             scrapeOptions = { all: true }
         } = await request.json();
 
-        if (!enteredUrl) {
+        const {
+            valid,
+            error,
+            url: normalizedUrl
+        } = utils.validateUrlBackend(enteredUrl);
+        
+        if (!valid) {
+            return Response.json({ error }, { status: 400 });
+        }
+
+        let headers = {};
+        let enteredUrlStatusCode = null;
+        let finalUrl = null;
+        let finalUrlStatusCode = null;
+        let redirects = [];
+        let contentType = null;
+
+        let redirectData;
+        try {
+            redirectData = await getRedirects(normalizedUrl);
+        } catch (err) {
             return Response.json(
-                { error: "URL is required" },
+                {
+                    error: "Failed to fetch URL (redirect resolution failed)",
+                    details: err.message,
+                },
                 { status: 400 }
             );
         }
 
-        // --- FOLLOW REDIRECTS ---
-        const redirectData = await getRedirects(enteredUrl);
         enteredUrlStatusCode = redirectData.initialUrlStatusCode;
         finalUrl = redirectData.finalUrl;
         finalUrlStatusCode = redirectData.finalUrlStatusCode;
@@ -88,6 +103,14 @@ export async function POST(request) {
             } catch (err) {
                 console.warn("Resource fetch failed:", err.message);
                 resourceExists = false;
+
+                return Response.json(
+                    {
+                        error: "Failed to fetch the target page.",
+                        details: err.message
+                    },
+                    { status: 400 }
+                );
             }
         }
 

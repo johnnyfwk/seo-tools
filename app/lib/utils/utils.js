@@ -1,3 +1,121 @@
+export function validateUrlFrontend(inputUrl) {
+    const trimmedUrl = inputUrl.trim();
+
+    // 1. Reject clearly invalid protocols (htps://, htp://, ftp:// etc.)
+    if (/^[a-zA-Z]+:\/\//.test(trimmedUrl)) {
+        if (!/^https?:\/\//i.test(trimmedUrl)) {
+            return {
+                valid: false,
+                error: "Invalid protocol. Use http:// or https:// only."
+            };
+        }
+    }
+
+    // 2. If no protocol → add http://
+    const withProtocol = /^https?:\/\//i.test(trimmedUrl)
+        ? trimmedUrl
+        : "http://" + trimmedUrl;
+
+    // 3. Try URL parsing (this catches 'http://????', 'http://htps://', etc.)
+    let url;
+    try {
+        url = new URL(withProtocol);
+    } catch {
+        return {
+            valid: false,
+            error: "Invalid URL format"
+        };
+    }
+
+    // 4. Reject URLs without a real hostname
+    if (!url.hostname.includes(".") || url.hostname.length < 3) {
+        return {
+            valid: false,
+            error: "Invalid URL"
+        };
+    }
+
+    // 5. Reject obviously incorrect domains (numbers only, one letter, etc.)
+    if (!/^[a-z0-9.-]+$/i.test(url.hostname)) {
+        return {
+            valid: false,
+            error: "Domain name contains invalid characters"
+        };
+    }
+
+    return {
+        valid: true,
+        url: url.href
+    };
+}
+
+export function validateUrlBackend(inputUrl) {
+    if (!inputUrl) {
+        return {
+            valid: false,
+            error: "URL is required."
+        };
+    }
+
+    let parsedUrl;
+    try {
+        parsedUrl = new URL(inputUrl);
+    } catch {
+        return {
+            valid: false,
+            error: "Invalid URL format."
+        };
+    }
+
+    const hostname = parsedUrl.hostname;
+
+    // Domain must contain at least one dot
+    if (!hostname.includes(".")) {
+        return {
+            valid: false,
+            error: "URL must contain a valid domain (e.g. example.com)."
+        };
+    }
+
+    // Only valid characters
+    if (!/^[a-zA-Z0-9.-]+$/.test(hostname)) {
+        return {
+            valid: false,
+            error: "Domain contains invalid characters."
+        };
+    }
+
+    // Hyphen rules
+    if (hostname.startsWith("-") || hostname.endsWith("-")) {
+        return {
+            valid: false,
+            error: "Domain cannot start or end with a hyphen."
+        };
+    }
+
+    // No double dots
+    if (hostname.includes("..")) {
+        return {
+            valid: false,
+            error: "Domain contains invalid formatting."
+        };
+    }
+
+    // Top-level domain rules
+    const tld = hostname.split(".").pop();
+    if (tld.length < 2) {
+        return {
+            valid: false,
+            error: "Invalid top-level domain."
+        };
+    }
+
+    return {
+        valid: true,
+        url: parsedUrl.href
+    };
+}
+
 export function highlightWhitespace(str) {
     if (!str) return str;
 
