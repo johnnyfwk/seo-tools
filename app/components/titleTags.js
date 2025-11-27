@@ -1,7 +1,7 @@
 import * as utils from '@/app/lib/utils/utils';
 
-export default function MetaTitles({ metaTitles }) {
-    if (metaTitles.length === 0) {
+export default function TitleTags({ titleTags }) {
+    if (titleTags.length === 0) {
         return <p>No title tag found.</p>
     }
 
@@ -9,7 +9,7 @@ export default function MetaTitles({ metaTitles }) {
 
     return (
         <>
-            {metaTitles.length > 1
+            {titleTags.length > 1
                 ? <p className="warning-text">Multiple title tags found.</p>
                 : null
             }
@@ -25,7 +25,7 @@ export default function MetaTitles({ metaTitles }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {metaTitles.map((metaTitle, i) => {
+                    {titleTags.map((metaTitle, i) => {
                         const statusTextAndClass = metaTitle.length === 0
                             ? {text: "Empty", class: "error-background"}
                             : metaTitle.length > recommendedMaxLength
