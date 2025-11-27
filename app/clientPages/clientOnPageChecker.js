@@ -378,7 +378,14 @@ export default function ClientOnPageChecker() {
         },
         {
             title: `Open Graph`,
-            component: <OpenGraph openGraph={pageData.scrapedData.openGraph} />,
+            component: <OpenGraph
+                openGraph={pageData.scrapedData.openGraph}
+                contentType={pageData.resource.contentType}
+                xRobotsNoindex={pageData.resource.headers?.["x-robots-tag"] ||
+                    pageData.resource.headers?.["X-Robots-Tag"] ||
+                    ""
+                }
+            />,
         },
         {
             title: `Pagination (${pageData.scrapedData.pagination.length})`,
