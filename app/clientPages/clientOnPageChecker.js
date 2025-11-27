@@ -367,7 +367,14 @@ export default function ClientOnPageChecker() {
         },
         {
             title: `Hreflang (${pageData.scrapedData.hreflang.length})`,
-            component: <Hreflang hreflang={pageData.scrapedData.hreflang} />,
+            component: <Hreflang
+                hreflang={pageData.scrapedData.hreflang}
+                contentType={pageData.resource.contentType}
+                xRobotsNoindex={pageData.resource.headers?.["x-robots-tag"] ||
+                    pageData.resource.headers?.["X-Robots-Tag"] ||
+                    ""
+                }
+            />,
         },
         {
             title: `Open Graph`,
