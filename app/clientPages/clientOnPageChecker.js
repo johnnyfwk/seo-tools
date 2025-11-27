@@ -55,14 +55,18 @@ export default function ClientOnPageChecker() {
             sitemapsContainingUrl: [],
             urlFound: null,
         },
-        headers: {},
-        contentType: "",
-        isHtml: null,
-        isImage: null,
-        isPdf: null,
-        isCss: null,
-        isJs: null,
-        isOther: null,
+        resource: {
+            exists: null,
+            headers: {},
+            contentType: null,
+            isHtml: null,
+            isPdf: null,
+            isImage: null,
+            isCss: null,
+            isJs: null,
+            isOther: null,
+            data: null,
+        },
         scrapedData: {
             metaRobotsTag: {
                 allowsFollowing: null,
@@ -154,8 +158,9 @@ export default function ClientOnPageChecker() {
                 blockedByRobots: data.robotsTxt?.blocked,
                 canonicalMatches: data.scrapedData?.canonicalTags?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl,
                 metaRobotsAllowsIndexing: data.scrapedData?.metaRobotsTag?.allowsIndexing,
-                contentType: data.contentType,
-                xRobotsNoindex: data.headers?.["x-robots-tag"] || data.headers?.["X-Robots-Tag"] || "",
+                contentType: data.resource.contentType,
+                xRobotsNoindex: data.resource.headers?.["x-robots-tag"] ||
+                    data.resource.headers?.["X-Robots-Tag"] || "",
             });
 
             setPageData({
@@ -177,16 +182,12 @@ export default function ClientOnPageChecker() {
                 },
                 xmlSitemaps: {
                     ...initialPageData.xmlSitemaps,
-                    ...data.xmlSitemaps
+                    ...data.xmlSitemaps,
                 },
-                headers: data.headers || {},
-                contentType: data.contentType || "",
-                isHtml: data.isHtml || null,
-                isImage: data.isImage || null,
-                isPdf: data.isPdf || null,
-                isCss: data.isCss || null,
-                isJs: data.isJs || null,
-                isOther: data.isOther || null,
+                resource: {
+                    ...initialPageData.resource,
+                    ...data.resource,
+                },
                 scrapedData: {
                     ...initialPageData.scrapedData,
                     ...data.scrapedData,
@@ -273,13 +274,13 @@ export default function ClientOnPageChecker() {
         {
             title: "Content Type",
             component: <ContentType
-                contentType={pageData.contentType}
-                isHtml={pageData.isHtml}
-                isPdf={pageData.isPdf}
-                isImage={pageData.isImage}
-                isCss={pageData.isCss}
-                isJs={pageData.isJs}
-                isOther={pageData.isOther}
+                contentType={pageData.resource.contentType}
+                isHtml={pageData.resource.isHtml}
+                isPdf={pageData.resource.isPdf}
+                isImage={pageData.resource.isImage}
+                isCss={pageData.resource.isCss}
+                isJs={pageData.resource.isJs}
+                isOther={pageData.resource.isOther}
             />
         },
         {
@@ -460,7 +461,7 @@ export default function ClientOnPageChecker() {
                             <h2>Page Data</h2>
                             <p>Entered URL is blocked by robots.txt. Page data could not be fetched.</p>
                         </section>
-                        : pageData.isHtml
+                        : pageData.resource.isHtml
                             ? <RenderSections sections={contentSections}/>
                             : <section>
                                 <h2>Page Data</h2>
