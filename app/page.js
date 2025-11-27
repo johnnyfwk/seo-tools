@@ -7,18 +7,18 @@ export const metadata = {
 
 export default function Home() {
     return (
-        <div>
+        <>
             <h1>Home</h1>
 
             <p>This is the introductory paragraph for the Home page.</p>
 
             <h2>
-                <Link href="/on-page-checker">On-Page Checker</Link>
+                <Link href="/seo-on-page-checker">SEO On-Page Checker</Link>
             </h2>
 
             <h2>
                 <Link href="/link-checker">Internal Link & Backlink Checker</Link>
             </h2>
-        </div>
+        </>
     );
 }
