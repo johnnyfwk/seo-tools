@@ -5,7 +5,6 @@ import Url from "../components/url";
 import StatusCode from "../components/statusCode";
 import RedirectChain from "../components/redirectChain";
 import RobotsTxt from "../components/robotsTxt";
-import RobotsDisclaimer from "../components/robotsDisclaimer";
 import MetaRobotsTag from "../components/metaRobotsTag";
 import CanonicalTags from "../components/canonicalTags";
 import HtmlLanguageAttribute from "../components/htmlLanguageAttribute";
@@ -24,6 +23,7 @@ import HttpRedirectsToHttps from "../components/httpRedirectsToHttps";
 import Indexability from "../components/indexability";
 import ContentType from "../components/contentType";
 import * as utils from '@/app/lib/utils/utils';
+import InputUrl from "../components/inputUrl";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -408,57 +408,18 @@ export default function ClientOnPageChecker() {
         <>
             <section>
                 <h1>On-Page Checker</h1>
-                <form
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        handleCheckPage();
-                    }}
-                    aria-busy={isCheckingPage}
-                >
-                    <fieldset disabled={isCheckingPage} style={{ border: "none", padding: 0 }}>
-                        <legend className="sr-only">URL Checker Form</legend>
 
-                        <label htmlFor="url"><strong>Enter URL:</strong></label>
-
-                        <input
-                            id="url"
-                            type="text"
-                            value={inputUrl}
-                            onChange={(e) => {
-                                setInputUrl(e.target.value);
-                                if (error) setError(null);
-                            }}
-                            placeholder="https://example.com"
-                            aria-invalid={!!error}
-                            aria-describedby={error ? "url-error" : undefined}
-                            style={{width: '100%', padding: "10px"}}
-                        />
-
-                        {error
-                            ? <p
-                                id="url-error"
-                                className="error-text"
-                                role="alert"
-                            >{error}</p>
-                            : null
-                        }
-
-                        <RobotsDisclaimer
-                            checked={scrapeEvenIfBlocked}
-                            onChange={(value) => {
-                                setScrapeEvenIfBlocked(value);
-                                setHasCheckedPage(false); // reset until next fetch
-                            }}
-                        />
-
-                        <button
-                            type="submit"
-                            disabled={isCheckingPage || !inputUrl.trim() || !!error}
-                        >
-                            {isCheckingPage ? "Fetching..." : "Check Page"}
-                        </button>
-                    </fieldset>
-                </form>
+                <InputUrl
+                    inputUrl={inputUrl}
+                    setInputUrl={setInputUrl}
+                    scrapeEvenIfBlocked={scrapeEvenIfBlocked}
+                    setScrapeEvenIfBlocked={setScrapeEvenIfBlocked}
+                    handleCheckPage={handleCheckPage}
+                    isCheckingPage={isCheckingPage}
+                    setHasCheckedPage={setHasCheckedPage}
+                    error={error}
+                    setError={setError}
+                />
             </section>
 
             {hasCheckedPage
