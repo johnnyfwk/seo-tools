@@ -1,6 +1,6 @@
 import * as utils from "@/app/lib/utils/utils";
 
-export default function OpenGraph({ openGraph }) {
+export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
     if (!openGraph) return null;
 
     // ------------------------------
@@ -138,6 +138,8 @@ export default function OpenGraph({ openGraph }) {
                                     null,
                                 metaRobotsAllowsIndexing:
                                     og.metaRobots?.allowsIndexing ?? null,
+                                contentType,
+                                xRobotsNoindex,
                             });
 
                             return (
