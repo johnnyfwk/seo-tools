@@ -4,7 +4,7 @@ import { scrapeMetaRobotsTag } from './metaRobotsTag';
 import { scrapeCanonicalTags } from './canonicalTags';
 import { scrapeHtmlLanguageAttribute } from './htmlLanguageAttribute';
 import { scrapeViewport } from './viewport';
-import { scrapeMetaTitles } from './metaTitles';
+import { scrapeTitleTags } from './titleTags';
 import { scrapeMetaDescriptions } from './metaDescriptions';
 import { scrapeHeadings } from './headings';
 import { scrapeLinks } from './links';
@@ -12,7 +12,6 @@ import { scrapeSchemaMarkup } from './schemaMarkup';
 import { scrapeImages } from './images';
 import { scrapeHreflang } from './hreflang';
 import { scrapeOpenGraph } from './openGraph';
-// import { scrapeXmlSitemaps } from './xmlSitemaps';
 import { scrapePagination } from './pagination';
 
 function shouldScrape(optionKey, opts) {
@@ -54,8 +53,8 @@ export async function scrapeWithCheerio(
             Object.assign(results, scrapeViewport($));
         }
 
-        if (shouldScrape('metaTitles', opts)) {
-            Object.assign(results, scrapeMetaTitles($));
+        if (shouldScrape('titleTags', opts)) {
+            Object.assign(results, scrapeTitleTags($));
         }
 
         if (shouldScrape('metaDescriptions', opts)) {
@@ -89,10 +88,7 @@ export async function scrapeWithCheerio(
         if (shouldScrape('pagination', opts)) {
             Object.assign(results, await scrapePagination($, pageUrl, headers));
         }
-
-        // if (shouldScrape('xmlSitemap', opts)) {
-        //     Object.assign(results, await scrapeXmlSitemaps(pageUrl));
-        // }
+        
     } catch (err) {
         console.error(`Error scraping page ${pageUrl}:`, err);
     }

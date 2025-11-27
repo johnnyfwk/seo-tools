@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from "react";
+import InputUrl from "../components/inputUrl";
 import Url from "../components/url";
 import StatusCode from "../components/statusCode";
 import RedirectChain from "../components/redirectChain";
@@ -9,7 +10,7 @@ import MetaRobotsTag from "../components/metaRobotsTag";
 import CanonicalTags from "../components/canonicalTags";
 import HtmlLanguageAttribute from "../components/htmlLanguageAttribute";
 import Viewport from "../components/viewport";
-import MetaTitles from "../components/metaTitles";
+import TitleTags from "../components/titleTags";
 import MetaDescriptions from "../components/metaDescriptions";
 import Headings from "../components/headings";
 import Links from "../components/links";
@@ -23,7 +24,6 @@ import HttpRedirectsToHttps from "../components/httpRedirectsToHttps";
 import Indexability from "../components/indexability";
 import ContentType from "../components/contentType";
 import * as utils from '@/app/lib/utils/utils';
-import InputUrl from "../components/inputUrl";
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -88,7 +88,7 @@ export default function ClientOnPageChecker() {
                 content: "",
                 properties: {}
             },
-            metaTitles: [],
+            titleTags: [],
             metaDescriptions: [],
             headings: [],
             links: {
@@ -207,9 +207,9 @@ export default function ClientOnPageChecker() {
                         ...initialPageData.scrapedData.viewport,
                         ...data.scrapedData?.viewport
                     },
-                    metaTitles: [
-                        ...initialPageData.scrapedData.metaTitles,
-                        ...(data.scrapedData?.metaTitles || [])
+                    titleTags: [
+                        ...initialPageData.scrapedData.titleTags,
+                        ...(data.scrapedData?.titleTags || [])
                     ],
                     metaDescriptions: [
                         ...initialPageData.scrapedData.metaDescriptions,
@@ -338,8 +338,8 @@ export default function ClientOnPageChecker() {
             component: <Viewport viewport={pageData.scrapedData.viewport} />
         },
         {
-            title: `Meta Titles (${pageData.scrapedData.metaTitles.length})`,
-            component: <MetaTitles metaTitles={pageData.scrapedData.metaTitles} />,
+            title: `Meta Titles (${pageData.scrapedData.titleTags.length})`,
+            component: <TitleTags titleTags={pageData.scrapedData.titleTags} />,
         },
         {
             title: `Meta Descriptions (${pageData.scrapedData.metaDescriptions.length})`,
