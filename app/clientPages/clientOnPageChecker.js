@@ -21,9 +21,9 @@ import OpenGraph from "../components/openGraph";
 import Pagination from "../components/pagination";
 import XmlSitemaps from "../components/xmlSitemaps";
 import HttpRedirectsToHttps from "../components/httpRedirectsToHttps";
-import * as utils from '@/app/lib/utils/utils';
 import Indexability from "../components/indexability";
 import ContentType from "../components/contentType";
+import * as utils from '@/app/lib/utils/utils';
 
 export default function ClientOnPageChecker() {
     const initialPageData = {
@@ -112,19 +112,14 @@ export default function ClientOnPageChecker() {
         setHasCheckedPage(false);
         setPageData(initialPageData);
 
-        let input = inputUrl.trim();
+        const {
+            valid,
+            url,
+            error: validationError
+        } = utils.validateUrlFrontend(inputUrl);
 
-        if (!/^https?:\/\//i.test(input)) {
-            input = 'http://' + input;
-        }
-
-        // Validate URL
-        let validatedUrl;
-        try {
-            validatedUrl = new URL(input);
-        } catch (err) {
-            console.error(err);
-            setError("Please enter a valid URL (starting with http:// or https://).");
+        if (!valid) {
+            setError(validationError);
             return;
         }
 
@@ -137,13 +132,14 @@ export default function ClientOnPageChecker() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    enteredUrl: validatedUrl.href,
+                    enteredUrl: url,
                     scrapeEvenIfBlocked,
                 }),
             });
 
             if (!response.ok) {
-                setError(`Request failed: ${response.status}`);
+                const err = await response.json().catch(() => null);
+                setError(err?.error || `Request failed: ${response.status}`);
                 return;
             }
 
@@ -249,11 +245,12 @@ export default function ClientOnPageChecker() {
                 },
             });
 
+            setHasCheckedPage(true);
+
         } catch (err) {
             console.error(err)
-            setError("Something went wrong.");
+            setError("Something went wrong while fetching the page.");
         } finally {
-            setHasCheckedPage(true);
             setIsCheckingPage(false);
         }
     }
