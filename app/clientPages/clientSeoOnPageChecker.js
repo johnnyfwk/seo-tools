@@ -34,7 +34,6 @@ export default function ClientSeoOnPageChecker() {
             reasons: [],
         },
         enteredUrlStatusCode: null,
-        enteredUrlIsBlockedByRobots: null,
         finalUrl: "",
         redirects: [],
         robotsTxt: {
@@ -132,9 +131,9 @@ export default function ClientSeoOnPageChecker() {
         const startTime = performance.now();
 
         try {
-            const response = await fetch('/api/on-page-checker', {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
+            const response = await fetch('/api/seo-on-page-checker', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     enteredUrl: url,
                     scrapeEvenIfBlocked,
@@ -170,7 +169,6 @@ export default function ClientSeoOnPageChecker() {
                 enteredUrl: data.enteredUrl || initialPageData.enteredUrl,
                 indexability: urlIndexability || initialPageData.indexability,
                 enteredUrlStatusCode: data.enteredUrlStatusCode || initialPageData.enteredUrlStatusCode,
-                enteredUrlIsBlockedByRobots: data.enteredUrlIsBlockedByRobots || initialPageData.enteredUrlIsBlockedByRobots,
                 finalUrl: data.finalUrl || initialPageData.finalUrl,
                 redirects: [
                     ...initialPageData.redirects,
@@ -249,38 +247,34 @@ export default function ClientSeoOnPageChecker() {
             setHasCheckedPage(true);
 
         } catch (err) {
-            console.error(err)
-            setError("Something went wrong while fetching the page.");
+            console.error(err);
+            setError("Something went wrong while fetching the page data.");
         } finally {
             setIsCheckingPage(false);
         }
     }
 
-    function formatDuration(ms) {
-        const seconds = Math.floor(ms / 1000);
-        const milliseconds = Math.floor(ms % 1000);
-        return seconds > 0 ? `${seconds}s ${milliseconds}ms` : `${milliseconds}ms`;
-    }
+    const scrapeDuration = utils.formatScrapeDuration(pageData.scrapeDuration);
 
     const technicalSectionsAlwaysRender = [
         {
             title: "Scrape Duration",
-            component: <p>{formatDuration(pageData.scrapeDuration)}</p>,
+            component: <p>{scrapeDuration}</p>,
         },
         {
-            title: "Entered URL",
+            title: "URL",
             component: <Url url={pageData.enteredUrl} />,
         },
         {
             title: "Content Type",
             component: <ContentType
-                contentType={pageData.resource.contentType}
-                isHtml={pageData.resource.isHtml}
-                isPdf={pageData.resource.isPdf}
-                isImage={pageData.resource.isImage}
-                isCss={pageData.resource.isCss}
-                isJs={pageData.resource.isJs}
-                isOther={pageData.resource.isOther}
+                contentType={pageData.resource?.contentType}
+                isHtml={pageData.resource?.isHtml}
+                isPdf={pageData.resource?.isPdf}
+                isImage={pageData.resource?.isImage}
+                isCss={pageData.resource?.isCss}
+                isJs={pageData.resource?.isJs}
+                isOther={pageData.resource?.isOther}
             />
         },
         {
@@ -323,11 +317,11 @@ export default function ClientSeoOnPageChecker() {
     const contentSections = [
         {
             title: "Meta Robots Tag",
-            component: <MetaRobotsTag metaRobotsTag={pageData.scrapedData.metaRobotsTag} />,
+            component: <MetaRobotsTag metaRobotsTag={pageData.scrapedData?.metaRobotsTag} />,
         },
         {
-            title: `Canonical Tags (${pageData.scrapedData.canonicalTags.tags.length})`,
-            component: <CanonicalTags canonicalTags={pageData.scrapedData.canonicalTags} />
+            title: `Canonical Tags (${pageData.scrapedData?.canonicalTags?.tags?.length})`,
+            component: <CanonicalTags canonicalTags={pageData.scrapedData?.canonicalTags} />
         },
         {
             title: "HTML Language Attribute",
@@ -335,43 +329,43 @@ export default function ClientSeoOnPageChecker() {
         },
         {
             title: "Viewport",
-            component: <Viewport viewport={pageData.scrapedData.viewport} />
+            component: <Viewport viewport={pageData.scrapedData?.viewport} />
         },
         {
-            title: `Meta Titles (${pageData.scrapedData.titleTags.length})`,
-            component: <TitleTags titleTags={pageData.scrapedData.titleTags} />,
+            title: `Title Tags (${pageData.scrapedData?.titleTags?.length})`,
+            component: <TitleTags titleTags={pageData.scrapedData?.titleTags} />,
         },
         {
-            title: `Meta Descriptions (${pageData.scrapedData.metaDescriptions.length})`,
-            component: <MetaDescriptions metaDescriptions={pageData.scrapedData.metaDescriptions} />,
+            title: `Meta Descriptions (${pageData.scrapedData?.metaDescriptions?.length})`,
+            component: <MetaDescriptions metaDescriptions={pageData.scrapedData?.metaDescriptions} />,
         },
         {
             title: "Headings",
-            component: <Headings headings={pageData.scrapedData.headings} />,
+            component: <Headings headings={pageData.scrapedData?.headings} />,
         },
         {
-            title: `Internal Links (${pageData.scrapedData.links.internal.length})`,
-            component: <Links links={pageData.scrapedData.links.internal} />,
+            title: `Internal Links (${pageData.scrapedData?.links?.internal?.length})`,
+            component: <Links links={pageData.scrapedData?.links?.internal} />,
         },
         {
-            title: `External Links (${pageData.scrapedData.links.external.length})`,
-            component: <Links links={pageData.scrapedData.links.external} />,
+            title: `External Links (${pageData.scrapedData?.links?.external?.length})`,
+            component: <Links links={pageData.scrapedData?.links?.external} />,
         },
         {
-            title: `Images (${pageData.scrapedData.images.length})`,
-            component: <Images images={pageData.scrapedData.images} />,
+            title: `Images (${pageData.scrapedData?.images?.length})`,
+            component: <Images images={pageData.scrapedData?.images} />,
         },
         {
-            title: `Schema Markup (${pageData.scrapedData.schemaMarkup.length})`,
-            component: <SchemaMarkup schemaMarkup={pageData.scrapedData.schemaMarkup} />,
+            title: `Schema Markup (${pageData.scrapedData?.schemaMarkup?.length})`,
+            component: <SchemaMarkup schemaMarkup={pageData.scrapedData?.schemaMarkup} />,
         },
         {
-            title: `Hreflang (${pageData.scrapedData.hreflang.length})`,
+            title: `Hreflang (${pageData.scrapedData?.hreflang?.length})`,
             component: <Hreflang
-                hreflang={pageData.scrapedData.hreflang}
-                contentType={pageData.resource.contentType}
-                xRobotsNoindex={pageData.resource.headers?.["x-robots-tag"] ||
-                    pageData.resource.headers?.["X-Robots-Tag"] ||
+                hreflang={pageData.scrapedData?.hreflang}
+                contentType={pageData.resource?.contentType}
+                xRobotsNoindex={pageData.resource?.headers?.["x-robots-tag"] ||
+                    pageData.resource?.headers?.["X-Robots-Tag"] ||
                     ""
                 }
             />,
@@ -379,17 +373,17 @@ export default function ClientSeoOnPageChecker() {
         {
             title: `Open Graph`,
             component: <OpenGraph
-                openGraph={pageData.scrapedData.openGraph}
-                contentType={pageData.resource.contentType}
-                xRobotsNoindex={pageData.resource.headers?.["x-robots-tag"] ||
-                    pageData.resource.headers?.["X-Robots-Tag"] ||
+                openGraph={pageData.scrapedData?.openGraph}
+                contentType={pageData.resource?.contentType}
+                xRobotsNoindex={pageData.resource?.headers?.["x-robots-tag"] ||
+                    pageData.resource?.headers?.["X-Robots-Tag"] ||
                     ""
                 }
             />,
         },
         {
-            title: `Pagination (${pageData.scrapedData.pagination.length})`,
-            component: <Pagination pagination={pageData.scrapedData.pagination} />,
+            title: `Pagination (${pageData.scrapedData?.pagination?.length})`,
+            component: <Pagination pagination={pageData.scrapedData?.pagination} />,
         },
     ];
 
@@ -431,7 +425,7 @@ export default function ClientSeoOnPageChecker() {
                         : null
                     }
 
-                    {pageData.enteredUrlIsBlockedByRobots && !scrapeEvenIfBlocked
+                    {pageData.robotsTxt.blocked && !scrapeEvenIfBlocked
                         ? <section>
                             <h2>Page Data</h2>
                             <p>Entered URL is blocked by robots.txt. Page data could not be fetched.</p>

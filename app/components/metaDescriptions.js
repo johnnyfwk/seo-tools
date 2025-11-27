@@ -2,15 +2,24 @@ import * as utils from '@/app/lib/utils/utils';
 
 export default function MetaDescriptions({ metaDescriptions }) {
     if (metaDescriptions.length === 0) {
-        return <p>No meta description tag found.</p>
+        return <p>No meta description found.</p>
     }
 
     const recommendedMaxLength = 160;
 
+    const numberOfMetaDescriptionsExceedingRecommendedMaxLength = metaDescriptions.filter((metaDesc) => {
+        return metaDesc.length > recommendedMaxLength;
+    });
+
     return (
         <>
+            {numberOfMetaDescriptionsExceedingRecommendedMaxLength.length === 0
+                ? <p>✅ The page has no meta descriptions exceeding the recommended length of {recommendedMaxLength} characters.</p>
+                : <p>⚠️ The page has {numberOfMetaDescriptionsExceedingRecommendedMaxLength.length} meta description(s) that exceeds the recommended length of {recommendedMaxLength} characters.</p>
+            }
+
             {metaDescriptions.length > 1
-                ? <p className="warning-text">Multiple meta description tags found.</p>
+                ? <p>⚠️ Multiple meta description tags found.</p>
                 : null
             }
             
@@ -20,17 +29,15 @@ export default function MetaDescriptions({ metaDescriptions }) {
                         <th scope="col" style={{ textAlign: 'center' }}>#</th>
                         <th scope="col" style={{ textAlign: 'left' }}>Text</th>
                         <th scope="col" style={{ textAlign: 'center' }}>Length</th>
-                        <th scope="col" style={{ textAlign: 'center' }}>Recommended Length</th>
-                        <th scope="col"  style={{ textAlign: 'center' }}>Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     {metaDescriptions.map((metaDesc, i) => {
-                        const statusTextAndClass = metaDesc.length === 0
-                            ? {text: "Empty", class: "error-background"}
-                            : metaDesc.length > recommendedMaxLength
-                                ? {text: "Too Long", class: "warning-background"}
-                                : {text: "OK", class: "success-background"}
+                        const lengthClass = metaDesc.length > recommendedMaxLength
+                            ? "error-background"
+                            : metaDesc.length <= recommendedMaxLength && metaDesc.length > 0
+                                ? "success-background"
+                                : ""
 
                         return (
                             <tr key={i}>
@@ -38,14 +45,10 @@ export default function MetaDescriptions({ metaDescriptions }) {
 
                                 <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(metaDesc)}</td>
 
-                                <td style={{ textAlign: 'center' }}>{metaDesc.length}</td>
-
-                                <td style={{ textAlign: 'center' }}>{recommendedMaxLength}</td>
-
                                 <td
                                     style={{ textAlign: 'center' }}
-                                    className={statusTextAndClass.class}
-                                >{statusTextAndClass.text}</td>
+                                    className={lengthClass}
+                                >{metaDesc.length}</td>
                             </tr>
                         )
                     })}
