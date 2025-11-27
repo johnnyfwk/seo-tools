@@ -1,7 +1,7 @@
 import Link from "next/link";
 import * as utils from '@/app/lib/utils/utils'; 
 
-export default function Hreflang({ hreflang }) {
+export default function Hreflang({ hreflang, contentType, xRobotsNoindex }) {
     if (hreflang.length === 0) {
         return <p>No hreflang tags found.</p>
     }
@@ -10,6 +10,7 @@ export default function Hreflang({ hreflang }) {
         <table>
             <thead>
                 <tr>
+                    <th style={{ textAlign: 'center' }}>#</th>
                     <th style={{ textAlign: 'center' }}>Source</th>
                     <th style={{ textAlign: 'center' }}>Hreflang</th>
                     <th style={{ textAlign: 'left' }}>URL</th>
@@ -29,10 +30,16 @@ export default function Hreflang({ hreflang }) {
                         blockedByRobots: hreflang.robotsTxt?.blocked,
                         canonicalMatches: hreflang.canonicalTags?.tags[0]?.resolvedCanonicalUrlMatchesOriginalUrl,
                         metaRobotsAllowsIndexing: hreflang.metaRobotsTag?.allowsIndexing,
+                        contentType,
+                        xRobotsNoindex,
                     });
 
                     return (
                         <tr key={index}>
+                            <td style={{ textAlign: 'center' }}>
+                                {index + 1}
+                            </td>
+
                             <td style={{ textAlign: 'center' }}>
                                 {hreflang.source}
                             </td>
