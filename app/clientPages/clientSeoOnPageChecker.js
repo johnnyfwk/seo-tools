@@ -256,7 +256,7 @@ export default function ClientSeoOnPageChecker({ metaDescription }) {
 
     const scrapeDuration = utils.formatScrapeDuration(pageData.scrapeDuration);
 
-    const technicalSectionsAlwaysRender = [
+    const mainSections = [
         {
             title: "Scrape Duration",
             component: <p>{scrapeDuration}</p>,
@@ -285,14 +285,6 @@ export default function ClientSeoOnPageChecker({ metaDescription }) {
             title: "Status Code",
             component: <StatusCode statusCode={pageData.enteredUrlStatusCode} />,
         },
-        {
-            title: "Robots.txt",
-            component: <RobotsTxt robotsTxt={pageData.robotsTxt} />,
-        },
-        {
-            title: `XML Sitemaps`,
-            component: <XmlSitemaps xmlSitemaps={pageData.xmlSitemaps} />,
-        },
     ];
 
     const technicalRedirectsSections = [
@@ -311,6 +303,17 @@ export default function ClientSeoOnPageChecker({ metaDescription }) {
         {
             title: "Redirect Chain",
             component: <RedirectChain redirectChain={pageData.redirects} />,
+        },
+    ];
+
+    const robotsTxtAndXmlSitemapsSections = [
+        {
+            title: "Robots.txt",
+            component: <RobotsTxt robotsTxt={pageData.robotsTxt} />,
+        },
+        {
+            title: `XML Sitemaps`,
+            component: <XmlSitemaps xmlSitemaps={pageData.xmlSitemaps} />,
         },
     ];
 
@@ -387,8 +390,6 @@ export default function ClientSeoOnPageChecker({ metaDescription }) {
         },
     ];
 
-    // console.log("Page Data:", pageData)
-
     function RenderSections({ sections }) {
          return sections.map((s, i) => (
             <section key={i}>
@@ -420,12 +421,14 @@ export default function ClientSeoOnPageChecker({ metaDescription }) {
 
             {hasCheckedPage
                 ? <>
-                    <RenderSections sections={technicalSectionsAlwaysRender}/>
+                    <RenderSections sections={mainSections}/>
 
                     {pageData.redirects.length > 1
                         ? <RenderSections sections={technicalRedirectsSections}/>
                         : null
                     }
+
+                    <RenderSections sections={robotsTxtAndXmlSitemapsSections}/>
 
                     {pageData.robotsTxt.blocked && !scrapeEvenIfBlocked
                         ? <section>
