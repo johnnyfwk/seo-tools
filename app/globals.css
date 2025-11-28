@@ -90,6 +90,7 @@ header {
 
 nav {
     background-color: var(--light-blue);
+    display: grid;
 }
 
 main {

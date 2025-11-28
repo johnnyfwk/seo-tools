@@ -409,3 +409,14 @@ export function formatScrapeDuration(ms) {
     const milliseconds = Math.floor(ms % 1000);
     return seconds > 0 ? `${seconds}s ${milliseconds}ms` : `${milliseconds}ms`;
 }
+
+export function getSlugFromFile(importMetaUrl) {
+    const path = new URL(importMetaUrl).pathname;
+
+    return (
+        "/" +
+        path
+            .split("/app/")[1]
+            .replace("/page.js", "")
+    );
+}

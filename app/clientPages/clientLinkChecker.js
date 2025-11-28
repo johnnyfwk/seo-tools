@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 
-export default function ClientLinkChecker() {
+export default function ClientLinkChecker({ metaDescription }) {
     const [destinationUrl, setDestinationUrl] = useState('');
     const [enteredDestinationUrl, setEnteredDestinationUrl] = useState(null);
     const [sourceUrls, setSourceUrls] = useState('');
@@ -46,6 +46,8 @@ export default function ClientLinkChecker() {
         <>
             <section>
                 <h1>Backlink & Internal Link Checker</h1>
+
+                <p>{metaDescription}</p>
 
                 <form onSubmit={handleCheck}>
                     <label htmlFor="url">Enter destination URL:</label>

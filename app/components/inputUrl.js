@@ -9,7 +9,8 @@ export default function InputUrl({
     isCheckingPage,
     setHasCheckedPage,
     error,
-    setError
+    setError,
+    page = "",
 }) {
     return (
         <form
@@ -45,13 +46,16 @@ export default function InputUrl({
                     : null
                 }
 
-                <RobotsDisclaimer
-                    checked={scrapeEvenIfBlocked}
-                    onChange={(value) => {
-                        setScrapeEvenIfBlocked(value);
-                        setHasCheckedPage(false); // reset until next fetch
-                    }}
-                />
+                {page !== "robots-txt-checker"
+                    ? <RobotsDisclaimer
+                        checked={scrapeEvenIfBlocked}
+                        onChange={(value) => {
+                            setScrapeEvenIfBlocked(value);
+                            setHasCheckedPage(false); // reset until next fetch
+                        }}
+                    />
+                    : null
+                }
 
                 <button
                     type="submit"

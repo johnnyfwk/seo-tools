@@ -1,4 +1,5 @@
-import ClientTitleTagAndMetaDescriptionChecker from "../clientPages/clientTitleTagAndMetaDescriptionChecker";
+import ClientRobotsTxtChecker from "../clientPages/clientRobotsTxtChecker";
+
 import { getSlugFromFile } from "../lib/utils/utils";
 import { pages } from "@/data/pages";
 
@@ -11,9 +12,9 @@ export const metadata = {
     description: page.metaDescription,
 }
 
-export default function TitleTagAndMetaDescriptionChecker() {
+export default function RobotsTxtChecker() {
     return (
-        <ClientTitleTagAndMetaDescriptionChecker
+        <ClientRobotsTxtChecker
             metaDescription={page.metaDescription}
         />
     )
