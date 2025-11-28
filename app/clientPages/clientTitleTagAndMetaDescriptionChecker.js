@@ -5,6 +5,7 @@ import InputUrl from "../components/inputUrl";
 import Url from "../components/url";
 import ContentType from "../components/contentType";
 import StatusCode from "../components/statusCode";
+import RedirectChain from "../components/redirectChain";
 import TitleTags from "../components/titleTags";
 import MetaDescriptions from "../components/metaDescriptions";
 import * as utils from '@/app/lib/utils/utils';
@@ -100,6 +101,10 @@ export default function ClientTitleTagAndMetaDescriptionChecker({ metaDescriptio
                 enteredUrl: data.enteredUrl || initialPageData.enteredUrl,
                 enteredUrlStatusCode: data.enteredUrlStatusCode || initialPageData.enteredUrlStatusCode,
                 finalUrl: data.finalUrl || initialPageData.finalUrl,
+                redirects: [
+                    ...initialPageData.redirects,
+                    ...(data.redirects || [])
+                ],
                 resource: {
                     ...initialPageData.resource,
                     ...data.resource,
@@ -130,7 +135,7 @@ export default function ClientTitleTagAndMetaDescriptionChecker({ metaDescriptio
 
     const scrapeDuration = utils.formatScrapeDuration(pageData.scrapeDuration);
 
-    const technicalSectionsAlwaysRender = [
+    const alwaysRender = [
         {
             title: "Scrape Duration",
             component: <p>{scrapeDuration}</p>,
@@ -157,10 +162,14 @@ export default function ClientTitleTagAndMetaDescriptionChecker({ metaDescriptio
         },
     ];
 
-    const technicalRedirectsSections = [
+    const redirectsSections = [
         {
             title: "Final URL",
             component: <Url url={pageData.finalUrl} />,
+        },
+        {
+            title: "Redirect Chain",
+            component: <RedirectChain redirectChain={pageData.redirects} />,
         },
     ];
 
@@ -206,23 +215,23 @@ export default function ClientTitleTagAndMetaDescriptionChecker({ metaDescriptio
             
             {hasCheckedPage
                 ? <>
-                    <RenderSections sections={technicalSectionsAlwaysRender}/>
+                    <RenderSections sections={alwaysRender}/>
 
                     {pageData.redirects.length > 1
-                        ? <RenderSections sections={technicalRedirectsSections}/>
+                        ? <RenderSections sections={redirectsSections}/>
                         : null
                     }
 
                     {pageData.robotsTxt.blocked && !scrapeEvenIfBlocked
                         ? <section>
                             <h2>Page Data</h2>
-                            <p>URL is blocked by robots.txt. Page data could not be fetched.</p>
+                            <p>URL is blocked by robots.txt. Title tag and meta description data could not be fetched.</p>
                         </section>
                         : pageData.resource.isHtml
                             ? <RenderSections sections={contentSections}/>
                             : <section>
                                 <h2>Page Data</h2>
-                                <p>No title tag or meta description found.</p>
+                                <p>No title tag or meta description data found.</p>
                             </section>
                     }
                 </>
