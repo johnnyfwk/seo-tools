@@ -1,12 +1,20 @@
 import ClientLinkChecker from "../clientPages/clientLinkChecker";
+import { getSlugFromFile } from "../lib/utils/utils";
+import { pages } from "@/data/pages";
+
+const slug = getSlugFromFile(import.meta.url);
+
+const page = pages.find((p) => p.slug === slug);
 
 export const metadata = {
-    title: "Internal Link & Backlink Checker | SEO Tools",
-    description: "This is the meta description for the Internal Link & Backlink Checker page.",
+    title: page.titleTag,
+    description: page.metaDescription,
 }
 
 export default function LinkChecker() {
     return (
-        <ClientLinkChecker />
+        <ClientLinkChecker
+            metaDescription={page.metaDescription}
+        />
     )
 }

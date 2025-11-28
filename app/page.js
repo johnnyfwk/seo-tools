@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 export const metadata = {
-    title: "This is the title tag for the Home page | SEO Tools",
-    description: "This is the meta description for the Home page.",
+    title: "Free SEO tools to optimise your site | SEO Tools",
+    description: "Check if your website is optimised for search engines with our free SEO tools.",
 }
 
 export default function Home() {

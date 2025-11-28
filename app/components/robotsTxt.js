@@ -26,7 +26,7 @@ export default function RobotsTxt({ robotsTxt }) {
             
             <div>
                 <p>
-                    <strong>Allows crawling of entered URL?: </strong>
+                    <strong>Allows crawling of URL?: </strong>
                     {!blocked
                         ? "✅ Yes"
                         : "❌ No"

@@ -3,9 +3,13 @@
 import { useState } from "react";
 import InputUrl from "../components/inputUrl";
 import Url from "../components/url";
+import ContentType from "../components/contentType";
+import Indexability from "../components/indexability";
 import StatusCode from "../components/statusCode";
+import HttpRedirectsToHttps from "../components/httpRedirectsToHttps";
 import RedirectChain from "../components/redirectChain";
 import RobotsTxt from "../components/robotsTxt";
+import XmlSitemaps from "../components/xmlSitemaps";
 import MetaRobotsTag from "../components/metaRobotsTag";
 import CanonicalTags from "../components/canonicalTags";
 import HtmlLanguageAttribute from "../components/htmlLanguageAttribute";
@@ -19,20 +23,12 @@ import SchemaMarkup from "../components/schemaMarkup";
 import Hreflang from "../components/hreflang";
 import OpenGraph from "../components/openGraph";
 import Pagination from "../components/pagination";
-import XmlSitemaps from "../components/xmlSitemaps";
-import HttpRedirectsToHttps from "../components/httpRedirectsToHttps";
-import Indexability from "../components/indexability";
-import ContentType from "../components/contentType";
 import * as utils from '@/app/lib/utils/utils';
 
-export default function ClientSeoOnPageChecker() {
+export default function ClientSeoOnPageChecker({ metaDescription }) {
     const initialPageData = {
         scrapeDuration: null,
         enteredUrl: "",
-        indexability: {
-            indexable: null,
-            reasons: [],
-        },
         enteredUrlStatusCode: null,
         finalUrl: "",
         redirects: [],
@@ -45,6 +41,10 @@ export default function ClientSeoOnPageChecker() {
             exists: null,
             sitemaps: [],
             url: "",
+        },
+        indexability: {
+            indexable: null,
+            reasons: [],
         },
         xmlSitemaps: {
             hasSitemap: null,
@@ -289,7 +289,7 @@ export default function ClientSeoOnPageChecker() {
             title: "Robots.txt",
             component: <RobotsTxt robotsTxt={pageData.robotsTxt} />,
         },
-                {
+        {
             title: `XML Sitemaps`,
             component: <XmlSitemaps xmlSitemaps={pageData.xmlSitemaps} />,
         },
@@ -403,6 +403,8 @@ export default function ClientSeoOnPageChecker() {
             <section>
                 <h1>Free SEO On-Page Checker</h1>
 
+                <p>{metaDescription}</p>
+
                 <InputUrl
                     inputUrl={inputUrl}
                     setInputUrl={setInputUrl}
@@ -428,7 +430,7 @@ export default function ClientSeoOnPageChecker() {
                     {pageData.robotsTxt.blocked && !scrapeEvenIfBlocked
                         ? <section>
                             <h2>Page Data</h2>
-                            <p>Entered URL is blocked by robots.txt. Page data could not be fetched.</p>
+                            <p>URL is blocked by robots.txt. Page data could not be fetched.</p>
                         </section>
                         : pageData.resource.isHtml
                             ? <RenderSections sections={contentSections}/>
