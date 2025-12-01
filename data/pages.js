@@ -20,16 +20,25 @@ export const pages = [
         metaDescription: "Check if a page has a title tag and meta description, and view their lengths.",
     },
     {
+        slug: "/h1-and-headings-checker",
+        h1: "Free H1 & Headings Checker",
+        metaDescription: "Check a page's H1 tag and heading hierarchy structure.",
+    },
+    {
         slug: "/robots-txt-checker",
         h1: "Free Robots.txt Checker",
-        metaDescription: "Check a website's robots.txt to see if a page is crawlable and view the XML sitemaps it contains.",
+        metaDescription: "Check your website's robots.txt file to see if a page is crawlable and view the XML sitemaps it contains.",
     },
     {
         slug: "/link-checker",
         h1: "Free Internal & External Link Checker",
         metaDescription: "Check the anchor texts and status codes of a page's internal and external links.",
     },
-].map(page => ({
-    ...page,
-    titleTag: `${page.h1} | ${siteName}`,
-}));
+].map((page) => {
+    return (
+        {
+            ...page,
+            titleTag: `${page.h1} | ${siteName}`
+        }
+    )
+})
