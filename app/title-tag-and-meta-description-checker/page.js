@@ -1,4 +1,4 @@
-import ClientTitleTagAndMetaDescriptionChecker from "../clientPages/clientTitleTagAndMetaDescriptionChecker";
+import ClientSeoOnPageChecker from "../clientPages/clientSeoOnPageChecker";
 import { getSlugFromFile } from "../lib/utils/utils";
 import { pages } from "@/data/pages";
 
@@ -11,10 +11,18 @@ export const metadata = {
     description: page.metaDescription,
 }
 
+const scrapeOptions = {
+    all: false,
+    titleTags: true,
+    metaDescriptions: true,
+}
+
 export default function TitleTagAndMetaDescriptionChecker() {
     return (
-        <ClientTitleTagAndMetaDescriptionChecker
+        <ClientSeoOnPageChecker
+            h1={page.h1}
             metaDescription={page.metaDescription}
+            scrapeOptions={scrapeOptions}
         />
     )
 }

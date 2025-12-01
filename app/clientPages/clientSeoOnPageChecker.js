@@ -24,8 +24,9 @@ import Hreflang from "../components/hreflang";
 import OpenGraph from "../components/openGraph";
 import Pagination from "../components/pagination";
 import * as utils from '@/app/lib/utils/utils';
+import { createCookiesWithMutableAccessCheck } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
-export default function ClientSeoOnPageChecker({ metaDescription }) {
+export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOptions }) {
     const initialPageData = {
         scrapeDuration: null,
         enteredUrl: "",
@@ -137,6 +138,7 @@ export default function ClientSeoOnPageChecker({ metaDescription }) {
                 body: JSON.stringify({
                     enteredUrl: url,
                     scrapeEvenIfBlocked,
+                    scrapeOptions,
                 }),
             });
 
@@ -287,14 +289,14 @@ export default function ClientSeoOnPageChecker({ metaDescription }) {
         },
     ];
 
-    const technicalRedirectsSections = [
+    const redirectsSections = [
+        {
+            title: "HTTP -> HTTPS",
+            component: <HttpRedirectsToHttps redirectChain={pageData.redirects} />,
+        },
         {
             title: "Redirect URL",
             component: <Url url={pageData.redirects[1]?.url} />,
-        },
-                {
-            title: "HTTP -> HTTPS",
-            component: <HttpRedirectsToHttps redirectChain={pageData.redirects} />,
         },
         {
             title: "Final URL",
@@ -306,63 +308,60 @@ export default function ClientSeoOnPageChecker({ metaDescription }) {
         },
     ];
 
-    const robotsTxtAndXmlSitemapsSections = [
-        {
+    const contentSections = {
+        robotsTxt: {
             title: "Robots.txt",
             component: <RobotsTxt robotsTxt={pageData.robotsTxt} />,
         },
-        {
+        xmlSitemaps: {
             title: `XML Sitemaps`,
             component: <XmlSitemaps xmlSitemaps={pageData.xmlSitemaps} />,
         },
-    ];
-
-    const contentSections = [
-        {
+        metaRobotsTag: {
             title: "Meta Robots Tag",
             component: <MetaRobotsTag metaRobotsTag={pageData.scrapedData?.metaRobotsTag} />,
         },
-        {
+        canonicalTags: {
             title: `Canonical Tags (${pageData.scrapedData?.canonicalTags?.tags?.length})`,
             component: <CanonicalTags canonicalTags={pageData.scrapedData?.canonicalTags} />
         },
-        {
+        htmlLanguageAttribute: {
             title: "HTML Language Attribute",
             component: <HtmlLanguageAttribute htmlLanguageAttribute={pageData.scrapedData?.htmlLanguageAttribute} />
         },
-        {
+        viewport: {
             title: "Viewport",
             component: <Viewport viewport={pageData.scrapedData?.viewport} />
         },
-        {
+        titleTags: {
             title: `Title Tags (${pageData.scrapedData?.titleTags?.length})`,
             component: <TitleTags titleTags={pageData.scrapedData?.titleTags} />,
         },
-        {
+        metaDescriptions: {
             title: `Meta Descriptions (${pageData.scrapedData?.metaDescriptions?.length})`,
             component: <MetaDescriptions metaDescriptions={pageData.scrapedData?.metaDescriptions} />,
         },
-        {
+        headings: {
             title: "Headings",
             component: <Headings headings={pageData.scrapedData?.headings} />,
         },
-        {
+        internalLinks: {
             title: `Internal Links (${pageData.scrapedData?.links?.internal?.length})`,
             component: <Links links={pageData.scrapedData?.links?.internal} />,
         },
-        {
+        externalLinks: {
             title: `External Links (${pageData.scrapedData?.links?.external?.length})`,
             component: <Links links={pageData.scrapedData?.links?.external} />,
         },
-        {
+        images: {
             title: `Images (${pageData.scrapedData?.images?.length})`,
             component: <Images images={pageData.scrapedData?.images} />,
         },
-        {
+        schemaMarkup: {
             title: `Schema Markup (${pageData.scrapedData?.schemaMarkup?.length})`,
             component: <SchemaMarkup schemaMarkup={pageData.scrapedData?.schemaMarkup} />,
         },
-        {
+        hreflang: {
             title: `Hreflang (${pageData.scrapedData?.hreflang?.length})`,
             component: <Hreflang
                 hreflang={pageData.scrapedData?.hreflang}
@@ -373,7 +372,7 @@ export default function ClientSeoOnPageChecker({ metaDescription }) {
                 }
             />,
         },
-        {
+        openGraph: {
             title: `Open Graph`,
             component: <OpenGraph
                 openGraph={pageData.scrapedData?.openGraph}
@@ -384,11 +383,22 @@ export default function ClientSeoOnPageChecker({ metaDescription }) {
                 }
             />,
         },
-        {
+        pagination: {
             title: `Pagination (${pageData.scrapedData?.pagination?.length})`,
             component: <Pagination pagination={pageData.scrapedData?.pagination} />,
         },
-    ];
+    };
+
+    let contentSectionsToRender;
+
+    contentSectionsToRender = Object.entries(scrapeOptions)
+        .filter(([key, value]) => value === true && key !== 'all')
+        .map(([key]) => contentSections[key])
+        .filter(Boolean);
+
+    if (scrapeOptions.all) {
+        contentSectionsToRender = Object.values(contentSections);
+    }
 
     function RenderSections({ sections }) {
          return sections.map((s, i) => (
@@ -402,7 +412,7 @@ export default function ClientSeoOnPageChecker({ metaDescription }) {
     return (
         <>
             <section>
-                <h1>Free SEO On-Page Checker</h1>
+                <h1>{h1}</h1>
 
                 <p>{metaDescription}</p>
 
@@ -424,11 +434,9 @@ export default function ClientSeoOnPageChecker({ metaDescription }) {
                     <RenderSections sections={mainSections}/>
 
                     {pageData.redirects.length > 1
-                        ? <RenderSections sections={technicalRedirectsSections}/>
+                        ? <RenderSections sections={redirectsSections}/>
                         : null
                     }
-
-                    <RenderSections sections={robotsTxtAndXmlSitemapsSections}/>
 
                     {pageData.robotsTxt.blocked && !scrapeEvenIfBlocked
                         ? <section>
@@ -436,7 +444,7 @@ export default function ClientSeoOnPageChecker({ metaDescription }) {
                             <p>URL is blocked by robots.txt. Page data could not be fetched.</p>
                         </section>
                         : pageData.resource.isHtml
-                            ? <RenderSections sections={contentSections}/>
+                            ? <RenderSections sections={contentSectionsToRender}/>
                             : <section>
                                 <h2>Page Data</h2>
                                 <p>No HTML found.</p>

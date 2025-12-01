@@ -11,10 +11,14 @@ export const metadata = {
     description: page.metaDescription,
 }
 
+const scrapeOptions = { all: true };
+
 export default function SeoOnPageChecker() {
     return (
         <ClientSeoOnPageChecker
+            h1={page.h1}
             metaDescription={page.metaDescription}
+            scrapeOptions={scrapeOptions}
         />
     )
 }

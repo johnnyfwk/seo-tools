@@ -10,7 +10,7 @@ export async function POST(request) {
         const {
             enteredUrl,
             scrapeEvenIfBlocked,
-            scrapeOptions = { all: true }
+            scrapeOptions,
         } = await request.json();
 
         const {
