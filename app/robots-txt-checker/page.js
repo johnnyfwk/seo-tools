@@ -1,5 +1,4 @@
-import ClientRobotsTxtChecker from "../clientPages/clientRobotsTxtChecker";
-
+import ClientSeoOnPageChecker from "../clientPages/clientSeoOnPageChecker";
 import { getSlugFromFile } from "../lib/utils/utils";
 import { pages } from "@/data/pages";
 
@@ -12,10 +11,17 @@ export const metadata = {
     description: page.metaDescription,
 }
 
+const scrapeOptions = {
+    all: false,
+    robotsTxt: true,
+}
+
 export default function RobotsTxtChecker() {
     return (
-        <ClientRobotsTxtChecker
+        <ClientSeoOnPageChecker
+            h1={page.h1}
             metaDescription={page.metaDescription}
+            scrapeOptions={scrapeOptions}
         />
     )
 }
