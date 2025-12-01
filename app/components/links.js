@@ -1,7 +1,11 @@
 import * as utils from '@/app/lib/utils/utils';
 
 export default function Links({ links }) {
-    if (links.length === 0) {
+    const crawlableLinks = links.filter((link) => {
+        return !link.uncrawlable;
+    })
+
+    if (crawlableLinks.length === 0) {
         return <p>No links found.</p>;
     }
 
@@ -25,7 +29,7 @@ export default function Links({ links }) {
                 </tr>
             </thead>
             <tbody>
-                {links.map((link, i) => {
+                {crawlableLinks.map((link, i) => {
                     return (
                         <tr key={i}>
                             <td style={{ textAlign: 'center' }}>{i + 1}</td>
@@ -38,7 +42,7 @@ export default function Links({ links }) {
                                 }
                             >{link.type}</td>
 
-                            <td style={{ textAlign: 'left' }}>{link.anchorText || "(no text)"}</td>
+                            <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(link.anchorText) || "(no text)"}</td>
 
                             <td style={{ textAlign: 'center' }}>
                                 {link.imageSrc

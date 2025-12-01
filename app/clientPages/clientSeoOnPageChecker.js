@@ -393,8 +393,15 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
 
     contentSectionsToRender = Object.entries(scrapeOptions)
         .filter(([key, value]) => value === true && key !== 'all')
-        .map(([key]) => contentSections[key])
-        .filter(Boolean);
+        .flatMap(([key]) => {
+            if (key === "links") {
+                return [
+                    contentSections.internalLinks,
+                    contentSections.externalLinks
+                ];
+            }
+            return contentSections[key] ? [contentSections[key]] : [];
+        });
 
     if (scrapeOptions.all) {
         contentSectionsToRender = Object.values(contentSections);

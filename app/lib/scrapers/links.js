@@ -5,7 +5,7 @@ import { getRedirects } from "../utils/getRedirects";
  * Scrapes links from HTML and fetches HTTP info
  * @param {string|function} htmlOr$ - raw HTML or a cheerio instance
  * @param {string} pageUrl - the base URL of the page
- */
+*/
 export async function scrapeLinks(htmlOr$, pageUrl) {
     const $ = typeof htmlOr$ === "function" && htmlOr$.root
         ? htmlOr$
@@ -121,21 +121,21 @@ export async function scrapeLinks(htmlOr$, pageUrl) {
 /* -------------------- HELPERS -------------------- */
 
 function classifyLink($, el, uncrawlable) {
-    if (uncrawlable) return "uncrawlable";
+    if (uncrawlable) return "Uncrawlable";
 
-    if ($(el).find("img").length > 0) return "image";
+    if ($(el).find("img").length > 0) return "Image";
 
     const text = $(el).text().trim();
-    if (text !== "") return "text";
+    if (text !== "") return "Text";
 
-    return "other";
+    return "Other";
 }
 
 function extractAnchorText($, el) {
     const img = $(el).find("img").first();
     if (img.length) {
         const alt = img.attr("alt");
-        return alt && alt.trim() !== ""
+        return alt
             ? alt
             : "(image link)";
     }

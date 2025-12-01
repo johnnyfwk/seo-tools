@@ -319,32 +319,42 @@ export function getInitialUrlStatusCodeClass(statusCode) {
     if (!statusCode) return "";
     if (statusCode >= 200 && statusCode < 300) return "success-background";
     if (statusCode >= 300 && statusCode < 400) return "warning-background";
-    return "error-background"; // 400/500
+    if (statusCode === 404 || statusCode === 410) return "error-background";
+    if (statusCode >= 400 && statusCode < 500) return "error-background";
+    if (statusCode >= 500 && statusCode < 600) return "server-error-background";
+    return "warning-background";
 }
 
 export function getFinalUrlStatusCodeTextAndClass(initialStatusCode, finalStatusCode) {
-    // No redirect → hide final info
-    if (initialStatusCode >= 200 && initialStatusCode < 300) {
-        return { text: "-", class: "" };
-    }
-
-    // No final status → fetch error
     if (!finalStatusCode) {
         return { text: "N/A", class: "" };
     }
 
-    // Good final
+    if (initialStatusCode >= 200 && initialStatusCode < 300) {
+        return { text: "-", class: "" };
+    }
+
     if (finalStatusCode >= 200 && finalStatusCode < 300) {
         return { text: finalStatusCode, class: "success-background" };
     }
 
-    // Redirect
     if (finalStatusCode >= 300 && finalStatusCode < 400) {
         return { text: finalStatusCode, class: "warning-background" };
     }
 
-    // Error
-    return { text: finalStatusCode, class: "error-background" };
+    if (finalStatusCode === 404 || finalStatusCode === 410) {
+        return { text: finalStatusCode, class: "error-background" };
+    }
+
+    if (finalStatusCode >= 400 && finalStatusCode < 500) {
+        return { text: finalStatusCode, class: "error-background" };
+    }
+
+    if (finalStatusCode >= 500 && finalStatusCode < 600) {
+        return { text: finalStatusCode, class: "error-background" };
+    }
+
+    return { text: finalStatusCode, class: "warning-background" };
 }
 
 export function getRobotsTxtTextAndClass(blocked) {
