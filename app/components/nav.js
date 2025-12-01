@@ -8,7 +8,8 @@ export default function Nav() {
             <Link href="/robots-txt-checker">Robots.txt Checker</Link>
             <Link href="/meta-robots-tag-checker">Meta Robots Tag Checker</Link>
             <Link href="/canonical-tag-checker">Canonical Tag Checker</Link>
-            <Link href="/h1-and-headings-checker">H1 & Headings Checker</Link>
+            <Link href="/viewport-meta-tag-checker">Viewport Meta Tag Checker</Link>
+            <Link href="/h1-tag-and-headings-checker">H1 Tag & Heading Structure Checker</Link>
             <Link href="/link-checker">Link Checker</Link>
         </nav>
     )

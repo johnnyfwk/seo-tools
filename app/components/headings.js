@@ -44,7 +44,7 @@ export default function Headings({ headings }) {
                         ))}
                     </ul>
                 </div>
-                : <p>✅ No issues found.</p>
+                : <p>✅ No issues found with heading structure.</p>
             }
 
             {headingLevels.map(level => (

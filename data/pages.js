@@ -30,14 +30,19 @@ export const pages = [
         metaDescription: "Check a page’s canonical tag to see which URL search engines should index.",
     },
     {
+        slug: "/viewport-meta-tag-checker",
+        h1: "Free Viewport Meta Tag Checker",
+        metaDescription: "Check a page’s viewport meta tag to see how it controls mobile responsiveness and scaling.",
+    },
+    {
         slug: "/title-tag-and-meta-description-checker",
         h1: "Free Title Tag & Meta Description Length Checker",
         metaDescription: "Check if a page has a title tag and meta description, and view their lengths.",
     },
     {
-        slug: "/h1-and-headings-checker",
-        h1: "Free H1 & Headings Checker",
-        metaDescription: "Check a page's H1 tag and heading hierarchy structure.",
+        slug: "/h1-tag-and-headings-checker",
+        h1: "Free H1 Tag & Heading Structure Checker",
+        metaDescription: "Check a page's H1 tag and overall heading structure.",
     },
     {
         slug: "/link-checker",

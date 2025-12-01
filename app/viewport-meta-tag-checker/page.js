@@ -13,10 +13,10 @@ export const metadata = {
 
 const scrapeOptions = {
     all: false,
-    headings: true,
+    viewport: true,
 }
 
-export default function H1AndHeadingsChecker() {
+export default function ViewportMetaTagChecker() {
     return (
         <ClientSeoOnPageChecker
             h1={page.h1}
