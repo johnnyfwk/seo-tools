@@ -4,9 +4,9 @@ export default function Indexability({ indexability }) {
     const { indexable, reasons = [] } = indexability;
 
     const indexableIcon = indexable === true 
-        ? "✅ URL is Indexable"
+        ? "✅ URL is indexable"
         : indexable === false
-            ? "❌ URL is Not Indexable"
+            ? "❌ URL is not indexable"
             : "⚠️ Indexability Unknown";
 
     return (

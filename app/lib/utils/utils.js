@@ -286,7 +286,7 @@ export function evaluateIndexability({
     if (isHtml) {
         if (metaRobotsAllowsIndexing === false) {
             indexable = false;
-            reasons.push("Meta robots tag has noindex value");
+            reasons.push("Meta robots tag has the 'noindex' value");
         }
 
         if (canonicalMatches === false) {
