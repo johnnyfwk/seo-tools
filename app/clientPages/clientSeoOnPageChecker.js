@@ -330,7 +330,7 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
             component: <HtmlLanguageAttribute htmlLanguageAttribute={pageData.scrapedData?.htmlLanguageAttribute} />
         },
         viewport: {
-            title: "Viewport",
+            title: "Viewport Meta Tag",
             component: <Viewport viewport={pageData.scrapedData?.viewport} />
         },
         titleTags: {

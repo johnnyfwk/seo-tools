@@ -29,7 +29,7 @@ export default function Viewport({ viewport }) {
             
             <div>
                 {missingRequired.length === 0
-                    ? <p>✅ Viewport includes required properties: <em>width</em> and <em>initial-scale</em>.</p>
+                    ? <p>✅ Includes required properties: <em>width</em> and <em>initial-scale</em>.</p>
                     : <p>
                         ❌ Missing required viewport properties: {missingRequired.join(', ')}
                     </p>
