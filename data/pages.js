@@ -47,7 +47,12 @@ export const pages = [
     {
         slug: "/internal-external-and-broken-link-checker",
         h1: "Free Internal, External & Broken Link Checker",
-        metaDescription: "Check a page’s internal, external, and broken links, and view their anchor texts, URLs, status codes, nofollow attributes, and more.",
+        metaDescription: "Check a page’s internal, external, and broken links, and view their anchor texts, URLs, HTTP status codes, nofollow attributes, and more.",
+    },
+    {
+        slug: "/image-alt-text-checker",
+        h1: "Free Image Alt Text Checker",
+        metaDescription: "Check a page’s image alt texts, HTTP status codes, and broken links.",
     },
     {
         slug: "/link-checker",
