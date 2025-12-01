@@ -45,6 +45,11 @@ export const pages = [
         metaDescription: "Check a page's H1 tag and overall heading structure.",
     },
     {
+        slug: "/internal-external-and-broken-link-checker",
+        h1: "Free Internal, External & Broken Link Checker",
+        metaDescription: "Check a page’s internal, external, and broken links, and view their anchor texts, URLs, status codes, nofollow attributes, and more.",
+    },
+    {
         slug: "/link-checker",
         h1: "Free Internal & External Link Checker",
         metaDescription: "Check the anchor texts and status codes of a page's internal and external links.",
