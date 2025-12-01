@@ -50,7 +50,7 @@ export async function scrapeXmlSitemaps(targetUrl) {
             });
 
             if (!res.ok) {
-                console.warn(`❌ Non-OK HTTP response for ${url}: ${res.status}`);
+                // console.warn(`❌ Non-OK HTTP response for ${url}: ${res.status}`);
                 return null;
             }
 

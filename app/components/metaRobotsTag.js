@@ -31,7 +31,7 @@ export default function MetaRobotsTag({ metaRobotsTag }) {
             </p>
 
             <p>
-                <strong>Allows crawling of linked pages / passing of link equity?: </strong>
+                <strong>Allows crawling of linked pages and passing of link equity?: </strong>
                 {metaRobotsTag.allowsFollowing
                     ? <span>✅ Yes</span>
                     : <span>❌ No</span>

@@ -13,10 +13,10 @@ export const metadata = {
 
 const scrapeOptions = {
     all: false,
-    headings: true,
+    metaRobotsTag: true,
 }
 
-export default function H1AndHeadingsChecker() {
+export default function MetaRobotsTagChecker() {
     return (
         <ClientSeoOnPageChecker
             h1={page.h1}

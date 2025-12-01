@@ -24,7 +24,6 @@ import Hreflang from "../components/hreflang";
 import OpenGraph from "../components/openGraph";
 import Pagination from "../components/pagination";
 import * as utils from '@/app/lib/utils/utils';
-import { createCookiesWithMutableAccessCheck } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
 export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOptions }) {
     const initialPageData = {
@@ -306,6 +305,7 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
             title: "Redirect Chain",
             component: <RedirectChain redirectChain={pageData.redirects} />,
         },
+        
     ];
 
     const contentSections = {
