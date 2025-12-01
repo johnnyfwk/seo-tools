@@ -22,9 +22,14 @@ export const pages = [
     {
         slug: "/meta-robots-tag-checker",
         h1: "Free Meta Robots Tag, Noindex & Nofollow Checker",
-        metaDescription: "See whether a page can be indexed and whether its links pass authority by checking its meta robots tag.",
+        metaDescription: "Check a page’s meta robots tag to see whether it can be indexed and whether its links pass authority.",
     },
-        {
+    {
+        slug: "/canonical-tag-checker",
+        h1: "Free Canonical Tag Checker",
+        metaDescription: "Check a page’s canonical tag to see which URL search engines should index.",
+    },
+    {
         slug: "/title-tag-and-meta-description-checker",
         h1: "Free Title Tag & Meta Description Length Checker",
         metaDescription: "Check if a page has a title tag and meta description, and view their lengths.",

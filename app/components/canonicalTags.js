@@ -37,7 +37,7 @@ export default function CanonicalTags({ canonicalTags }) {
                         <th style={{ textAlign: "center" }}>#</th>
                         <th style={{ textAlign: "left" }}>Canonical URL</th>
                         <th style={{ textAlign: "center" }}>Status Code</th>
-                        <th style={{ textAlign: "center" }}>Canonical URL matches entered URL?</th>
+                        <th style={{ textAlign: "center" }}>Matches URL?</th>
                     </tr>
                 </thead>
                 <tbody>
