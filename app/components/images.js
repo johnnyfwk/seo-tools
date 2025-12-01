@@ -75,7 +75,7 @@ export default function Images({ images }) {
                             </td>
 
                             <td
-                                style={{ textAlign: 'left' }}
+                                style={{ textAlign: 'center' }}
                                 className={utils.getFinalUrlStatusCodeTextAndClass(
                                     image.initialUrlStatusCode,
                                     image.finalUrlStatusCode,
