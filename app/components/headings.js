@@ -37,22 +37,19 @@ export default function Headings({ headings }) {
         <>
             {missingLevels.length > 0
                 ? <div>
-                    <p><strong>Hierarchy issues found</strong>:</p>
+                    <p><strong>Issues found</strong>:</p>
                     <ul>
                         {missingLevels.map(level => (
-                            <li
-                                key={level}
-                                className="error-text"
-                            >{level} tag missing</li>
+                            <li key={level}>❌ {level} tag missing</li>
                         ))}
                     </ul>
                 </div>
-                : null
+                : <p>✅ No issues found.</p>
             }
 
             {headingLevels.map(level => (
                 <section key={level} id={level}>
-                    <h4>{level.toUpperCase()} Tags ({grouped[level].length})</h4>
+                    <h3>{level.toUpperCase()} Tags ({grouped[level].length})</h3>
                     
                     {grouped[level].length === 0
                         ? <p>No {level} tags found.</p>
