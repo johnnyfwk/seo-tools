@@ -69,10 +69,9 @@ export default function Hreflang({ hreflang, contentType, xRobotsNoindex }) {
                                 {hreflang.initialUrlStatusCode || "N/A"}
                             </td>
 
-                            <td style={{ textAlign: 'left' }}>
-                                {hreflang.initialUrlStatusCode >= 200 && hreflang.initialUrlStatusCode < 300
-                                    ? "-"
-                                    : hreflang.finalUrl
+                            <td style={{ textAlign: "left" }}>
+                                {hreflang.initialUrlStatusCode >= 300 && hreflang.initialUrlStatusCode < 400
+                                    ? hreflang.finalUrl
                                         ? <a
                                             href={hreflang.finalUrl}
                                             target="_blank"
@@ -81,6 +80,7 @@ export default function Hreflang({ hreflang, contentType, xRobotsNoindex }) {
                                             {hreflang.finalUrl}
                                         </a>
                                         : "N/A"
+                                    : "-"
                                 }
                             </td>
 

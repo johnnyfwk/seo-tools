@@ -117,9 +117,8 @@ export default function Links({ links }) {
                             </td>
 
                             <td style={{ textAlign: "left" }}>
-                                {link.initialUrlStatusCode >= 200 && link.initialUrlStatusCode < 300
-                                    ? "-"
-                                    : link.finalUrl
+                                {link.initialUrlStatusCode >= 300 && link.initialUrlStatusCode < 400
+                                    ? link.finalUrl
                                         ? <a
                                             href={link.finalUrl}
                                             target="_blank"
@@ -128,6 +127,7 @@ export default function Links({ links }) {
                                             {link.finalUrl}
                                         </a>
                                         : "N/A"
+                                    : "-"
                                 }
                             </td>
 
