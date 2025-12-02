@@ -302,18 +302,6 @@ export function getInitialUrlStatusCodeClass(statusCode) {
     return "warning-background";
 }
 
-export function getFinalUrlText(initialUrlStatusCode, finalUrl) {
-    if (initialUrlStatusCode >= 200 && initialUrlStatusCode < 300) {
-        return "-";
-    }
-
-    if (initialUrlStatusCode >= 300 && initialUrlStatusCode < 400) {
-        return finalUrl;
-    }
-
-    return "-";
-}
-
 export function getFinalUrlStatusCodeTextAndClass(initialUrlStatusCode, finalUrlStatusCode) {
     if (initialUrlStatusCode >= 200 && initialUrlStatusCode < 300) {
         return { text: "-", class: "" };
