@@ -6,7 +6,7 @@ export default function CanonicalTags({ canonicalTags }) {
         globalIssues: canonicalTags?.globalIssues || [],
     };
 
-    if (safe.tags.length === 0) return <p>No canonical tags found.</p>;
+    if (safe.tags.length === 0) return <p>No canonical tags found. URL is indexable by default.</p>;
 
     return (
         <>

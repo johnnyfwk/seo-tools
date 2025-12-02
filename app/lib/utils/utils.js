@@ -238,7 +238,6 @@ export function createLimiter(maxConcurrency) {
  * @param {boolean} params.metaRobotsAllowsIndexing - True if meta robots allows indexing
  * @returns {Object} { indexable: boolean, reasons: string[] }
 */
-
 export function evaluateIndexability({
     statusCode,
     blockedByRobots,
@@ -248,68 +247,46 @@ export function evaluateIndexability({
     xRobotsNoindex
 }) {
     const reasons = [];
+
+    if (statusCode == null || contentType == null) {
+        return {
+            indexable: null,
+            reasons: ["Insufficient data (missing status code or content type)"]
+        };
+    }
+
     let indexable = true;
 
-    // --- HARD FAILS (only if statusCode exists) ---
-    if (typeof statusCode === "number") {
-        if (statusCode >= 300 && statusCode < 400) {
-            indexable = false;
-            reasons.push(`HTTP status code is ${statusCode} (redirect)`);
-        } else if (statusCode >= 400) {
-            indexable = false;
-            reasons.push(`HTTP status code is ${statusCode} (client/server error)`);
-        } else if (statusCode < 200 || statusCode >= 300) {
-            indexable = false;
-            reasons.push(`HTTP status code is ${statusCode}, not 200`);
-        }
+    if (statusCode < 200 || statusCode >= 300) {
+        indexable = false;
+        reasons.push(`HTTP status code is ${statusCode} (not indexable)`);
+        return { indexable, reasons };
     }
 
     if (blockedByRobots === true) {
         indexable = false;
-        reasons.push("Blocked by robots.txt");
+        reasons.push("Crawling blocked by robots.txt");
     }
 
-    if (typeof xRobotsNoindex === "string" && xRobotsNoindex.toLowerCase().includes("noindex")) {
+    if (typeof xRobotsNoindex === "string" &&
+        xRobotsNoindex.toLowerCase().includes("noindex")
+    ) {
         indexable = false;
-        reasons.push("X-Robots-Tag header has noindex");
+        reasons.push("X-Robots-Tag has 'noindex' value");
     }
 
-    // --- Determine resource type ---
-    const isHtml = contentType?.includes("text/html");
-    const isPdf = contentType?.includes("application/pdf");
-    const isImage = contentType?.startsWith("image/");
-    const isCss = contentType?.includes("text/css");
-    const isJs = contentType?.includes("application/javascript") || contentType?.includes("text/javascript")
-    const isOther = !isHtml && !isPdf && !isImage && !isCss && !isJs;
+    const isHtml = contentType.includes("text/html");
 
-    // --- HTML-specific soft rules ---
     if (isHtml) {
         if (metaRobotsAllowsIndexing === false) {
             indexable = false;
-            reasons.push("Meta robots tag has the 'noindex' value");
+            reasons.push("Meta robots tag has 'noindex' value");
         }
 
         if (canonicalMatches === false) {
             indexable = false;
-            reasons.push("Canonical URL points elsewhere");
+            reasons.push("Canonical URL points to a different URL");
         }
-    }
-
-    // --- Missing Signals ---
-    const allSignalsMissing = [
-        statusCode,
-        blockedByRobots,
-        contentType,
-        xRobotsNoindex,
-        canonicalMatches,
-        metaRobotsAllowsIndexing
-    ].every(v => v === null || v === undefined);
-
-    if (allSignalsMissing) {
-        return {
-            indexable: null,
-            reasons: ["Insufficient data to determine indexability"]
-        };
     }
 
     return { indexable, reasons };
