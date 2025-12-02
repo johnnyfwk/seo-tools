@@ -13,6 +13,7 @@ export default function Nav() {
             <Link href="/internal-external-and-broken-link-checker">Internal, External & Broken Link Checker</Link>
             <Link href="/image-alt-text-checker">Image Alt Text Checker</Link>
             <Link href="/structured-data-checker">Structured Data Checker</Link>
+            <Link href="/hreflang-checker">Hreflang Checker</Link>
             <Link href="/open-graph-checker">Open Graph Checker</Link>
             <Link href="/link-checker">Link Checker</Link>
         </nav>

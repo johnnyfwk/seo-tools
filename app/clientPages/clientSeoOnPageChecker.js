@@ -362,7 +362,7 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
             component: <StructuredData structuredData={pageData.scrapedData?.structuredData} />,
         },
         hreflang: {
-            title: `Hreflang (${pageData.scrapedData?.hreflang?.length})`,
+            title: `Hreflang Tags (${pageData.scrapedData?.hreflang?.length})`,
             component: <Hreflang
                 hreflang={pageData.scrapedData?.hreflang}
                 contentType={pageData.resource?.contentType}
