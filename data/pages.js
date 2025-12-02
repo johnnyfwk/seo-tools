@@ -60,6 +60,11 @@ export const pages = [
         metaDescription: "Check a page for structured data to detect and fix errors, validate schema, and boost indexing and rich snippet performance.",
     },
     {
+        slug: "/open-graph-checker",
+        h1: "Free Open Graph Checker",
+        metaDescription: "Check a page for Open Graph metadata, including title, description, images, videos, and site info while validating URLs and auditing SEO signals.",
+    },
+    {
         slug: "/link-checker",
         h1: "Free Internal & External Link Checker",
         metaDescription: "Check the anchor texts and status codes of a page's internal and external links.",
