@@ -50,8 +50,19 @@ export default function Pagination({ pagination }) {
                                 {p.initialUrlStatusCode ?? "N/A"}
                             </td>
 
-                            <td style={{ textAlign: 'left' }}>
-                                {utils.getFinalUrlText(p.initialUrlStatusCode, p.finalUrl)}
+                            <td style={{ textAlign: "left" }}>
+                                {p.initialUrlStatusCode >= 200 && p.initialUrlStatusCode < 300
+                                    ? "-"
+                                    : p.finalUrl
+                                        ? <a
+                                            href={p.finalUrl}
+                                            target="_blank"
+                                            rel="noreferrer noopener"
+                                        >
+                                            {p.finalUrl}
+                                        </a>
+                                        : "N/A"
+                                }
                             </td>
 
                             <td
