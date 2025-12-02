@@ -65,6 +65,11 @@ export const pages = [
         metaDescription: "Check a page for Open Graph metadata, including title, description, images, videos, and site info while validating URLs and auditing SEO signals.",
     },
     {
+        slug: "/hreflang-checker",
+        h1: "Free Hreflang Checker",
+        metaDescription: "Check a page’s hreflang links, validate URLs, track redirects, and audit SEO signals like robots.txt, meta robots, and canonical tags.",
+    },
+    {
         slug: "/link-checker",
         h1: "Free Internal & External Link Checker",
         metaDescription: "Check the anchor texts and status codes of a page's internal and external links.",
