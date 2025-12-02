@@ -8,7 +8,7 @@ import { scrapeTitleTags } from './titleTags';
 import { scrapeMetaDescriptions } from './metaDescriptions';
 import { scrapeHeadings } from './headings';
 import { scrapeLinks } from './links';
-import { scrapeSchemaMarkup } from './schemaMarkup';
+import { scrapeStructuredData } from './structuredData';
 import { scrapeImages } from './images';
 import { scrapeHreflang } from './hreflang';
 import { scrapeOpenGraph } from './openGraph';
@@ -16,6 +16,7 @@ import { scrapePagination } from './pagination';
 
 function shouldScrape(optionKey, opts) {
     if (opts[optionKey] === false) return false; // explicitly disabled
+    
     return opts[optionKey] === true || opts.all === true;
 }
 
@@ -69,8 +70,8 @@ export async function scrapeWithCheerio(
             Object.assign(results, await scrapeLinks($, pageUrl));
         }
 
-        if (shouldScrape('schema', opts)) {
-            Object.assign(results, scrapeSchemaMarkup($));
+        if (shouldScrape('structuredData', opts)) {
+            Object.assign(results, scrapeStructuredData($));
         }
 
         if (shouldScrape('images', opts)) {

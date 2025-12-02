@@ -23,25 +23,30 @@ function RenderValue({ value, depth = 0 }) {
             <div style={{ marginLeft: indent }}>
                 {Object.entries(value).map(([k, v]) => (
                     <div key={k} style={{ marginBottom: 5 }}>
-                        <strong>{k}:</strong> <RenderValue value={v} depth={depth + 1} />
+                        <strong>{k}:</strong>{' '}
+                        {typeof v === 'object' ? (
+                            <RenderValue value={v} depth={depth + 1} />
+                        ) : (
+                            <span>{v?.toString() ?? 'null'}</span>
+                        )}
                     </div>
                 ))}
             </div>
         );
     }
 
-    return <span>{value.toString()}</span>;
+    return <span style={{ marginLeft: indent }}>{value.toString()}</span>;
 }
 
-export default function SchemaMarkup({ schemaMarkup }) {
-    if (!schemaMarkup || !schemaMarkup.length) {
-        return <p>No schemas found.</p>;
+export default function StructuredData({ structuredData }) {
+    if (!structuredData || !structuredData.length) {
+        return <p>No structured data found.</p>;
     }
 
-    // Use a Set to track which schema indices are expanded
+    // Use a Set to track which structured data indices are expanded
     const [expanded, setExpanded] = useState(new Set());
 
-    const toggleSchema = (idx) => {
+    const toggleStructuredData = (idx) => {
         setExpanded(prev => {
             const newSet = new Set(prev);
             if (newSet.has(idx)) {
@@ -54,8 +59,8 @@ export default function SchemaMarkup({ schemaMarkup }) {
     };
 
     return (
-        <div>
-            {schemaMarkup.map((schema, idx) => (
+        <>
+            {structuredData.map((structuredData, idx) => (
                 <div
                     key={idx}
                     style={{
@@ -66,17 +71,17 @@ export default function SchemaMarkup({ schemaMarkup }) {
                         backgroundColor: '#f9f9f9'
                     }}
                 >
-                    <h4>
-                        {Array.isArray(schema.raw['@type'])
-                            ? schema.raw['@type'].join(', ')
-                            : schema.raw['@type'] || schema.type || 'Unknown'
+                    <h3>
+                        {Array.isArray(structuredData.raw['@type'])
+                            ? structuredData.raw['@type'].join(', ')
+                            : structuredData.raw['@type'] || structuredData.type || 'Unknown'
                         }
-                        {schema.raw.name ? `: ${schema.raw.name}` : ''}
-                    </h4>
+                        {structuredData.raw.name ? `: ${structuredData.raw.name}` : ''}
+                    </h3>
 
-                    <h5 style={{ marginTop: 0, marginBottom: '0.5rem', color: '#555' }}>
-                        {schema.format}
-                    </h5>
+                    <h4 style={{ marginTop: 0, marginBottom: '0.5rem', color: '#555' }}>
+                        {structuredData.format}
+                    </h4>
 
                     <button
                         style={{
@@ -88,14 +93,14 @@ export default function SchemaMarkup({ schemaMarkup }) {
                             border: 'none',
                             borderRadius: '4px'
                         }}
-                        onClick={() => toggleSchema(idx)}
+                        onClick={() => toggleStructuredData(idx)}
                     >
                         {expanded.has(idx) ? 'Hide Details' : 'Show Details'}
                     </button>
 
-                    {expanded.has(idx) && <RenderValue value={schema.raw} />}
+                    {expanded.has(idx) && <RenderValue value={structuredData.raw} />}
                 </div>
             ))}
-        </div>
+        </>
     );
 }
