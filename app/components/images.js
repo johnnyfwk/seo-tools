@@ -59,10 +59,9 @@ export default function Images({ images }) {
                                 {image.initialUrlStatusCode || "N/A"}
                             </td>
 
-                            <td style={{ textAlign: 'left' }}>
-                                {image.initialUrlStatusCode >= 200 && image.initialUrlStatusCode < 300
-                                    ? "-"
-                                    : image.finalUrl
+                            <td style={{ textAlign: "left" }}>
+                                {image.initialUrlStatusCode >= 300 && image.initialUrlStatusCode < 400
+                                    ? image.finalUrl
                                         ? <a
                                             href={image.finalUrl}
                                             target="_blank"
@@ -71,6 +70,7 @@ export default function Images({ images }) {
                                             {image.finalUrl}
                                         </a>
                                         : "N/A"
+                                    : "-"
                                 }
                             </td>
 
