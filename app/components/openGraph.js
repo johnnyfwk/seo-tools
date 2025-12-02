@@ -1,262 +1,182 @@
+'use client';
+
 import * as utils from "@/app/lib/utils/utils";
 
 export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
     if (!openGraph) return null;
 
-    // ------------------------------
-    // Normalize the og:url structure
-    // ------------------------------
-    let ogUrls = [];
-    if (Array.isArray(openGraph.url)) {
-        ogUrls = openGraph.url;
-    } else if (typeof openGraph.url === "string") {
-        ogUrls = [{ initialUrl: openGraph.url }];
-    }
+    // Normalize og:url
+    const ogUrls = Array.isArray(openGraph.url)
+        ? openGraph.url
+        : typeof openGraph.url === "string"
+        ? [{ initialUrl: openGraph.url }]
+        : [];
 
-    // ------------------------------
     // Check for OG presence
-    // ------------------------------
     const hasOgData = Object.values(openGraph).some(
         (v) => v !== null && v !== "" && !(Array.isArray(v) && v.length === 0)
     );
+    if (!hasOgData) return <p>No open graph tags found.</p>;
 
-    if (!hasOgData) {
-        return <p>No open graph tags found.</p>;
-    }
-
-    // ------------------------------
     // Detect missing standard fields
-    // ------------------------------
     const expectedOgFields = [
-        "title",
-        "type",
-        "url",
-        "description",
-        "image",
-        "siteName",
-        "video",
-        "audio",
-        "locale",
+        "title","type","url","description","image","siteName","video","audio","locale"
     ];
 
-    const missingFields = expectedOgFields.filter((field) => {
+    const missingFields = expectedOgFields.filter(field => {
         const val = openGraph[field];
         return val === null || val === "" || (Array.isArray(val) && val.length === 0);
     });
 
-    // ------------------------------
-    // Helper: Render media tables
-    // ------------------------------
-    const renderMediaArray = (label, arr) =>
-        arr.map((src, idx) => (
-            <tr key={`${label}-${idx}`}>
-                <td>{label} [{idx + 1}]</td>
-                <td>
-                    {label === "image" ? (
-                        <a href={src} target="_blank" rel="noopener noreferrer">
-                            <img
-                                src={src}
-                                alt=""
-                                style={{ maxWidth: "150px", maxHeight: "150px", display: "block" }}
-                            />
-                            <div>{src}</div>
-                        </a>
-                    ) : (
-                        <a href={src} target="_blank" rel="noopener noreferrer">{src}</a>
-                    )}
-                </td>
-            </tr>
-        ));
+    // Helper: Render media arrays (images/videos) as clickable links
+    const renderMediaArray = (label, arr) => arr.map((src, idx) => (
+        <tr key={`${label}-${idx}`}>
+            <td>{`${label} [${idx + 1}]`}</td>
+            <td>
+                {label === "image" ? (
+                <a href={src} target="_blank" rel="noopener noreferrer">
+                    <img
+                        src={src}
+                        alt=""
+                        style={{ maxWidth: "150px", maxHeight: "150px", display: "block" }}
+                    />
+                    <div>{src}</div>
+                </a>
+                ) : (
+                    <a href={src} target="_blank" rel="noopener noreferrer">{src}</a>
+                )}
+            </td>
+        </tr>
+    ));
+
+    // Helper: Render a label + clickable URL row
+    const renderUrlRow = (label, url) => (
+        <div>
+            <strong>{label}:</strong>{" "}
+            {url ? <a href={url} target="_blank" rel="noopener noreferrer">{url}</a> : "N/A"}
+        </div>
+    );
 
     return (
-        <div>
-
-            {/* ------------------------------ */}
-            {/* Missing OG Fields               */}
-            {/* ------------------------------ */}
+        <>
             {missingFields.length > 0 && (
-                <div style={{ marginBottom: "1rem" }}>
-                    <strong>Missing Open Graph Fields:</strong>
-                    <ul>
-                        {missingFields.map((field) => (
-                            <li key={field}>{field}</li>
-                        ))}
-                    </ul>
-                </div>
+                <section style={{ marginBottom: "1rem" }}>
+                    <h3>Missing Fields:</h3>
+                    <ul>{missingFields.map(f => <li key={f}>{f}</li>)}</ul>
+                </section>
             )}
 
-            <strong>Open Graph Metadata</strong>
+            <section>
+                <h3>Metadata:</h3>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th style={{ textAlign: "left" }}>Property</th>
-                        <th style={{ textAlign: "left" }}>Value</th>
-                    </tr>
-                </thead>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style={{ textAlign: "left" }}>Property</th>
+                            <th style={{ textAlign: "left" }}>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {/* General OG fields except url */}
+                        {Object.entries(openGraph).map(([key, value]) => {
+                            if (key === "url" || !value) return null;
 
-                <tbody>
-                    {/* -------------------------------- */}
-                    {/* General OG fields except og:url   */}
-                    {/* -------------------------------- */}
-                    {Object.entries(openGraph).map(([key, value]) => {
-                        // Skip URL — handled separately below
-                        if (key === "url") return null;
-                        if (!value) return null;
-
-                        // Handle arrays of images/videos
-                        if ((key === "image" || key === "video") && Array.isArray(value)) {
+                            if ((key === "image" || key === "video") && Array.isArray(value))
                             return renderMediaArray(key, value);
-                        }
 
-                        // Handle single media as string
-                        if ((key === "image" || key === "video") && typeof value === "string") {
+                            if ((key === "image" || key === "video") && typeof value === "string")
                             return renderMediaArray(key, [value]);
-                        }
 
-                        return (
-                            <tr key={key}>
-                                <td>{key}</td>
-                                <td>{value}</td>
-                            </tr>
-                        );
-                    })}
+                            // Make any string starting with http clickable
+                            const displayValue = typeof value === "string" && value.startsWith("http")
+                                ? <a href={value} target="_blank" rel="noopener noreferrer">{value}</a>
+                                : value;
 
-                    {/* -------------------------------- */}
-                    {/* og:url rows                      */}
-                    {/* -------------------------------- */}
-                    {ogUrls.length > 0 &&
-                        ogUrls.map((og, idx) => {
+                            return (
+                                <tr key={key}>
+                                    <td>{key}</td>
+                                    <td>{displayValue}</td>
+                                </tr>
+                            );
+                        })}
+
+                        {/* og:url entries */}
+                        {ogUrls.map((og, idx) => {
                             const finalStatus = og.finalUrlStatusCode ?? og.initialUrlStatusCode;
 
-                            // Compute indexability
                             const indexability = utils.evaluateIndexability({
                                 statusCode: finalStatus,
                                 blockedByRobots: og.robotsTxt?.blocked ?? null,
-                                canonicalMatches:
-                                    og.canonical?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl ??
-                                    null,
-                                metaRobotsAllowsIndexing:
-                                    og.metaRobots?.allowsIndexing ?? null,
+                                canonicalMatches: og.canonical?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl ?? null,
+                                metaRobotsAllowsIndexing: og.metaRobots?.allowsIndexing ?? null,
                                 contentType,
                                 xRobotsNoindex,
                             });
 
                             return (
-                                <tr key={`ogurl-${idx}`}>
-                                    <td>og:url [{idx + 1}]</td>
-                                    <td>
-                                        {/* RAW URL */}
-                                        {og.initialUrl && (
-                                            <div>
-                                                <strong>URL:</strong>{" "}
-                                                <a
-                                                    href={og.initialUrl}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    {og.initialUrl}
-                                                </a>
-                                            </div>
-                                        )}
+                            <tr key={`ogurl-${idx}`}>
+                                <td>og:url [{idx + 1}]</td>
 
-                                        <div>
-                                            <strong>Status Code:</strong>{" "}
-                                            {og.initialUrlStatusCode ?? "N/A"}
-                                        </div>
+                                <td>
+                                    {renderUrlRow("URL", og.initialUrl)}
 
-                                        {/* FINAL URL */}
-                                        {og.finalUrl && og.finalUrl !== og.initialUrl && (
-                                            <>
-                                                <div>
-                                                    <strong>Final URL:</strong>{" "}
-                                                    <a
-                                                        href={og.finalUrl}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                    >
-                                                        {og.finalUrl}
-                                                    </a>
-                                                </div>
+                                    <div><strong>Status Code:</strong> {og.initialUrlStatusCode ?? "N/A"}</div>
 
-                                                <div>
-                                                    <strong>Final URL Status Code:</strong>{" "}
-                                                    {og.finalUrlStatusCode ?? "N/A"}
-                                                </div>
-                                            </>
-                                        )}
+                                    {og.finalUrl && og.finalUrl !== og.initialUrl && (
+                                        <>
+                                            {renderUrlRow("Final URL", og.finalUrl)}
+                                            <div><strong>Final Status Code:</strong> {og.finalUrlStatusCode ?? "N/A"}</div>
+                                        </>
+                                    )}
 
-                                        {/* Robots.txt */}
-                                        <div>
-                                            <strong>Blocked by robots.txt?:</strong>{" "}
-                                            {og.robotsTxt
-                                                ? og.robotsTxt.blocked === null
-                                                    ? "No robots.txt"
-                                                    : og.robotsTxt.blocked === true
-                                                        ? "⛔ Yes"
-                                                        : "✅ No"
-                                                : "N/A"}
-                                        </div>
+                                    <div>
+                                        <strong>Blocked by robots.txt?:</strong>{" "}
+                                        {og.robotsTxt?.blocked === null
+                                            ? "No robots.txt"
+                                            : og.robotsTxt?.blocked
+                                                ? "⛔ Yes"
+                                                : "✅ No"
+                                        }
+                                    </div>
 
-                                        {/* Meta robots */}
-                                        <div>
-                                            <strong>Meta robots allows indexing?:</strong>{" "}
-                                            {og.metaRobots
-                                                ? og.metaRobots.allowsIndexing === null
-                                                    ? <span>No meta robots tag</span>
-                                                    : og.metaRobots.allowsIndexing === true
-                                                        ? <span>✅ Yes</span>
-                                                        : <span>⛔ No</span>
-                                                : <span>N/A</span>
-                                            }
-                                        </div>
-
-                                        {/* Canonical */}
-                                        <div>
-                                            <strong>Canonical URL:</strong>{" "}
-                                            {og.canonical?.tags?.[0]?.resolvedCanonicalUrl
-                                                ? <a
-                                                    href={
-                                                        og.canonical.tags[0].resolvedCanonicalUrl
-                                                    }
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    {og.canonical.tags[0].resolvedCanonicalUrl}
-                                                </a>
-                                                : <span>No canonical tag</span>
-                                            }
-                                        </div>
-
-                                        {/* Canonical match */}
-                                        <div>
-                                            <strong>Canonical URL matches URL?:</strong>{" "}
-                                            {og.canonical
-                                                ? og.canonical.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl === true
-                                                    ? <span>✅ Yes</span>
-                                                    : og.canonical.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl === false
-                                                        ? <span>⛔ No</span>
-                                                        : <span>N/A</span>
-                                                : <span>N/A</span>
-                                            }
-                                        </div>
-
-                                        {/* Indexability */}
-                                        <div>
-                                            <strong>Indexable?:</strong>{" "}
-                                            {indexability.indexable === true
+                                    <div>
+                                        <strong>Meta robots allows indexing?:</strong>{" "}
+                                        {og.metaRobots?.allowsIndexing === null
+                                            ? "No meta robots tag"
+                                            : og.metaRobots?.allowsIndexing
                                                 ? "✅ Yes"
-                                                : indexability.indexable === false
-                                                    ? "⛔ No"
-                                                    : "N/A"
-                                            }
-                                        </div>
-                                    </td>
-                                </tr>
+                                                : "⛔ No"
+                                        }
+                                    </div>
+
+                                    {renderUrlRow("Canonical URL", og.canonical?.tags?.[0]?.resolvedCanonicalUrl)}
+
+                                    <div>
+                                        <strong>Canonical matches URL?:</strong>{" "}
+                                        {og.canonical?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl === true
+                                            ? "✅ Yes"
+                                            : og.canonical?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl === false
+                                                ? "⛔ No"
+                                                : "N/A"
+                                        }
+                                    </div>
+
+                                    <div>
+                                        <strong>Indexable?:</strong>{" "}
+                                        {indexability.indexable === true
+                                            ? "✅ Yes"
+                                            : indexability.indexable === false
+                                                ? "⛔ No"
+                                                : "N/A"
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
                             );
                         })}
-                </tbody>
-            </table>
-        </div>
+                    </tbody>
+                </table>
+            </section>
+        </>
     );
 }
