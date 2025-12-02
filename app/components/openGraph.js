@@ -230,7 +230,7 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
 
                                         {/* Canonical match */}
                                         <div>
-                                            <strong>URL matches canonical?:</strong>{" "}
+                                            <strong>Canonical URL matches URL?:</strong>{" "}
                                             {og.canonical
                                                 ? og.canonical.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl === true
                                                     ? <span>✅ Yes</span>

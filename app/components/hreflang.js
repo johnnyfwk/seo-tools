@@ -17,10 +17,10 @@ export default function Hreflang({ hreflang, contentType, xRobotsNoindex }) {
                     <th style={{ textAlign: 'center' }}>Status Code</th>
                     <th style={{ textAlign: 'left' }}>Final URL</th>
                     <th style={{ textAlign: 'center' }}>Final URL Status Code</th>
-                    <th style={{ textAlign: 'center' }}>URL is blocked by robots.txt?</th>
-                    <th style={{ textAlign: 'center' }}>URL's meta robots tag allows indexing?</th>
+                    <th style={{ textAlign: 'center' }}>Blocked by robots.txt?</th>
+                    <th style={{ textAlign: 'center' }}>Meta robots tag allows indexing?</th>
                     <th style={{ textAlign: 'center' }}>Canonical URL matches URL?</th>
-                    <th style={{ textAlign: 'center' }}>URL is indexable?</th>
+                    <th style={{ textAlign: 'center' }}>Indexable?</th>
                 </tr>
             </thead>
             <tbody>
