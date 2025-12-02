@@ -302,36 +302,35 @@ export function getInitialUrlStatusCodeClass(statusCode) {
     return "warning-background";
 }
 
-export function getFinalUrlStatusCodeTextAndClass(initialStatusCode, finalStatusCode) {
-    if (!finalStatusCode) {
-        return { text: "N/A", class: "" };
+export function getFinalUrlText(initialUrlStatusCode, finalUrl) {
+    if (initialUrlStatusCode >= 200 && initialUrlStatusCode < 300) {
+        return "-";
     }
 
-    if (initialStatusCode >= 200 && initialStatusCode < 300) {
+    if (initialUrlStatusCode >= 300 && initialUrlStatusCode < 400) {
+        return finalUrl;
+    }
+
+    return "-";
+}
+
+export function getFinalUrlStatusCodeTextAndClass(initialUrlStatusCode, finalUrlStatusCode) {
+    if (initialUrlStatusCode >= 200 && initialUrlStatusCode < 300) {
         return { text: "-", class: "" };
     }
 
-    if (finalStatusCode >= 200 && finalStatusCode < 300) {
-        return { text: finalStatusCode, class: "success-background" };
+    if (initialUrlStatusCode >= 300 && initialUrlStatusCode < 400) {
+        return {
+            text: finalUrlStatusCode,
+            class: finalUrlStatusCode >= 200 && finalUrlStatusCode < 300
+                ? "success-background"
+                : !finalUrlStatusCode
+                    ? ""
+                    : "error-background"
+        };
     }
 
-    if (finalStatusCode >= 300 && finalStatusCode < 400) {
-        return { text: finalStatusCode, class: "warning-background" };
-    }
-
-    if (finalStatusCode === 404 || finalStatusCode === 410) {
-        return { text: finalStatusCode, class: "error-background" };
-    }
-
-    if (finalStatusCode >= 400 && finalStatusCode < 500) {
-        return { text: finalStatusCode, class: "error-background" };
-    }
-
-    if (finalStatusCode >= 500 && finalStatusCode < 600) {
-        return { text: finalStatusCode, class: "error-background" };
-    }
-
-    return { text: finalStatusCode, class: "warning-background" };
+    return { text: "-", class: "" };
 }
 
 export function getRobotsTxtTextAndClass(blocked) {

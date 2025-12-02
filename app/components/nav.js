@@ -15,6 +15,7 @@ export default function Nav() {
             <Link href="/structured-data-checker">Structured Data Checker</Link>
             <Link href="/hreflang-checker">Hreflang Checker</Link>
             <Link href="/open-graph-checker">Open Graph Checker</Link>
+            <Link href="/pagination-checker">Pagination Checker</Link>
             <Link href="/link-checker">Link Checker</Link>
         </nav>
     )
