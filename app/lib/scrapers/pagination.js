@@ -19,12 +19,10 @@ export async function scrapePagination($, pageUrl, headers = {}) {
     const paginationSelectors = [
         'a[rel="next"]',
         'a[rel="prev"]',
-        'ul.pagination a',
-        '.pagination a',
-        '.pager a',
-        'a[href*="?page="]',
-        'a[href*="&page="]',
-        'a[href^="/page/"]'
+        '[aria-label="Next"]',
+        '[aria-label="Previous"]',
+        '.pagination a[href]',
+        'nav[role="navigation"] .pagination a[href]'
     ];
 
     const paginationLinks = [];

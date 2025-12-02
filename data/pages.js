@@ -70,6 +70,11 @@ export const pages = [
         metaDescription: "Check a page’s hreflang links, validate URLs, track redirects, and audit SEO signals like robots.txt, meta robots, and canonical tags.",
     },
     {
+        slug: "/pagination-checker",
+        h1: "Free Pagination Checker",
+        metaDescription: "Check pagination links, resolve redirects, and validate canonical tags to ensure clean, crawlable, and indexable pagination.",
+    },
+    {
         slug: "/link-checker",
         h1: "Free Internal & External Link Checker",
         metaDescription: "Check the anchor texts and status codes of a page's internal and external links.",
