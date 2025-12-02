@@ -19,7 +19,7 @@ import MetaDescriptions from "../components/metaDescriptions";
 import Headings from "../components/headings";
 import Links from "../components/links";
 import Images from "../components/images";
-import SchemaMarkup from "../components/schemaMarkup";
+import StructuredData from "../components/structuredData";
 import Hreflang from "../components/hreflang";
 import OpenGraph from "../components/openGraph";
 import Pagination from "../components/pagination";
@@ -96,7 +96,7 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
                 uncrawlable: [],
             },
             images: [],
-            schemaMarkup: [],
+            structuredData: [],
             hreflang: [],
             openGraph: {},
             pagination: [],
@@ -226,9 +226,9 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
                         ...initialPageData.scrapedData.images,
                         ...(data.scrapedData?.images || [])
                     ],
-                    schemaMarkup: [
-                        ...initialPageData.scrapedData.schemaMarkup,
-                        ...(data.scrapedData?.schemaMarkup || [])
+                    structuredData: [
+                        ...initialPageData.scrapedData.structuredData,
+                        ...(data.scrapedData?.structuredData || [])
                     ],
                     hreflang: [
                         ...initialPageData.scrapedData.hreflang,
@@ -357,9 +357,9 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
             title: `Images (${pageData.scrapedData?.images?.length})`,
             component: <Images images={pageData.scrapedData?.images} />,
         },
-        schemaMarkup: {
-            title: `Schema Markup (${pageData.scrapedData?.schemaMarkup?.length})`,
-            component: <SchemaMarkup schemaMarkup={pageData.scrapedData?.schemaMarkup} />,
+        structuredData: {
+            title: `Structured Data (${pageData.scrapedData?.structuredData?.length})`,
+            component: <StructuredData structuredData={pageData.scrapedData?.structuredData} />,
         },
         hreflang: {
             title: `Hreflang (${pageData.scrapedData?.hreflang?.length})`,

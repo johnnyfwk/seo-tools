@@ -55,6 +55,11 @@ export const pages = [
         metaDescription: "Check a page’s image alt texts, HTTP status codes, and broken links.",
     },
     {
+        slug: "/structured-data-checker",
+        h1: "Free Structured Data Checker",
+        metaDescription: "Check a page for structured data to detect and fix errors, validate schema, and boost indexing and rich snippet performance.",
+    },
+    {
         slug: "/link-checker",
         h1: "Free Internal & External Link Checker",
         metaDescription: "Check the anchor texts and status codes of a page's internal and external links.",

@@ -1,28 +1,28 @@
-function handleSchema(schema, schemas) {
-    if (!schema) return;
+function handleStructuredData(node, results) {
+    if (!node) return;
 
-    if (Array.isArray(schema)) {
-        schema.forEach(s => handleSchema(s, schemas));
+    if (Array.isArray(node)) {
+        node.forEach(child => handleStructuredData(child, results));
         return;
     }
 
-    if (typeof schema !== 'object') return;
+    if (typeof node !== 'object') return;
 
-    const type = schema['@type'];
-    schemas.push({
+    const type = node['@type'];
+    results.push({
         type: Array.isArray(type) ? type.join(', ') : type || 'Unknown',
         format: 'JSON-LD',
-        raw: schema,
+        raw: node,
     });
 
-    if (schema['@graph']) {
-        handleSchema(schema['@graph'], schemas); // recursive for array
+    const graph = node['@graph'];
+    if (Array.isArray(graph)) {
+        graph.forEach(child => handleStructuredData(child, results));
     }
 }
 
-
-export function scrapeSchemaMarkup($) {
-    const schemas = [];
+export function scrapeStructuredData($) {
+    const results = [];
 
     // --- JSON-LD ---
     $('script[type*="ld+json" i]').each((i, el) => {
@@ -31,15 +31,15 @@ export function scrapeSchemaMarkup($) {
             const parsed = JSON.parse(jsonText);
 
             if (Array.isArray(parsed)) {
-                parsed.forEach(schema => handleSchema(schema, schemas));
-            } else if (parsed['@graph']) { // ✅ handle Yoast SEO schemas
-                parsed['@graph'].forEach(schema => handleSchema(schema, schemas));
+                parsed.forEach(node => handleStructuredData(node, results));
+            } else if (parsed['@graph']) { // ✅ handle Yoast SEO structured data
+                parsed['@graph'].forEach(node => handleStructuredData(node, results));
             } else {
-                handleSchema(parsed, schemas);
+                handleStructuredData(parsed, results);
             }
         } catch (e) {
             if (process.env.NODE_ENV !== 'production') {
-                console.warn('Invalid JSON-LD schema:', e.message);
+                console.warn('Invalid JSON-LD structured data:', e.message);
             }
         }
     });
@@ -50,9 +50,9 @@ export function scrapeSchemaMarkup($) {
 
         if (type) {
             const typeName = type.trim().replace(/^https?:\/\/schema\.org\//, '');
-            schemas.push({
+            results.push({
                 type: typeName,
-                format: 'microdata',
+                format: 'Microdata',
                 raw: { itemtype: type },
             });
         }
@@ -64,7 +64,7 @@ export function scrapeSchemaMarkup($) {
 
         if (type) {
             const typeName = type.trim().replace(/^schema:/, '');
-            schemas.push({
+            results.push({
                 type: typeName,
                 format: 'RDFa',
                 raw: { typeof: type },
@@ -72,5 +72,5 @@ export function scrapeSchemaMarkup($) {
         }
     });
 
-    return { schemaMarkup: schemas };
+    return { structuredData: results };
 }
