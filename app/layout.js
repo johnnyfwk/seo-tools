@@ -1,4 +1,5 @@
 import "./globals.css";
+import { siteUrl } from "@/data/pages";
 import Link from "next/link";
 import Nav from "./components/nav";
 import Footer from "./components/footer";
@@ -14,7 +15,7 @@ export const metadata = {
     follow: true,
   },
   alternates: {
-    canonical: "https://example.com/",
+    canonical: siteUrl,
   },
   title: "Free SEO tools to optimise your site | SEO Tools",
   description: "Check if your website is optimised for search engines with our free SEO tools.",

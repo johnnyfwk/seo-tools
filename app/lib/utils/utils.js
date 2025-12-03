@@ -386,9 +386,9 @@ export function formatScrapeDuration(ms) {
 
 export function getSlugFromFile(importMetaUrl) {
     const path = new URL(importMetaUrl).pathname;
+    console.log("Path:", path)
 
     return (
-        "/" +
         path
             .split("/app/")[1]
             .replace("/page.js", "")

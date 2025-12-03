@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { siteUrl } from "@/data/pages";
 
 export const metadata = {
     robots: {
@@ -6,7 +7,7 @@ export const metadata = {
         follow: true,
     },
     alternates: {
-        canonical: "https://example.com/",
+        canonical: siteUrl,
     },
     title: "Free SEO tools to optimise your site | SEO Tools",
     description: "Check if your website is optimised for search engines with our free SEO tools.",
