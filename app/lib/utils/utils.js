@@ -53,7 +53,7 @@ export function validateUrlBackend(inputUrl) {
     if (!inputUrl) {
         return {
             valid: false,
-            error: "URL is required."
+            error: "URL is required"
         };
     }
 
@@ -63,7 +63,7 @@ export function validateUrlBackend(inputUrl) {
     } catch {
         return {
             valid: false,
-            error: "Invalid URL format."
+            error: "Invalid URL format"
         };
     }
 
@@ -73,7 +73,7 @@ export function validateUrlBackend(inputUrl) {
     if (!hostname.includes(".")) {
         return {
             valid: false,
-            error: "URL must contain a valid domain (e.g. example.com)."
+            error: "URL must contain a valid domain (e.g. example.com)"
         };
     }
 
@@ -81,7 +81,7 @@ export function validateUrlBackend(inputUrl) {
     if (!/^[a-zA-Z0-9.-]+$/.test(hostname)) {
         return {
             valid: false,
-            error: "Domain contains invalid characters."
+            error: "Domain contains invalid characters"
         };
     }
 
@@ -89,7 +89,7 @@ export function validateUrlBackend(inputUrl) {
     if (hostname.startsWith("-") || hostname.endsWith("-")) {
         return {
             valid: false,
-            error: "Domain cannot start or end with a hyphen."
+            error: "Domain cannot start or end with a hyphen"
         };
     }
 
@@ -97,7 +97,7 @@ export function validateUrlBackend(inputUrl) {
     if (hostname.includes("..")) {
         return {
             valid: false,
-            error: "Domain contains invalid formatting."
+            error: "Domain contains invalid formatting"
         };
     }
 
@@ -106,7 +106,7 @@ export function validateUrlBackend(inputUrl) {
     if (tld.length < 2) {
         return {
             valid: false,
-            error: "Invalid top-level domain."
+            error: "Invalid top-level domain"
         };
     }
 

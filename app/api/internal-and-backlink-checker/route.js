@@ -1,4 +1,5 @@
 import * as cheerio from 'cheerio';
+import * as utils from '@/app/lib/utils/utils';
 
 async function fetchPageHtml(url) {
     try {
@@ -19,7 +20,7 @@ async function fetchPageHtml(url) {
     }
 }
 
-function extractLinks($, src, destinationUrl) {
+function extractLinks($, src, targetUrl) {
     return $('a[href]')
         .map((i, el) => {
             const href = $(el).attr('href')?.trim();
@@ -40,20 +41,36 @@ function extractLinks($, src, destinationUrl) {
                 href: absoluteHref,
                 anchor,
                 dofollow,
-                matchesDestination: absoluteHref === destinationUrl
+                matchesDestination: absoluteHref === targetUrl
             };
         })
         .get()
         .filter(Boolean);
 }
 
-export async function POST(req) {
+export async function POST(request) {
     try {
-        const { destinationUrl, sourceUrls } = await req.json();
+        const {
+            targetUrl,
+            sourceUrls
+        } = await request.json();
 
-        if (!destinationUrl || !sourceUrls || !Array.isArray(sourceUrls)) {
+        if (!targetUrl || !sourceUrls || !Array.isArray(sourceUrls)) {
             return new Response(
-                JSON.stringify({ error: 'Provide a destination URL and one or more source URLs' }),
+                JSON.stringify({ error: 'Provide a target URL and one or more source URLs.' }),
+                { status: 400 }
+            );
+        }
+
+        const {
+            valid,
+            error,
+            url: normalisedUrl
+        } = utils.validateUrlBackend(targetUrl);
+
+        if (!valid) {
+            return Response.json(
+                { error },
                 { status: 400 }
             );
         }
@@ -70,7 +87,7 @@ export async function POST(req) {
 
             const $ = cheerio.load(html);
 
-            const links = extractLinks($, src, destinationUrl);
+            const links = extractLinks($, src, targetUrl);
 
             const matchingLinks = links.filter(link => link.matchesDestination);
 
@@ -81,7 +98,7 @@ export async function POST(req) {
             });
         }
 
-        return new Response(JSON.stringify({ destinationUrl, results }), {
+        return new Response(JSON.stringify({ results }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
         });

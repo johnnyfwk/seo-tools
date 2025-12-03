@@ -23,6 +23,15 @@ export default function InputUrl({
             <fieldset disabled={isCheckingPage} style={{ border: "none", padding: 0 }}>
                 <label htmlFor="url" className="sr-only">Enter URL:</label>
 
+                {error
+                    ? <p
+                        id="url-error"
+                        className="error-text"
+                        role="alert"
+                    >{error}</p>
+                    : null
+                }
+
                 <input
                     id="url"
                     type="url"
@@ -36,15 +45,6 @@ export default function InputUrl({
                     aria-describedby={error ? "url-error" : undefined}
                     style={{width: '100%', padding: "10px"}}
                 />
-
-                {error
-                    ? <p
-                        id="url-error"
-                        className="error-text"
-                        role="alert"
-                    >{error}</p>
-                    : null
-                }
 
                 {page !== "robots-txt-checker"
                     ? <RobotsDisclaimer

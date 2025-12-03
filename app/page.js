@@ -15,14 +15,6 @@ export default function Home() {
             <h2>
                 <Link href="/seo-on-page-checker">SEO On-Page Checker</Link>
             </h2>
-
-            <h2>
-                <Link href="/title-tag-and-meta-description-checker">Title Tag & Meta Description Length Checker</Link>
-            </h2>
-
-            <h2>
-                <Link href="/link-checker">Internal Link & Backlink Checker</Link>
-            </h2>
         </>
     );
 }
