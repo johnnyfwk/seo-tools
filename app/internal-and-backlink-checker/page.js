@@ -9,6 +9,9 @@
 // export const metadata = {
 //     title: page.titleTag,
 //     description: page.metaDescription,
+//     alternates: {
+//         canonical: page.canonicalUrl,
+//     },
 //     robots: {
 //         index: false, //********************** Set to true when finished **********************//
 //         follow: true,
