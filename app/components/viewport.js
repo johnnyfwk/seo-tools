@@ -10,7 +10,7 @@ export default function Viewport({ viewport }) {
         <>
             <div>
                 <p>
-                    <strong>Raw Content:</strong> <code>{viewport.content}</code>
+                    <strong>Content:</strong> <code>{viewport.content}</code>
                 </p>
             </div>
 
@@ -33,16 +33,6 @@ export default function Viewport({ viewport }) {
                     : <p>
                         ❌ Missing required viewport properties: {missingRequired.join(', ')}
                     </p>
-                }
-
-                {!viewport.properties['user-scalable']
-                    ? <p>⚠️ Consider setting <em>user-scalable</em> to improve mobile accessibility.</p>
-                    : null
-                }
-
-                {!viewport.properties['maximum-scale']
-                    ? <p>⚠️ Consider setting <em>maximum-scale</em> to prevent unwanted zooming if needed.</p>
-                    : null
                 }
             </div>
         </>
