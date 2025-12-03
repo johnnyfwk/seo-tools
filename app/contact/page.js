@@ -1,4 +1,11 @@
 export const metadata = {
+    robots: {
+        index: true,
+        follow: true,
+    },
+    alternates: {
+        canonical: "https://seotools.uk/contact",
+    },
     title: "This is the title tag for the Contact page | SEO Tools",
     description: "This is the meta description for the Contact page.",
 }
