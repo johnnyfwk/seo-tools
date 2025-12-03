@@ -1,4 +1,4 @@
-import ClientLinkChecker from "../clientPages/clientLinkChecker";
+import ClientInternalAndBacklinkChecker from "../clientPages/clientInternalAndBacklinkChecker";
 import { getSlugFromFile } from "../lib/utils/utils";
 import { pages } from "@/data/pages";
 
@@ -9,11 +9,15 @@ const page = pages.find((p) => p.slug === slug);
 export const metadata = {
     title: page.titleTag,
     description: page.metaDescription,
+    robots: {
+        index: false, //********************** Set to true when finished **********************//
+        follow: true,
+    }
 }
 
-export default function LinkChecker() {
+export default function InternalAndBacklinkChecker() {
     return (
-        <ClientLinkChecker
+        <ClientInternalAndBacklinkChecker
             metaDescription={page.metaDescription}
         />
     )

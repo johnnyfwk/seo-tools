@@ -45,11 +45,6 @@ export const pages = [
         metaDescription: "Check a page's H1 tag and overall heading structure.",
     },
     {
-        slug: "/internal-external-and-broken-link-checker",
-        h1: "Free Internal, External & Broken Link Checker",
-        metaDescription: "Check a page’s internal, external, and broken links, and view their anchor texts, URLs, HTTP status codes, nofollow attributes, and more.",
-    },
-    {
         slug: "/image-alt-text-checker",
         h1: "Free Image Alt Text Checker",
         metaDescription: "Check a page’s image alt texts, HTTP status codes, and broken links.",
@@ -75,10 +70,15 @@ export const pages = [
         metaDescription: "Check pagination links, resolve redirects, and validate canonical tags to ensure clean, crawlable, and indexable pagination.",
     },
     {
-        slug: "/link-checker",
-        h1: "Free Internal & External Link Checker",
-        metaDescription: "Check the anchor texts and status codes of a page's internal and external links.",
+        slug: "/internal-external-and-broken-link-checker",
+        h1: "Free Internal, External Anchor Text & Broken Link Checker",
+        metaDescription: "Check a page’s internal, external, and broken links, and view their anchor texts, URLs, HTTP status codes, nofollow attributes, and more.",
     },
+    // {
+    //     slug: "/internal-and-backlink-checker",
+    //     h1: "Free Internal & Backlink Checker",
+    //     metaDescription: "Check the anchor texts and status codes of a page's internal and external links.",
+    // },
 ].map((page) => {
     return (
         {

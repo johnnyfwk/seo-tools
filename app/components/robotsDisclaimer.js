@@ -10,14 +10,14 @@ export default function RobotsDisclaimer({ checked, onChange }) {
 
     return (
         <div>
-            <label>
-                <input
-                    type="checkbox"
-                    checked={checked}
-                    onChange={handleCheckboxChange}
-                />
-                Ignore robots.txt
-            </label>
+            <input
+                id="ignoreRobots"
+                type="checkbox"
+                checked={checked}
+                onChange={handleCheckboxChange}
+            />
+
+            <label htmlFor="ignoreRobots">Ignore robots.txt</label>
 
             {showWarning
                 ? <div>
