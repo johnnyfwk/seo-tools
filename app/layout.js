@@ -14,7 +14,7 @@ export const metadata = {
     follow: true,
   },
   alternates: {
-    canonical: "https://seotools.uk/",
+    canonical: "https://example.com/",
   },
   title: "Free SEO tools to optimise your site | SEO Tools",
   description: "Check if your website is optimised for search engines with our free SEO tools.",

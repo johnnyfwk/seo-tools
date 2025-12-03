@@ -1,4 +1,4 @@
-const siteUrl = "https://seotools.uk";
+const siteUrl = "https://example.com";
 const siteName = "SEO Tools";
 
 /*****************************************************
