@@ -1,3 +1,4 @@
+const siteUrl = "https://seotools.uk";
 const siteName = "SEO Tools";
 
 /*****************************************************
@@ -40,7 +41,7 @@ export const pages = [
         metaDescription: "Check if a page has a title tag and meta description, and view their lengths.",
     },
     {
-        slug: "/h1-tag-and-headings-checker",
+        slug: "/h1-tag-and-heading-structure-checker",
         h1: "Free H1 Tag & Heading Structure Checker",
         metaDescription: "Check a page's H1 tag and overall heading structure.",
     },
@@ -71,7 +72,7 @@ export const pages = [
     },
     {
         slug: "/internal-external-and-broken-link-checker",
-        h1: "Free Internal, External Anchor Text & Broken Link Checker",
+        h1: "Free Internal & External Link, Anchor Text & Broken Link Checker",
         metaDescription: "Check a page’s internal, external, and broken links, and view their anchor texts, URLs, HTTP status codes, nofollow attributes, and more.",
     },
     // {
@@ -83,6 +84,7 @@ export const pages = [
     return (
         {
             ...page,
+            canonicalUrl: `${siteUrl}${page.slug}`,
             titleTag: `${page.h1} | ${siteName}`
         }
     )
