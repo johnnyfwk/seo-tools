@@ -7,11 +7,15 @@ const slug = getSlugFromFile(import.meta.url);
 const page = pages.find((p) => p.slug === slug);
 
 export const metadata = {
-    title: page.titleTag,
-    description: page.metaDescription,
+    robots: {
+        index: page.robots.index,
+        follow: page.robots.follow,
+    },
     alternates: {
         canonical: page.canonicalUrl,
     },
+    title: page.titleTag,
+    description: page.metaDescription,
 }
 
 const scrapeOptions = {

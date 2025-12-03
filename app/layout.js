@@ -5,11 +5,19 @@ import Footer from "./components/footer";
 import BackToTopButton from "./components/backToTopButton";
 
 export const metadata = {
-  title: "Free SEO tools to optimise your site | SEO Tools",
-  description: "Check if your website is optimised for search engines with our free SEO tools.",
+  robots: {
+    index: true,
+    follow: true,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   alternates: {
     canonical: "https://seotools.uk/",
   },
+  title: "Free SEO tools to optimise your site | SEO Tools",
+  description: "Check if your website is optimised for search engines with our free SEO tools.",
 };
 
 export default function RootLayout({ children }) {
