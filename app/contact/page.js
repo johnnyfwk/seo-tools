@@ -1,6 +1,11 @@
-import { siteUrl, siteName } from "@/data/pages";
+import { siteUrl, siteName, pages } from "@/data/pages";
+import * as utils from '@/app/lib/utils/utils';
 
-const description = "Have questions or feedback? Contact us and let us know how we can improve our SEO tools.";
+const slug = utils.getSlugFromFile(import.meta.url);
+
+const page = pages.find((p) => p.slug === slug);
+
+if (!page) throw new Error(`Page not found: ${slug}`);
 
 export const metadata = {
     robots: {
@@ -8,10 +13,10 @@ export const metadata = {
         follow: true,
     },
     alternates: {
-        canonical: `${siteUrl}contact`,
+        canonical: page.canonicalUrl,
     },
-    title: `Contact Us | ${siteName}`,
-    description,
+    title: page.titleTag,
+    description: page.metaDescription,
 }
 
 export default function Contact() {
@@ -37,9 +42,9 @@ export default function Contact() {
             {
                 "@type": "ContactPage",
                 "@id": `${siteUrl}contact#contactpage`,
-                "url": `${siteUrl}contact`,
-                "name": "Contact",
-                "description": description,
+                "url": page.canonicalUrl,
+                "name": page.h1,
+                "description": page.metaDescription,
                 "isPartOf": {
                     "@id": `${siteUrl}#website`
                 },
@@ -52,7 +57,7 @@ export default function Contact() {
 
     return (
         <section>
-            <h1>Contact</h1>
+            <h1>{page.h1}</h1>
 
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis tristique urna tellus, sed dignissim enim aliquet eu. Nullam aliquet vitae enim vestibulum consequat. Aenean nisi nisl, vestibulum vitae pretium non, faucibus et nibh. Curabitur sed dolor non risus fringilla dictum sit amet id sem. Vestibulum vitae est eget magna semper dictum. Cras luctus mi et nulla rutrum egestas. Duis hendrerit ligula id est semper, fringilla varius lacus interdum. Cras dignissim risus sed nisi consequat varius.</p>
 
