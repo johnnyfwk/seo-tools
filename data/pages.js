@@ -149,6 +149,24 @@ export const pages = [
         h1: "Free Internal & Backlink Checker",
         metaDescription: "Check the anchor texts and status codes of a page's internal and external links.",
     },
+    {
+        slug: "about",
+        robots: {
+            index: true,
+            follow: true,
+        },
+        h1: "About",
+        metaDescription: "Learn who we are and how our SEO tools help improve your website.",
+    },
+    {
+        slug: "contact",
+        robots: {
+            index: true,
+            follow: true,
+        },
+        h1: "Contact Us",
+        metaDescription: "Have questions or feedback? Contact us and let us know how we can improve our SEO tools.",
+    },
 ].map((page) => {
     return (
         {
