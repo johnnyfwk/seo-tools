@@ -5,6 +5,7 @@ export default function Nav() {
         <nav>
             <Link href="/seo-on-page-checker">SEO On-Page Checker</Link>
             <Link href="/robots-txt-checker">Robots.txt Checker</Link>
+            <Link href="/xml-sitemap-checker">XML Sitemap Checker</Link>
             <Link href="/meta-robots-tag-checker">Meta Robots Tag Checker</Link>
             <Link href="/canonical-tag-checker">Canonical Tag Checker</Link>
             <Link href="/viewport-meta-tag-checker">Viewport Meta Tag Checker</Link>

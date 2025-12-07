@@ -51,6 +51,15 @@ export const pages = [
         metaDescription: "Check a page’s canonical tag to see which URL search engines should index.",
     },
     {
+        slug: "xml-sitemap-checker",
+        robots: {
+            index: true,
+            follow: true,
+        },
+        h1: "Free XML Sitemap Checker",
+        metaDescription: "Check your XML sitemaps, see which ones contain a specific URL, and view all sitemap entries listed in your robots.txt file.",
+    },
+    {
         slug: "viewport-meta-tag-checker",
         robots: {
             index: true,
