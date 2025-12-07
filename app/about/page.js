@@ -1,4 +1,6 @@
-import { siteUrl } from "@/data/pages";
+import { siteUrl, siteName } from "@/data/pages";
+
+const description = "Learn who we are and how our SEO tools help improve your website.";
 
 export const metadata = {
     robots: {
@@ -8,11 +10,46 @@ export const metadata = {
     alternates: {
         canonical: `${siteUrl}about`,
     },
-    title: "This is the title tag for the About page | SEO Tools",
-    description: "This is the meta description for the About page.",
+    title: `About | ${siteName}`,
+    description,
 }
 
 export default function About() {
+    const aboutPageSchema = {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "WebSite",
+                "@id": `${siteUrl}#website`,
+                "url": siteUrl,
+                "name": siteName,
+                "publisher": {
+                    "@id": `${siteUrl}#organization`
+                }
+            },
+            {
+                "@type": "Organization",
+                "@id": `${siteUrl}#organization`,
+                "name": siteName,
+                "url": siteUrl
+                // "logo": `${siteUrl}/logo.png`
+            },
+            {
+                "@type": "AboutPage",
+                "@id": `${siteUrl}about#aboutpage`,
+                "url": `${siteUrl}about`,
+                "name": "About",
+                "description": description,
+                "isPartOf": {
+                    "@id": `${siteUrl}#website`
+                },
+                "mainEntity": {
+                    "@id": `${siteUrl}#organization`
+                }
+            }
+        ]
+    };
+
     return (
         <section>
             <h1>About</h1>
@@ -26,6 +63,11 @@ export default function About() {
             <p>Sed a nisi eu mi pulvinar scelerisque. Nam rutrum sapien laoreet mauris iaculis feugiat. Proin mauris risus, tincidunt vel dui ut, convallis dictum urna. Vivamus commodo placerat turpis sit amet lacinia. Nullam et ultrices est. Proin eleifend nibh libero, ut elementum ligula porttitor sit amet. Vestibulum at dolor orci.</p>
 
             <p>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Mauris non odio dignissim, ornare velit ac, faucibus justo. In vitae mauris nisi. Morbi pulvinar ligula a finibus tincidunt. Vivamus eu justo hendrerit, euismod lorem sit amet, bibendum ex. Quisque pellentesque enim at justo pretium, sed dignissim nisi bibendum. Pellentesque bibendum diam quam, eget auctor tellus posuere in. Donec at felis non nunc convallis fringilla id vitae ligula. Vestibulum laoreet ligula vel turpis commodo facilisis. Pellentesque eget semper tellus. Cras a semper mauris. Vestibulum eleifend rhoncus neque sit amet aliquet.</p>
+
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutPageSchema) }}
+            />
         </section>
     )
 }

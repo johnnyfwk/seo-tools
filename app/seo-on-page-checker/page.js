@@ -12,7 +12,7 @@ if (!page) throw new Error(`Page not found: ${slug}`);
 const scrapeOptions = { all: true };
 
 export default function SeoOnPageChecker() {
-    const metadata = utils.generateMetadataForEachPage(siteUrl, siteName, page);
+    const metadata = utils.generateMetadataForToolPages(siteUrl, siteName, page);
 
     return (
         <>
@@ -24,7 +24,7 @@ export default function SeoOnPageChecker() {
             
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: metadata.other["application/ld+json"] }}
+                dangerouslySetInnerHTML={{ __html: metadata.structuredData["application/ld+json"] }}
             />
         </>
     )

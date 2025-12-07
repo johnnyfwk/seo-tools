@@ -10,7 +10,7 @@ const page = pages.find((p) => p.slug === slug);
 if (!page) throw new Error(`Page not found: ${slug}`);
 
 // export default function InternalAndBacklinkChecker() {
-//     const metadata = utils.generateMetadataForEachPage(siteUrl, siteName, page);
+//     const metadata = utils.generateMetadataForToolPages(siteUrl, siteName, page);
 //     return (
 //         <>
 //             <ClientSeoOnPageChecker
@@ -21,7 +21,7 @@ if (!page) throw new Error(`Page not found: ${slug}`);
         
 //             <script
 //                 type="application/ld+json"
-//                 dangerouslySetInnerHTML={{ __html: metadata.other["application/ld+json"] }}
+//                 dangerouslySetInnerHTML={{ __html: metadata.structuredData["application/ld+json"] }}
 //             />
 //         </>
 //     )

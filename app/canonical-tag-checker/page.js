@@ -15,7 +15,7 @@ const scrapeOptions = {
 }
 
 export default function CanonicalTagChecker() {
-    const metadata = utils.generateMetadataForEachPage(siteUrl, siteName, page);
+    const metadata = utils.generateMetadataForToolPages(siteUrl, siteName, page);
 
     return (
         <>
@@ -27,7 +27,7 @@ export default function CanonicalTagChecker() {
             
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: metadata.other["application/ld+json"] }}
+                dangerouslySetInnerHTML={{ __html: metadata.structuredData["application/ld+json"] }}
             />
         </>
     )
