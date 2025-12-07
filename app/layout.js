@@ -1,9 +1,9 @@
 import "./globals.css";
-import { siteUrl } from "@/data/pages";
 import Link from "next/link";
 import Nav from "./components/nav";
 import Footer from "./components/footer";
 import BackToTopButton from "./components/backToTopButton";
+import { siteUrl, siteName, defaultTitle, defaultMetaDescription } from "@/data/pages";
 
 export const metadata = {
   robots: {
@@ -17,8 +17,8 @@ export const metadata = {
   alternates: {
     canonical: siteUrl,
   },
-  title: "Free SEO tools to optimise your site | SEO Tools",
-  description: "Check if your website is optimised for search engines with our free SEO tools.",
+  title: `${defaultTitle} | ${siteName}`,
+  description: defaultMetaDescription,
 };
 
 export default function RootLayout({ children }) {
@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <header>
-          <Link href="/" id="logo">SEO Tools</Link>
+          <Link href="/" id="logo">{siteName}</Link>
           <Nav />
         </header>
 

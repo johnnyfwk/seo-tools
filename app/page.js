@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { siteUrl, siteName } from "@/data/pages";
-
-const description = "Use our free SEO tools to analyse your site, find issues, and improve organic search performance.";
+import { siteUrl, siteName, defaultTitle, defaultMetaDescription } from "@/data/pages";
 
 export const metadata = {
     robots: {
@@ -11,8 +9,8 @@ export const metadata = {
     alternates: {
         canonical: siteUrl,
     },
-    title: `Free SEO Tools to Analyse & Optimise Your Site | ${siteName}`,
-    description,
+    title: `${defaultTitle} | ${siteName}`,
+    description: defaultMetaDescription,
 }
 
 export default function Home() {
@@ -40,9 +38,9 @@ export default function Home() {
 
     return (
         <>
-            <h1>Home</h1>
+            <h1>{defaultTitle}</h1>
 
-            <p>{description}</p>
+            <p>{defaultMetaDescription}</p>
 
             <h2>
                 <Link href="/seo-on-page-checker">SEO On-Page Checker</Link>
