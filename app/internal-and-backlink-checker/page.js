@@ -9,15 +9,21 @@ const page = pages.find((p) => p.slug === slug);
 
 if (!page) throw new Error(`Page not found: ${slug}`);
 
-export function generateMetadata() {
-    return utils.generateMetadataForEachPage(siteUrl, siteName, page);
-}
-
 // export default function InternalAndBacklinkChecker() {
+//     const metadata = utils.generateMetadataForEachPage(siteUrl, siteName, page);
 //     return (
-//         <ClientInternalAndBacklinkChecker
-//             metaDescription={page.metaDescription}
-//         />
+//         <>
+//             <ClientSeoOnPageChecker
+//                 h1={page.h1}
+//                 metaDescription={page.metaDescription}
+//                 scrapeOptions={scrapeOptions}
+//             />
+        
+//             <script
+//                 type="application/ld+json"
+//                 dangerouslySetInnerHTML={{ __html: metadata.other["application/ld+json"] }}
+//             />
+//         </>
 //     )
 // }
 

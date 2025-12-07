@@ -14,16 +14,21 @@ const scrapeOptions = {
     images: true,
 }
 
-export function generateMetadata() {
-    return utils.generateMetadataForEachPage(siteUrl, siteName, page);
-}
-
 export default function ImageAltTextChecker() {
+    const metadata = utils.generateMetadataForEachPage(siteUrl, siteName, page);
+
     return (
-        <ClientSeoOnPageChecker
-            h1={page.h1}
-            metaDescription={page.metaDescription}
-            scrapeOptions={scrapeOptions}
-        />
+        <>
+            <ClientSeoOnPageChecker
+                h1={page.h1}
+                metaDescription={page.metaDescription}
+                scrapeOptions={scrapeOptions}
+            />
+            
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: metadata.other["application/ld+json"] }}
+            />
+        </>
     )
 }

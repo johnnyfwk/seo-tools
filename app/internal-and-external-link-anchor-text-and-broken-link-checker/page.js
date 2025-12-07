@@ -11,10 +11,10 @@ if (!page) throw new Error(`Page not found: ${slug}`);
 
 const scrapeOptions = {
     all: false,
-    hreflang: true,
+    links: true,
 }
 
-export default function HreflangChecker() {
+export default function InternalAndExternalLinkAnchorTextAndBrokenLinkChecker() {
     const metadata = utils.generateMetadataForEachPage(siteUrl, siteName, page);
 
     return (
