@@ -29,7 +29,7 @@ export default function Hreflang({ hreflang, contentType, xRobotsNoindex }) {
                         statusCode: hreflang.finalUrlStatusCode,
                         blockedByRobots: hreflang.robotsTxt?.blocked,
                         canonicalMatches: hreflang.canonicalTags?.tags[0]?.resolvedCanonicalUrlMatchesOriginalUrl,
-                        metaRobotsAllowsIndexing: hreflang.metaRobotsTag?.allowsIndexing,
+                        metaRobotsAllowsIndexing: hreflang.metaRobotsAndXRobotsTag?.allowsIndexing,
                         contentType,
                         xRobotsNoindex,
                     });
@@ -111,11 +111,11 @@ export default function Hreflang({ hreflang, contentType, xRobotsNoindex }) {
                             <td
                                 style={{ textAlign: 'center' }}
                                 className={utils.getMetaRobotsTagTextAndClass(
-                                    hreflang.metaRobotsTag?.allowsIndexing
+                                    hreflang.metaRobotsAndXRobotsTag?.allowsIndexing
                                 ).class || ""}
                             >
                                 {utils.getMetaRobotsTagTextAndClass(
-                                    hreflang.metaRobotsTag?.allowsIndexing
+                                    hreflang.metaRobotsAndXRobotsTag?.allowsIndexing
                                 ).text || "N/A"}
                             </td>
 

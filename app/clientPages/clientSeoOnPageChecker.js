@@ -10,7 +10,7 @@ import HttpRedirectsToHttps from "../components/httpRedirectsToHttps";
 import RedirectChain from "../components/redirectChain";
 import RobotsTxt from "../components/robotsTxt";
 import XmlSitemaps from "../components/xmlSitemaps";
-import MetaRobotsTag from "../components/metaRobotsTag";
+import MetaRobotsAndXRobotsTag from "../components/metaRobotsAndXRobotsTag";
 import CanonicalTags from "../components/canonicalTags";
 import HtmlLanguageAttribute from "../components/htmlLanguageAttribute";
 import Viewport from "../components/viewport";
@@ -67,11 +67,11 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
             data: null,
         },
         scrapedData: {
-            metaRobotsTag: {
+            metaRobotsAndXRobotsTag: {
                 allowsFollowing: null,
                 allowsIndexing: null,
                 content: "",
-                htmlTagContent: "",
+                metaRobotsTagContent: "",
                 xRobotsTagContent: "",
             },
             canonicalTags: {
@@ -157,7 +157,7 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
                 statusCode: data.enteredUrlStatusCode,
                 blockedByRobots: data.robotsTxt?.blocked,
                 canonicalMatches: data.scrapedData?.canonicalTags?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl,
-                metaRobotsAllowsIndexing: data.scrapedData?.metaRobotsTag?.allowsIndexing,
+                metaRobotsAllowsIndexing: data.scrapedData?.metaRobotsAndXRobotsTag?.allowsIndexing,
                 contentType: data.resource.contentType,
                 xRobotsNoindex: data.resource.headers?.["x-robots-tag"] ||
                     data.resource.headers?.["X-Robots-Tag"] || "",
@@ -190,9 +190,9 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
                 scrapedData: {
                     ...initialPageData.scrapedData,
                     ...data.scrapedData,
-                    metaRobotsTag: {
-                        ...initialPageData.scrapedData.metaRobotsTag,
-                        ...data.scrapedData?.metaRobotsTag
+                    metaRobotsAndXRobotsTag: {
+                        ...initialPageData.scrapedData.metaRobotsAndXRobotsTag,
+                        ...data.scrapedData?.metaRobotsAndXRobotsTag
                     },
                     canonicalTags: {
                         ...initialPageData.scrapedData.canonicalTags,
@@ -317,9 +317,9 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
             title: `XML Sitemaps`,
             component: <XmlSitemaps xmlSitemaps={pageData.xmlSitemaps} />,
         },
-        metaRobotsTag: {
-            title: "Meta Robots Tag",
-            component: <MetaRobotsTag metaRobotsTag={pageData.scrapedData?.metaRobotsTag} />,
+        metaRobotsAndXRobotsTag: {
+            title: "Meta Robots & X-Robots Tag",
+            component: <MetaRobotsAndXRobotsTag metaRobotsAndXRobotsTag={pageData.scrapedData?.metaRobotsAndXRobotsTag} />,
         },
         canonicalTags: {
             title: `Canonical Tags (${pageData.scrapedData?.canonicalTags?.tags?.length})`,

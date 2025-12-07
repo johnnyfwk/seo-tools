@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio';
 
-import { scrapeMetaRobotsTag } from './metaRobotsTag';
+import { scrapeMetaRobotsAndXRobotsTag } from './metaRobotsAndXRobotsTag';
 import { scrapeCanonicalTags } from './canonicalTags';
 import { scrapeHtmlLanguageAttribute } from './htmlLanguageAttribute';
 import { scrapeViewport } from './viewport';
@@ -38,8 +38,8 @@ export async function scrapeWithCheerio(
     const results = {};
 
     try {
-        if (shouldScrape('metaRobotsTag', opts)) {
-            Object.assign(results, scrapeMetaRobotsTag($, headers));
+        if (shouldScrape('metaRobotsAndXRobotsTag', opts)) {
+            Object.assign(results, scrapeMetaRobotsAndXRobotsTag($, headers));
         }
 
         if (shouldScrape('canonicalTags', opts)) {

@@ -108,7 +108,7 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
                                 statusCode: finalStatus,
                                 blockedByRobots: og.robotsTxt?.blocked ?? null,
                                 canonicalMatches: og.canonical?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl ?? null,
-                                metaRobotsAllowsIndexing: og.metaRobots?.allowsIndexing ?? null,
+                                metaRobotsAllowsIndexing: og.metaRobotsAndXRobots?.allowsIndexing ?? null,
                                 contentType,
                                 xRobotsNoindex,
                             });
@@ -141,9 +141,9 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
 
                                     <div>
                                         <strong>Meta robots allows indexing?:</strong>{" "}
-                                        {og.metaRobots?.allowsIndexing === null
+                                        {og.metaRobotsAndXRobots?.allowsIndexing === null
                                             ? "No meta robots tag"
-                                            : og.metaRobots?.allowsIndexing
+                                            : og.metaRobotsAndXRobots?.allowsIndexing
                                                 ? "✅ Yes"
                                                 : "⛔ No"
                                         }

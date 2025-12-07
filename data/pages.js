@@ -33,12 +33,12 @@ export const pages = [
         metaDescription: "Check your website's robots.txt file to see if a page is crawlable and view the XML sitemaps it contains.",
     },
     {
-        slug: "meta-robots-tag-checker",
+        slug: "meta-robots-and-x-robots-tag-checker",
         robots: {
             index: true,
             follow: true,
         },
-        h1: "Free Meta Robots Tag, Noindex & Nofollow Checker",
+        h1: "Free Meta Robots & X-Robots-Tag Noindex/Nofollow Checker",
         metaDescription: "Check a page’s meta robots tag to see whether it can be indexed and whether its links pass authority.",
     },
     {

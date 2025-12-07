@@ -1,7 +1,6 @@
 import ClientSeoOnPageChecker from "../clientPages/clientSeoOnPageChecker";
 import { getSlugFromFile } from "../lib/utils/utils";
 import { pages } from "@/data/pages";
-console.log("Pages:", pages);
 
 const slug = getSlugFromFile(import.meta.url);
 

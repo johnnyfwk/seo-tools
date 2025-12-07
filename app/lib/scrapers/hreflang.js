@@ -2,7 +2,7 @@ import * as cheerio from 'cheerio';
 import { getRedirects } from '../utils/getRedirects';
 import { checkRobotsTxt } from '../utils/checkRobotsTxt';
 import { scrapeCanonicalTags } from './canonicalTags';
-import { scrapeMetaRobotsTag } from './metaRobotsTag';
+import { scrapeMetaRobotsAndXRobotsTag } from './metaRobotsAndXRobotsTag';
 
 export async function scrapeHreflang($, pageUrl, headers = {}) {
     const hreflangs = [];
@@ -61,7 +61,7 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
             const robotsTxt = await checkRobotsTxt(finalUrl);
 
             // Initial HTML (for meta robots + canonical)
-            let metaRobotsTag = null;
+            let metaRobotsAndXRobotsTag = null;
             let canonicalTags = null;
 
             try {
@@ -70,7 +70,7 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
                     const html = await response.text();
                     const $page = cheerio.load(html);
 
-                    metaRobotsTag = scrapeMetaRobotsTag($page);
+                    metaRobotsAndXRobotsTag = scrapeMetaRobotsAndXRobotsTag($page);
                     canonicalTags = (await scrapeCanonicalTags($page, finalUrl)).canonicalTags;
                 }
             } catch {
@@ -84,7 +84,7 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
                 initialUrl,
                 initialUrlStatusCode,
                 robotsTxt,
-                metaRobotsTag: metaRobotsTag?.metaRobotsTag || null,
+                metaRobotsAndXRobotsTag: metaRobotsAndXRobotsTag?.metaRobotsAndXRobotsTag || null,
                 canonicalTags,
 
                 // Final URL
