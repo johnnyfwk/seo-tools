@@ -8,8 +8,22 @@ const page = pages.find((p) => p.slug === slug);
 
 if (!page) throw new Error(`Page not found: ${slug}`);
 
+export const metadata = {
+    title: page.titleTag,
+    description: page.metaDescription,
+    robots: {
+        index: page.robots.index,
+        follow: page.robots.follow,
+    },
+    alternates: {
+        canonical: page.canonicalUrl,
+    },
+};
+
 // export default function InternalAndBacklinkChecker() {
-//     const metadata = utils.generateMetadataForToolPages(siteUrl, siteName, page);
+//     const structuredData = utils.generateMetadataForToolPages(siteUrl, siteName, page)
+//         .structuredData["application/ld+json"];
+//
 //     return (
 //         <>
 //             <ClientSeoOnPageChecker
@@ -17,10 +31,10 @@ if (!page) throw new Error(`Page not found: ${slug}`);
 //                 metaDescription={page.metaDescription}
 //                 scrapeOptions={scrapeOptions}
 //             />
-        
+//
 //             <script
 //                 type="application/ld+json"
-//                 dangerouslySetInnerHTML={{ __html: metadata.structuredData["application/ld+json"] }}
+//                 dangerouslySetInnerHTML={{ __html: structuredData }}
 //             />
 //         </>
 //     )

@@ -23,7 +23,7 @@ export const pages = [
             follow: true,
         },
         h1: "Free SEO On-Page Checker",
-        metaDescription: "This is the meta description for the free SEO on-page checker page.",
+        metaDescription: "Check a webpage for SEO issues including title tags, meta descriptions, headings, links, structured data, and more with our on-page SEO analysis tool.",
     },
     {
         slug: "robots-txt-checker",
