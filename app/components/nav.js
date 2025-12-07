@@ -11,7 +11,7 @@ export default function Nav() {
             <Link href="/viewport-meta-tag-checker">Viewport Meta Tag Checker</Link>
             <Link href="/title-tag-and-meta-description-checker">Title Tag & Meta Description Length Checker</Link>
             <Link href="/h1-tag-and-heading-structure-checker">H1 Tag & Heading Structure Checker</Link>
-            <Link href="/internal-external-and-broken-link-checker">Internal, External & Broken Link Checker</Link>
+            <Link href="/internal-and-external-link-anchor-text-and-broken-link-checker">Internal & External Link, Anchor Text & Broken Link Checker</Link>
             <Link href="/image-alt-text-checker">Image Alt Text Checker</Link>
             <Link href="/structured-data-checker">Structured Data Checker</Link>
             <Link href="/hreflang-checker">Hreflang Checker</Link>

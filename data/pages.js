@@ -132,7 +132,7 @@ export const pages = [
         metaDescription: "Check pagination links, resolve redirects, and validate canonical tags to ensure clean, crawlable, and indexable pagination.",
     },
     {
-        slug: "internal-external-and-broken-link-checker",
+        slug: "internal-and-external-link-anchor-text-and-broken-link-checker",
         robots: {
             index: true,
             follow: true,
