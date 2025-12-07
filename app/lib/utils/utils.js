@@ -393,3 +393,89 @@ export function getSlugFromFile(importMetaUrl) {
             .replace("/page.js", "")
     );
 }
+
+export function generateMetadataForEachPage(siteUrl, siteName, page) {
+    const softwareApplicationSchema = {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "url": page.canonicalUrl,
+        "name": page.h1,
+        "description": page.metaDescription,
+        "applicationCategory": "SEOAnalysisTool",
+        "operatingSystem": "Web",
+        "creator": {
+            "@type": "Organization",
+            "name": siteName,
+        },
+        "offers": {
+            "@type": "Offer",
+            "url": page.canonicalUrl,
+            "price": "0",
+            "priceCurrency": "GBP",
+            "availability": "https://schema.org/InStock"
+        },
+    };
+
+    const webPageSchema = {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "url": page.canonicalUrl,
+        "name": page.h1,
+        "description": page.metaDescription,
+        "isPartOf": {
+            "@type": "WebSite",
+            "name": siteName,
+            "url": siteUrl
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": siteName,
+            "url": siteUrl,
+        },
+        "mainEntityOfPage": page.canonicalUrl,
+        "breadcrumb": {
+            "@id": "#breadcrumb"
+        }
+    };
+
+    const breadcrumbSchema = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "@id": "#breadcrumb",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": siteName,
+                "item": siteUrl
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": page.h1,
+                "item": page.canonicalUrl
+            },
+        ]
+    };
+
+    const structuredDataArray = [
+        softwareApplicationSchema,
+        webPageSchema,
+        breadcrumbSchema
+    ];
+
+    return {
+        robots: {
+            index: page.robots.index,
+            follow: page.robots.follow,
+        },
+        alternates: {
+            canonical: page.canonicalUrl,
+        },
+        title: page.titleTag,
+        description: page.metaDescription,
+        other: {
+            "application/ld+json": JSON.stringify(structuredDataArray),
+        }
+    }
+}
