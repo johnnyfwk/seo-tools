@@ -394,7 +394,7 @@ export function getSlugFromFile(importMetaUrl) {
     );
 }
 
-export function generateMetadataForEachPage(siteUrl, siteName, page) {
+export function generateMetadataForToolPages(siteUrl, siteName, page) {
     const softwareApplicationSchema = {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
@@ -474,7 +474,7 @@ export function generateMetadataForEachPage(siteUrl, siteName, page) {
         },
         title: page.titleTag,
         description: page.metaDescription,
-        other: {
+        structuredData: {
             "application/ld+json": JSON.stringify(structuredDataArray),
         }
     }
