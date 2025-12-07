@@ -14,8 +14,21 @@ const scrapeOptions = {
     metaDescriptions: true,
 };
 
+export const metadata = {
+    title: page.titleTag,
+    description: page.metaDescription,
+    robots: {
+        index: page.robots.index,
+        follow: page.robots.follow,
+    },
+    alternates: {
+        canonical: page.canonicalUrl,
+    },
+};
+
 export default function TitleTagAndMetaDescriptionChecker() {
-    const metadata = utils.generateMetadataForToolPages(siteUrl, siteName, page);
+    const structuredData = utils.generateMetadataForToolPages(siteUrl, siteName, page)
+        .structuredData["application/ld+json"];
 
     return (
         <>
@@ -27,7 +40,7 @@ export default function TitleTagAndMetaDescriptionChecker() {
             
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: metadata.structuredData["application/ld+json"] }}
+                dangerouslySetInnerHTML={{ __html: structuredData }}
             />
         </>
     )
