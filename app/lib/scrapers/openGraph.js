@@ -1,7 +1,7 @@
 import * as cheerio from "cheerio"; 
 import { getRedirects } from "../utils/getRedirects";
 import { scrapeCanonicalTags } from "./canonicalTags";
-import { scrapeMetaRobotsTag } from "./metaRobotsTag";
+import { scrapeMetaRobotsAndXRobotsTag } from "./metaRobotsAndXRobotsTag";
 import { checkRobotsTxt } from "../utils/checkRobotsTxt";
 
 export async function scrapeOpenGraph($, pageUrl) {
@@ -79,7 +79,7 @@ export async function scrapeOpenGraph($, pageUrl) {
 
         // --- 5. Fetch final URL HTML ---
         let $final = null;
-        let metaRobots = null;
+        let metaRobotsAndXRobots = null;
         let canonical = null;
 
         try {
@@ -89,7 +89,7 @@ export async function scrapeOpenGraph($, pageUrl) {
                 $final = cheerio.load(html);
 
                 // Extract meta robots
-                metaRobots = scrapeMetaRobotsTag($final, res.headers)?.metaRobotsTag;
+                metaRobotsAndXRobots = scrapeMetaRobotsAndXRobotsTag($final, res.headers)?.metaRobotsAndXRobotsTag;
 
                 // Extract canonical for the final URL only
                 canonical = (await scrapeCanonicalTags($final, finalUrl)).canonicalTags;
@@ -109,7 +109,7 @@ export async function scrapeOpenGraph($, pageUrl) {
             finalUrlStatusCode: finalStatus,
 
             robotsTxt,
-            metaRobots,
+            metaRobotsAndXRobots,
             canonical,
 
             redirects: redirectData.redirects

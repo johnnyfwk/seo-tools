@@ -1,5 +1,4 @@
 import { siteUrl } from "@/data/pages";
-console.log(siteUrl)
 
 export default function sitemap() {
     return [

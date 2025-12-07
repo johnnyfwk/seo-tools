@@ -20,10 +20,10 @@ export const metadata = {
 
 const scrapeOptions = {
     all: false,
-    metaRobotsTag: true,
+    metaRobotsAndXRobotsTag: true,
 }
 
-export default function MetaRobotsTagChecker() {
+export default function MetaRobotsAndXRobotsTagChecker() {
     return (
         <ClientSeoOnPageChecker
             h1={page.h1}
