@@ -104,11 +104,13 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
                         {ogUrls.map((og, idx) => {
                             const finalStatus = og.finalUrlStatusCode ?? og.initialUrlStatusCode;
 
+                            const metaRobotsAllDirectivesLowercase = String(og.metaRobotsAndXRobots?.allDirectives || "").toLowerCase();
+
                             const indexability = utils.evaluateIndexability({
                                 statusCode: finalStatus,
                                 blockedByRobots: og.robotsTxt?.blocked ?? null,
                                 canonicalMatches: og.canonical?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl ?? null,
-                                metaRobotsAllowsIndexing: og.metaRobotsAndXRobots?.allowsIndexing ?? null,
+                                metaRobotsAllowsIndexing: !metaRobotsAllDirectivesLowercase.includes("noindex") ?? null,
                                 contentType,
                                 xRobotsNoindex,
                             });
@@ -141,9 +143,9 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
 
                                     <div>
                                         <strong>Meta robots allows indexing?:</strong>{" "}
-                                        {og.metaRobotsAndXRobots?.allowsIndexing === null
-                                            ? "No meta robots tag"
-                                            : og.metaRobotsAndXRobots?.allowsIndexing
+                                        {og.metaRobotsAndXRobots?.allDirectives === null
+                                            ? "No meta robots tag found"
+                                            : !og.metaRobotsAndXRobots?.allDirectives?.includes("noindex")
                                                 ? "✅ Yes"
                                                 : "⛔ No"
                                         }
