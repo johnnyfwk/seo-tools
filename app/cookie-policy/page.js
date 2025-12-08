@@ -12,30 +12,14 @@ const slug = utils.getSlugFromFile(import.meta.url);
 
 const page = pages.find((p) => p.slug === slug);
 
-export const metadata = {
-    robots: {
-        index: page.robots.index,
-        follow: page.robots.follow,
-    },
-    alternates: {
-        canonical: page.canonicalUrl,
-    },
-    title: page.titleTag,
-    description: page.metaDescription,
-    openGraph: {
-        title: page.titleTag,
-        description: page.metaDescription,
-        url: page.canonicalUrl,
-        siteName,
-        locale: openGraphLocale,
-        type: openGraphType,
-        images: [
-            {
-                url: `${siteUrl}${openGraphImage}`
-            }
-        ],
-    },
-}
+export const metadata = utils.createMetadata(
+    siteUrl,
+    siteName,
+    page,
+    openGraphLocale,
+    openGraphType,
+    openGraphImage,
+);
 
 export default function CookiePolicy() {
     const cookiePolicyPageSchema = {
