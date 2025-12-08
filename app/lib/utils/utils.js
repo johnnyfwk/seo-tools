@@ -394,6 +394,47 @@ export function getSlugFromFile(importMetaUrl) {
     );
 }
 
+export function createMetadata(
+    siteUrl,
+    siteName,
+    page,
+    openGraphLocale,
+    openGraphType,
+    openGraphImage,
+    schema
+) {
+    return {
+        robots: {
+            index: page.robots.index,
+            follow: page.robots.follow,
+        },
+        alternates: {
+            canonical: page.canonicalUrl,
+        },
+        title: page.titleTag,
+        description: page.metaDescription,
+        openGraph: {
+            title: page.titleTag,
+            description: page.metaDescription,
+            url: page.canonicalUrl,
+            siteName,
+            locale: openGraphLocale,
+            type: openGraphType,
+            images: [
+                {
+                    url: `${siteUrl}${openGraphImage}`
+                }
+            ],
+        },
+        other: [
+            {
+                type: 'application/ld+json',
+                content: JSON.stringify(schema)
+            }
+        ]
+    }
+}
+
 export function generateMetadataForToolPages(siteUrl, siteName, page) {
     const softwareApplicationSchema = {
         "@context": "https://schema.org",

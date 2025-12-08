@@ -14,66 +14,111 @@ const page = pages.find((p) => p.slug === slug);
 
 if (!page) throw new Error(`Page not found: ${slug}`);
 
-export const metadata = {
-    robots: {
-        index: page.robots.index,
-        follow: page.robots.follow,
-    },
-    alternates: {
-        canonical: page.canonicalUrl,
-    },
-    title: page.titleTag,
-    description: page.metaDescription,
-    openGraph: {
-        title: page.titleTag,
-        description: page.metaDescription,
-        url: page.canonicalUrl,
-        siteName,
-        locale: openGraphLocale,
-        type: openGraphType,
-        images: [
-            {
-                url: `${siteUrl}${openGraphImage}`
-            }
-        ],
-    },
-}
+// export const metadata = {
+//     robots: {
+//         index: page.robots.index,
+//         follow: page.robots.follow,
+//     },
+//     alternates: {
+//         canonical: page.canonicalUrl,
+//     },
+//     title: page.titleTag,
+//     description: page.metaDescription,
+//     openGraph: {
+//         title: page.titleTag,
+//         description: page.metaDescription,
+//         url: page.canonicalUrl,
+//         siteName,
+//         locale: openGraphLocale,
+//         type: openGraphType,
+//         images: [
+//             {
+//                 url: `${siteUrl}${openGraphImage}`
+//             }
+//         ],
+//     },
+// }
+
+const aboutPageSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "WebSite",
+            "@id": `${siteUrl}#website`,
+            "url": siteUrl,
+            "name": siteName,
+            "publisher": {
+                "@id": `${siteUrl}#organization`
+            },
+            "inLanguage": "en-GB"
+        },
+        {
+            "@type": "Organization",
+            "@id": `${siteUrl}#organization`,
+            "name": siteName,
+            "url": siteUrl,
+            "logo": `${siteUrl}${openGraphImage}`,
+            "inLanguage": "en-GB"
+        },
+        {
+            "@type": "AboutPage",
+            "@id": `${siteUrl}about#aboutpage`,
+            "url": page.canonicalUrl,
+            "name": page.h1,
+            "description": page.metaDescription,
+            "isPartOf": {
+                "@id": `${siteUrl}#website`
+            },
+            "inLanguage": "en-GB"
+        }
+    ]
+};
+
+export const metadata = utils.createMetadata(
+    siteUrl,
+    siteName,
+    page,
+    openGraphLocale,
+    openGraphType,
+    openGraphImage,
+    aboutPageSchema
+);
 
 export default function About() {
-    const aboutPageSchema = {
-        "@context": "https://schema.org",
-        "@graph": [
-            {
-                "@type": "WebSite",
-                "@id": `${siteUrl}#website`,
-                "url": siteUrl,
-                "name": siteName,
-                "publisher": {
-                    "@id": `${siteUrl}#organization`
-                },
-                "inLanguage": "en-GB"
-            },
-            {
-                "@type": "Organization",
-                "@id": `${siteUrl}#organization`,
-                "name": siteName,
-                "url": siteUrl,
-                "logo": `${siteUrl}${openGraphImage}`,
-                "inLanguage": "en-GB"
-            },
-            {
-                "@type": "AboutPage",
-                "@id": `${siteUrl}about#aboutpage`,
-                "url": page.canonicalUrl,
-                "name": page.h1,
-                "description": page.metaDescription,
-                "isPartOf": {
-                    "@id": `${siteUrl}#website`
-                },
-                "inLanguage": "en-GB"
-            }
-        ]
-    };
+    // const aboutPageSchema = {
+    //     "@context": "https://schema.org",
+    //     "@graph": [
+    //         {
+    //             "@type": "WebSite",
+    //             "@id": `${siteUrl}#website`,
+    //             "url": siteUrl,
+    //             "name": siteName,
+    //             "publisher": {
+    //                 "@id": `${siteUrl}#organization`
+    //             },
+    //             "inLanguage": "en-GB"
+    //         },
+    //         {
+    //             "@type": "Organization",
+    //             "@id": `${siteUrl}#organization`,
+    //             "name": siteName,
+    //             "url": siteUrl,
+    //             "logo": `${siteUrl}${openGraphImage}`,
+    //             "inLanguage": "en-GB"
+    //         },
+    //         {
+    //             "@type": "AboutPage",
+    //             "@id": `${siteUrl}about#aboutpage`,
+    //             "url": page.canonicalUrl,
+    //             "name": page.h1,
+    //             "description": page.metaDescription,
+    //             "isPartOf": {
+    //                 "@id": `${siteUrl}#website`
+    //             },
+    //             "inLanguage": "en-GB"
+    //         }
+    //     ]
+    // };
 
     return (
         <section>
@@ -89,10 +134,10 @@ export default function About() {
 
             <p>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Mauris non odio dignissim, ornare velit ac, faucibus justo. In vitae mauris nisi. Morbi pulvinar ligula a finibus tincidunt. Vivamus eu justo hendrerit, euismod lorem sit amet, bibendum ex. Quisque pellentesque enim at justo pretium, sed dignissim nisi bibendum. Pellentesque bibendum diam quam, eget auctor tellus posuere in. Donec at felis non nunc convallis fringilla id vitae ligula. Vestibulum laoreet ligula vel turpis commodo facilisis. Pellentesque eget semper tellus. Cras a semper mauris. Vestibulum eleifend rhoncus neque sit amet aliquet.</p>
 
-            <script
+            {/* <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutPageSchema) }}
-            />
+            /> */}
         </section>
     )
 }
