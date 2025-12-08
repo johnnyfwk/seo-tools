@@ -400,8 +400,7 @@ export function createMetadata(
     page,
     openGraphLocale,
     openGraphType,
-    openGraphImage,
-    schema
+    openGraphImage
 ) {
     return {
         robots: {
@@ -425,13 +424,7 @@ export function createMetadata(
                     url: `${siteUrl}${openGraphImage}`
                 }
             ],
-        },
-        other: [
-            {
-                type: 'application/ld+json',
-                content: JSON.stringify(schema)
-            }
-        ]
+        }
     }
 }
 
