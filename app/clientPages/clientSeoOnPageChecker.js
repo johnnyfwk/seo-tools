@@ -68,9 +68,7 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
         },
         scrapedData: {
             metaRobotsAndXRobotsTag: {
-                allowsFollowing: null,
-                allowsIndexing: null,
-                content: "",
+                allDirectives: "",
                 metaRobotsTagContent: "",
                 xRobotsTagContent: "",
             },
@@ -153,11 +151,13 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
             const endTime = performance.now();
             const elapsedMs = endTime - startTime;
 
+            const metaRobotsAllDirectivesLowercase = String(data.scrapedData?.metaRobotsAndXRobotsTag?.allDirectives || "").toLowerCase();
+
             const urlIndexability = utils.evaluateIndexability({
                 statusCode: data.enteredUrlStatusCode,
                 blockedByRobots: data.robotsTxt?.blocked,
                 canonicalMatches: data.scrapedData?.canonicalTags?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl,
-                metaRobotsAllowsIndexing: data.scrapedData?.metaRobotsAndXRobotsTag?.allowsIndexing,
+                metaRobotsAllowsIndexing: !metaRobotsAllDirectivesLowercase.includes("noindex"),
                 contentType: data.resource.contentType,
                 xRobotsNoindex: data.resource.headers?.["x-robots-tag"] ||
                     data.resource.headers?.["X-Robots-Tag"] || "",

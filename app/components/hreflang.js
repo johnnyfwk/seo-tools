@@ -29,10 +29,12 @@ export default function Hreflang({ hreflang, contentType, xRobotsNoindex }) {
                         statusCode: hreflang.finalUrlStatusCode,
                         blockedByRobots: hreflang.robotsTxt?.blocked,
                         canonicalMatches: hreflang.canonicalTags?.tags[0]?.resolvedCanonicalUrlMatchesOriginalUrl,
-                        metaRobotsAllowsIndexing: hreflang.metaRobotsAndXRobotsTag?.allowsIndexing,
+                        metaRobotsAllowsIndexing: !hreflang.metaRobotsAndXRobotsTag?.allDirectives?.includes("noindex"),
                         contentType,
                         xRobotsNoindex,
                     });
+
+                    const metaRobotsAllDirectivesLowercase = String(hreflang.metaRobotsAndXRobotsTag?.allDirectives || "").toLowerCase();
 
                     return (
                         <tr key={index}>
@@ -111,11 +113,11 @@ export default function Hreflang({ hreflang, contentType, xRobotsNoindex }) {
                             <td
                                 style={{ textAlign: 'center' }}
                                 className={utils.getMetaRobotsTagTextAndClass(
-                                    hreflang.metaRobotsAndXRobotsTag?.allowsIndexing
+                                    !metaRobotsAllDirectivesLowercase.includes("noindex")
                                 ).class || ""}
                             >
                                 {utils.getMetaRobotsTagTextAndClass(
-                                    hreflang.metaRobotsAndXRobotsTag?.allowsIndexing
+                                    !metaRobotsAllDirectivesLowercase.includes("noindex")
                                 ).text || "N/A"}
                             </td>
 
