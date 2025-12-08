@@ -53,7 +53,7 @@ export default function Home() {
                 "@id": `${siteUrl}#organization`,
                 "name": siteName,
                 "url": siteUrl,
-                // "logo": `${siteUrl}/logo.png`,
+                "logo": `${siteUrl}${openGraphImage}`
             }
         ],
     };

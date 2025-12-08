@@ -16,8 +16,8 @@ if (!page) throw new Error(`Page not found: ${slug}`);
 
 export const metadata = {
     robots: {
-        index: true,
-        follow: true,
+        index: page.robots.index,
+        follow: page.robots.follow,
     },
     alternates: {
         canonical: page.canonicalUrl,
@@ -56,8 +56,8 @@ export default function About() {
                 "@type": "Organization",
                 "@id": `${siteUrl}#organization`,
                 "name": siteName,
-                "url": siteUrl
-                // "logo": `${siteUrl}/logo.png`
+                "url": siteUrl,
+                "logo": `${siteUrl}${openGraphImage}`
             },
             {
                 "@type": "AboutPage",
