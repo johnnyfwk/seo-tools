@@ -1,10 +1,10 @@
 export const siteUrl = "https://example.com/";
-export const siteName = "SEO Tools";
+export const siteName = "SEOTools";
 export const defaultTitle = "Free SEO Tools to Analyse & Optimise Your Site";
 export const defaultMetaDescription = "Use our free SEO tools to analyse your site, find issues, and improve organic search performance.";
 export const openGraphLocale = "en_GB";
 export const openGraphType = "website";
-export const openGraphImage = "images/frogs.jpg";
+export const openGraphImage = "images/logo.jpg";
 
 /*****************************************************
     {
@@ -171,6 +171,42 @@ export const pages = [
         },
         h1: "Contact Us",
         metaDescription: "Have questions or feedback? Contact us and let us know how we can improve our SEO tools.",
+    },
+    {
+        slug: "privacy-policy",
+        robots: {
+            index: true,
+            follow: true,
+        },
+        h1: "Privacy Policy",
+        metaDescription: "Read our Privacy Policy to learn how we collect, use, and protect your data when you use our SEO tools.",
+    },
+    {
+        slug: "terms-of-service",
+        robots: {
+            index: true,
+            follow: true,
+        },
+        h1: "Terms of Service",
+        metaDescription: "Read our Terms of Service to understand the rules for using our SEO tools, website, and features.",
+    },
+    {
+        slug: "disclaimer",
+        robots: {
+            index: true,
+            follow: true,
+        },
+        h1: "Disclaimer",
+        metaDescription: "Read our Disclaimer to understand the limitations of our SEO tools and the accuracy of the data provided.",
+    },
+    {
+        slug: "cookie-policy",
+        robots: {
+            index: true,
+            follow: true,
+        },
+        h1: "Cookie Policy",
+        metaDescription: "Learn how we use cookies and tracking technologies to improve your experience on our website.",
     },
 ].map((page) => {
     return (
