@@ -50,14 +50,16 @@ export default function Contact() {
                 "name": siteName,
                 "publisher": {
                     "@id": `${siteUrl}#organization`
-                }
+                },
+                "inLanguage": "en-GB"
             },
             {
                 "@type": "Organization",
                 "@id": `${siteUrl}#organization`,
                 "name": siteName,
                 "url": siteUrl,
-                "logo": `${siteUrl}${openGraphImage}`
+                "logo": `${siteUrl}${openGraphImage}`,
+                "inLanguage": "en-GB"
             },
             {
                 "@type": "ContactPage",
@@ -68,9 +70,7 @@ export default function Contact() {
                 "isPartOf": {
                     "@id": `${siteUrl}#website`
                 },
-                "mainEntity": {
-                    "@id": `${siteUrl}#organization`
-                }
+                "inLanguage": "en-GB"
             }
         ]
     };
