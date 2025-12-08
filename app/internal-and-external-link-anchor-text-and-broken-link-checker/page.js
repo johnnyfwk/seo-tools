@@ -20,30 +20,14 @@ const scrapeOptions = {
     links: true,
 }
 
-export const metadata = {
-    title: page.titleTag,
-    description: page.metaDescription,
-    robots: {
-        index: page.robots.index,
-        follow: page.robots.follow,
-    },
-    alternates: {
-        canonical: page.canonicalUrl,
-    },
-    openGraph: {
-        title: page.titleTag,
-        description: page.metaDescription,
-        url: page.canonicalUrl,
-        siteName,
-        locale: openGraphLocale,
-        type: openGraphType,
-        images: [
-            {
-                url: `${siteUrl}${openGraphImage}`
-            }
-        ],
-    },
-};
+export const metadata = utils.createMetadata(
+    siteUrl,
+    siteName,
+    page,
+    openGraphLocale,
+    openGraphType,
+    openGraphImage,
+);
 
 export default function InternalAndExternalLinkAnchorTextAndBrokenLinkChecker() {
     const structuredData = utils.generateMetadataForToolPages(siteUrl, siteName, page)
