@@ -1,5 +1,12 @@
 import ClientInternalAndBacklinkChecker from "../clientPages/clientInternalAndBacklinkChecker";
-import { siteUrl, siteName, pages } from "@/data/pages";
+import {
+    siteUrl,
+    siteName,
+    pages,
+    openGraphLocale,
+    openGraphType,
+    openGraphImage
+} from "@/data/pages";
 import * as utils from '@/app/lib/utils/utils';
 
 const slug = utils.getSlugFromFile(import.meta.url);
@@ -17,6 +24,19 @@ export const metadata = {
     },
     alternates: {
         canonical: page.canonicalUrl,
+    },
+    openGraph: {
+        title: page.titleTag,
+        description: page.metaDescription,
+        url: page.canonicalUrl,
+        siteName,
+        locale: openGraphLocale,
+        type: openGraphType,
+        images: [
+            {
+                url: `${siteUrl}${openGraphImage}`
+            }
+        ],
     },
 };
 

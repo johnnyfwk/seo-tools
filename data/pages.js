@@ -2,6 +2,9 @@ export const siteUrl = "https://example.com/";
 export const siteName = "SEO Tools";
 export const defaultTitle = "Free SEO Tools to Analyse & Optimise Your Site";
 export const defaultMetaDescription = "Use our free SEO tools to analyse your site, find issues, and improve organic search performance.";
+export const openGraphLocale = "en_GB";
+export const openGraphType = "website";
+export const openGraphImage = "images/frogs.jpg";
 
 /*****************************************************
     {
@@ -77,7 +80,7 @@ export const pages = [
             follow: true,
         },
         h1: "Free Title Tag & Meta Description Length Checker",
-        metaDescription: "Check if a page has a title tag and meta description, and view their lengths.",
+        metaDescription: "Check a page’s title tag and meta description and view their character lengths.",
     },
     {
         slug: "h1-tag-and-heading-structure-checker",
@@ -104,7 +107,7 @@ export const pages = [
             follow: true,
         },
         h1: "Free Structured Data Checker",
-        metaDescription: "Check a page for structured data to detect and fix errors, validate schema, and boost indexing and rich snippet performance.",
+        metaDescription: "Check a page’s structured data and detect errors to see if it’s eligible for indexing and rich snippets.",
     },
     {
         slug: "open-graph-checker",
@@ -113,7 +116,7 @@ export const pages = [
             follow: true,
         },
         h1: "Free Open Graph Checker",
-        metaDescription: "Check a page for Open Graph metadata, including title, description, images, videos, and site info while validating URLs and auditing SEO signals.",
+        metaDescription: "Check a page for Open Graph tags and see its titles, descriptions, images, locale, and more.",
     },
     {
         slug: "hreflang-checker",
@@ -122,7 +125,7 @@ export const pages = [
             follow: true,
         },
         h1: "Free Hreflang Checker",
-        metaDescription: "Check a page’s hreflang links, validate URLs, track redirects, and audit SEO signals like robots.txt, meta robots, and canonical tags.",
+        metaDescription: "View a page’s hreflang tags and see the linked URLs and target languages.",
     },
     {
         slug: "pagination-checker",
@@ -131,7 +134,7 @@ export const pages = [
             follow: true,
         },
         h1: "Free Pagination Checker",
-        metaDescription: "Check pagination links, resolve redirects, and validate canonical tags to ensure clean, crawlable, and indexable pagination.",
+        metaDescription: "Check pagination links on a page and see their URLs and canonical information.",
     },
     {
         slug: "internal-and-external-link-anchor-text-and-broken-link-checker",
@@ -149,7 +152,7 @@ export const pages = [
             follow: true,
         },
         h1: "Free Internal & Backlink Checker",
-        metaDescription: "Check the anchor texts and status codes of a page's internal and external links.",
+        metaDescription: "Check if a link exists from any page, internal or external, to a page on your site using our backlink and link checker tool.",
     },
     {
         slug: "about",

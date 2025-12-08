@@ -1,4 +1,11 @@
-import { siteUrl, siteName, pages } from "@/data/pages";
+import {
+    siteUrl,
+    siteName,
+    pages,
+    openGraphLocale,
+    openGraphType,
+    openGraphImage
+} from "@/data/pages";
 import * as utils from '@/app/lib/utils/utils';
 
 const slug = utils.getSlugFromFile(import.meta.url);
@@ -17,6 +24,19 @@ export const metadata = {
     },
     title: page.titleTag,
     description: page.metaDescription,
+    openGraph: {
+        title: page.titleTag,
+        description: page.metaDescription,
+        url: page.canonicalUrl,
+        siteName,
+        locale: openGraphLocale,
+        type: openGraphType,
+        images: [
+            {
+                url: `${siteUrl}${openGraphImage}`
+            }
+        ],
+    },
 }
 
 export default function About() {
