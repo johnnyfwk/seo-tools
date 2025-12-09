@@ -147,3 +147,9 @@ table {
     border-collapse: collapse;
 }
 
+#cookie-consent-banner {
+    background-color: orange;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}

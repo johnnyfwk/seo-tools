@@ -1,9 +1,10 @@
 import "./globals.css";
+import { siteUrl, siteName, defaultTitle, defaultMetaDescription } from "@/data/pages";
 import Link from "next/link";
 import Nav from "./components/nav";
 import Footer from "./components/footer";
 import BackToTopButton from "./components/backToTopButton";
-import { siteUrl, siteName, defaultTitle, defaultMetaDescription } from "@/data/pages";
+import CookieConsent from "./components/cookieConsent";
 
 export const metadata = {
   robots: {
@@ -35,6 +36,8 @@ export default function RootLayout({ children }) {
         </main>
 
         <Footer />
+
+        <CookieConsent />
 
         <BackToTopButton />
       </body>
