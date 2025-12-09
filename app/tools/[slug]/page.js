@@ -1,4 +1,4 @@
-import ClientSeoOnPageCheckerWrapper from "@/app/clientPages/ClientSeoOnPageCheckerWrapper";
+import ClientSeoOnPageCheckerWrapper from '@/app/clientPages/clientSeoOnPageCheckerWrapper';
 import * as utils from '@/app/lib/utils/utils';
 import { tools } from "@/data/tools";
 import {
