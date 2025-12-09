@@ -1,7 +1,7 @@
 import "./globals.css";
 import { siteUrl, siteName, defaultTitle, defaultMetaDescription } from "@/data/pages";
 import Link from "next/link";
-import Nav from "./components/nav";
+import NavAndNavButton from "./components/navAndNavButton";
 import Footer from "./components/footer";
 import BackToTopButton from "./components/backToTopButton";
 import CookieConsent from "./components/cookieConsent";
@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
       <body>
         <header>
           <Link href="/" id="logo">{siteName}</Link>
-          <Nav />
+          <NavAndNavButton />
         </header>
 
         <main>
