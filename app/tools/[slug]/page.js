@@ -1,4 +1,4 @@
-import ClientSeoOnPageChecker from "@/app/clientPages/clientSeoOnPageChecker";
+import ClientSeoOnPageCheckerWrapper from "@/app/clientPages/ClientSeoOnPageCheckerWrapper";
 import * as utils from '@/app/lib/utils/utils';
 import { tools } from "@/data/tools";
 import {
@@ -58,7 +58,7 @@ export default async function Tool({ params }) {
 
     return (
         <>
-            <ClientSeoOnPageChecker
+            <ClientSeoOnPageCheckerWrapper
                 h1={tool.h1}
                 metaDescription={tool.metaDescription}
                 scrapeOptions={tool.scrapeOptions}
