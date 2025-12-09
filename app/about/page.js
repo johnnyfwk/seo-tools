@@ -1,14 +1,14 @@
+import * as utils from '@/app/lib/utils/utils';
+import { pages } from '@/data/pages';
 import {
     siteUrl,
     siteName,
-    pages,
     openGraphLocale,
     openGraphType,
     openGraphImage
-} from "@/data/pages";
-import * as utils from '@/app/lib/utils/utils';
+} from "@/data/site";
 
-const slug = utils.getSlugFromFile(import.meta.url);
+const slug = "about";
 
 const page = pages.find((p) => p.slug === slug);
 

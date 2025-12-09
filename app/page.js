@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { tools } from "@/data/tools";
 import {
     siteUrl,
     siteName,
@@ -6,8 +7,8 @@ import {
     defaultMetaDescription,
     openGraphLocale,
     openGraphType,
-    openGraphImage
-} from "@/data/pages";
+    openGraphImage,
+} from "@/data/site";
 
 export const metadata = {
     robots: {
@@ -64,9 +65,18 @@ export default function Home() {
 
             <p>{defaultMetaDescription}</p>
 
-            <h2>
-                <Link href="/seo-on-page-checker">SEO On-Page Checker</Link>
-            </h2>
+            {tools.length > 0
+                ? <ul>
+                    {tools.map((tool, i) => {
+                        return (
+                            <li key={i}>
+                                <Link href={`/tools/${tool.slug}`}>{tool.h1}</Link>
+                            </li>
+                        )
+                    })}
+                </ul>
+                : <p>No tools available.</p>
+            }
 
             <script
                 type="application/ld+json"

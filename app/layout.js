@@ -1,16 +1,20 @@
 import "./globals.css";
-import { siteUrl, siteName, defaultTitle, defaultMetaDescription } from "@/data/pages";
 import Link from "next/link";
 import NavAndNavButton from "./components/navAndNavButton";
 import Footer from "./components/footer";
 import BackToTopButton from "./components/backToTopButton";
 import CookieConsent from "./components/cookieConsent";
+import {
+  siteUrl,
+  siteName,
+  defaultTitle,
+  defaultMetaDescription,
+  openGraphLocale,
+  openGraphType,
+  openGraphImage,
+} from "@/data/site";
 
 export const metadata = {
-  robots: {
-    index: true,
-    follow: true,
-  },
   robots: {
     index: true,
     follow: true,
@@ -20,6 +24,20 @@ export const metadata = {
   },
   title: `${defaultTitle} | ${siteName}`,
   description: defaultMetaDescription,
+  openGraph: {
+    title: defaultTitle,
+    description: defaultMetaDescription,
+    url: siteUrl,
+    siteName,
+    locale: openGraphLocale,
+    type: openGraphType,
+    images: [
+      {
+        // url: `${siteUrl}${openGraphImage}`
+        url: "https://cdn.pixabay.com/photo/2015/08/09/14/26/frog-881654_1280.jpg"
+      }
+    ],
+  },
 };
 
 export default function RootLayout({ children }) {

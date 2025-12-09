@@ -105,6 +105,10 @@ nav {
     justify-items: start;
 }
 
+.nav-section-heading {
+    font-weight: bold;
+}
+
 #nav-button {
     background-color: greenyellow;
     cursor: pointer;
