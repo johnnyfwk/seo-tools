@@ -384,16 +384,6 @@ export function formatScrapeDuration(ms) {
     return seconds > 0 ? `${seconds}s ${milliseconds}ms` : `${milliseconds}ms`;
 }
 
-export function getSlugFromFile(importMetaUrl) {
-    const path = new URL(importMetaUrl).pathname;
-
-    return (
-        path
-            .split("/app/")[1]
-            .replace("/page.js", "")
-    );
-}
-
 export function createMetadata(
     siteUrl,
     siteName,
@@ -428,13 +418,13 @@ export function createMetadata(
     }
 }
 
-export function generateMetadataForToolPages(siteUrl, siteName, page) {
+export function generateStructuredDataForToolPages(siteUrl, siteName, tool) {
     const softwareApplicationSchema = {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
-        "url": page.canonicalUrl,
-        "name": page.h1,
-        "description": page.metaDescription,
+        "url": tool.canonicalUrl,
+        "name": tool.h1,
+        "description": tool.metaDescription,
         "applicationCategory": "SEOAnalysisTool",
         "operatingSystem": "Web",
         "creator": {
@@ -443,7 +433,7 @@ export function generateMetadataForToolPages(siteUrl, siteName, page) {
         },
         "offers": {
             "@type": "Offer",
-            "url": page.canonicalUrl,
+            "url": tool.canonicalUrl,
             "price": "0",
             "priceCurrency": "GBP",
             "availability": "https://schema.org/InStock"
@@ -453,9 +443,9 @@ export function generateMetadataForToolPages(siteUrl, siteName, page) {
     const webPageSchema = {
         "@context": "https://schema.org",
         "@type": "WebPage",
-        "url": page.canonicalUrl,
-        "name": page.h1,
-        "description": page.metaDescription,
+        "url": tool.canonicalUrl,
+        "name": tool.h1,
+        "description": tool.metaDescription,
         "isPartOf": {
             "@type": "WebSite",
             "name": siteName,
@@ -466,7 +456,7 @@ export function generateMetadataForToolPages(siteUrl, siteName, page) {
             "name": siteName,
             "url": siteUrl,
         },
-        "mainEntityOfPage": page.canonicalUrl,
+        "mainEntityOfPage": tool.canonicalUrl,
         "breadcrumb": {
             "@id": "#breadcrumb"
         }
@@ -486,30 +476,15 @@ export function generateMetadataForToolPages(siteUrl, siteName, page) {
             {
                 "@type": "ListItem",
                 "position": 2,
-                "name": page.h1,
-                "item": page.canonicalUrl
+                "name": tool.h1,
+                "item": tool.canonicalUrl
             },
         ]
     };
 
-    const structuredDataArray = [
+    return [
         softwareApplicationSchema,
         webPageSchema,
         breadcrumbSchema
     ];
-
-    return {
-        robots: {
-            index: page.robots.index,
-            follow: page.robots.follow,
-        },
-        alternates: {
-            canonical: page.canonicalUrl,
-        },
-        title: page.titleTag,
-        description: page.metaDescription,
-        structuredData: {
-            "application/ld+json": JSON.stringify(structuredDataArray),
-        }
-    }
 }

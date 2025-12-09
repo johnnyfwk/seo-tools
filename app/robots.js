@@ -1,3 +1,5 @@
+import { siteUrl } from "@/data/site"
+
 export default function robots() {
     return {
         rules: [
@@ -6,6 +8,6 @@ export default function robots() {
                 allow: '/'
             }
         ],
-        sitemap: 'https://example.com/sitemap.xml'
+        sitemap: `${siteUrl}sitemap.xml`,
     }
 }

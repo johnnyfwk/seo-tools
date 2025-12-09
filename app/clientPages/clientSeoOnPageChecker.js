@@ -419,7 +419,7 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
     return (
         <>
             <section>
-                <h1>{h1}</h1>
+                <h1>Free {h1}</h1>
 
                 <p>{metaDescription}</p>
 
