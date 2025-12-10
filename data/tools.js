@@ -24,6 +24,59 @@ export const tools = [
         metaDescription: "Check a webpage for SEO issues including title tags, meta descriptions, headings, links, structured data, and more with our on-page SEO analysis tool.",
         scrapeOptions: { all: true },
     },
+        {
+        slug: "title-tag-and-meta-description-checker",
+        robots: {
+            index: true,
+            follow: true,
+        },
+        h1: "Title Tag & Meta Description Length Checker",
+        metaDescription: "Check a page’s title tag and meta description and view their character lengths.",
+        scrapeOptions: {
+            all: false,
+            titleTags: true,
+            metaDescriptions: true,
+        },
+    },
+        {
+        slug: "h1-tag-and-heading-structure-checker",
+        robots: {
+            index: true,
+            follow: true,
+        },
+        h1: "H1 Tag & Heading Structure Checker",
+        metaDescription: "Check a page's H1 tag and overall heading structure.",
+        scrapeOptions: {
+            all: false,
+            headings: true,
+        },
+    },
+    {
+        slug: "image-alt-text-checker",
+        robots: {
+            index: true,
+            follow: true,
+        },
+        h1: "Image Alt Text Checker",
+        metaDescription: "Check a page’s image alt texts, HTTP status codes, and broken links.",
+        scrapeOptions: {
+            all: false,
+            images: true,
+        },
+    },
+    {
+        slug: "internal-and-external-link-anchor-text-and-broken-link-checker",
+        robots: {
+            index: true,
+            follow: true,
+        },
+        h1: "Internal & External Link, Anchor Text & Broken Link Checker",
+        metaDescription: "Check a page’s internal, external, and broken links, and view their anchor texts, URLs, HTTP status codes, nofollow attributes, and more.",
+        scrapeOptions: {
+            all: false,
+            links: true,
+        },
+    },
     {
         slug: "robots-txt-checker",
         robots: {
@@ -77,59 +130,6 @@ export const tools = [
         },
     },
     {
-        slug: "viewport-meta-tag-checker",
-        robots: {
-            index: true,
-            follow: true,
-        },
-        h1: "Viewport Meta Tag Checker",
-        metaDescription: "Check a page’s viewport meta tag to see how it controls mobile responsiveness and scaling.",
-        scrapeOptions: {
-            all: false,
-            viewport: true,
-        },
-    },
-    {
-        slug: "title-tag-and-meta-description-checker",
-        robots: {
-            index: true,
-            follow: true,
-        },
-        h1: "Title Tag & Meta Description Length Checker",
-        metaDescription: "Check a page’s title tag and meta description and view their character lengths.",
-        scrapeOptions: {
-            all: false,
-            titleTags: true,
-            metaDescriptions: true,
-        },
-    },
-    {
-        slug: "h1-tag-and-heading-structure-checker",
-        robots: {
-            index: true,
-            follow: true,
-        },
-        h1: "H1 Tag & Heading Structure Checker",
-        metaDescription: "Check a page's H1 tag and overall heading structure.",
-        scrapeOptions: {
-            all: false,
-            headings: true,
-        },
-    },
-    {
-        slug: "image-alt-text-checker",
-        robots: {
-            index: true,
-            follow: true,
-        },
-        h1: "Image Alt Text Checker",
-        metaDescription: "Check a page’s image alt texts, HTTP status codes, and broken links.",
-        scrapeOptions: {
-            all: false,
-            images: true,
-        },
-    },
-    {
         slug: "structured-data-checker",
         robots: {
             index: true,
@@ -169,6 +169,19 @@ export const tools = [
         },
     },
     {
+        slug: "viewport-meta-tag-checker",
+        robots: {
+            index: true,
+            follow: true,
+        },
+        h1: "Viewport Meta Tag Checker",
+        metaDescription: "Check a page’s viewport meta tag to see how it controls mobile responsiveness and scaling.",
+        scrapeOptions: {
+            all: false,
+            viewport: true,
+        },
+    },
+    {
         slug: "pagination-checker",
         robots: {
             index: true,
@@ -181,29 +194,6 @@ export const tools = [
             pagination: true,
         },
     },
-    {
-        slug: "internal-and-external-link-anchor-text-and-broken-link-checker",
-        robots: {
-            index: true,
-            follow: true,
-        },
-        h1: "Internal & External Link, Anchor Text & Broken Link Checker",
-        metaDescription: "Check a page’s internal, external, and broken links, and view their anchor texts, URLs, HTTP status codes, nofollow attributes, and more.",
-        scrapeOptions: {
-            all: false,
-            links: true,
-        },
-    },
-    // {
-    //     slug: "internal-and-backlink-checker",
-    //     robots: {
-    //         index: false,
-    //         follow: true,
-    //     },
-    //     h1: "Free Internal & Backlink Checker",
-    //     metaDescription: "Check if a link exists from any page, internal or external, to a page on your site using our backlink and link checker tool.",
-    //     scrapeOptions: null,
-    // },
 ].map((tool) => {
     return (
         {
