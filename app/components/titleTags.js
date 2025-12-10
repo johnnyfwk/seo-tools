@@ -5,22 +5,36 @@ export default function TitleTags({ titleTags }) {
         return <p>No title tag found.</p>
     }
 
+    const issues = [];
+
     const recommendedMaxLength = 60;
 
     const numberOfTitleTagsExceedingRecommendedMaxLength = titleTags.filter((titleTag) => {
         return titleTag.length > recommendedMaxLength;
     });
 
+    if (titleTags.length > 1) {
+        issues.push(`Multiple (${titleTags.length}) title tags found.`);
+    }
+
+    if (numberOfTitleTagsExceedingRecommendedMaxLength.length === 1) {
+        issues.push(`1 title tag exceeds the recommended length of ${recommendedMaxLength} characters.`);
+    } else if (numberOfTitleTagsExceedingRecommendedMaxLength.length > 1) {
+        issues.push(`${numberOfTitleTagsExceedingRecommendedMaxLength.length} title tags exceed the recommended length of ${recommendedMaxLength} characters.`);
+    }
+
     return (
         <>
-            {numberOfTitleTagsExceedingRecommendedMaxLength.length === 0
-                ? <p>✅ The page has no title tags exceeding the recommended length of {recommendedMaxLength} characters.</p>
-                : <p>⚠️ The page has {numberOfTitleTagsExceedingRecommendedMaxLength.length} title tag(s) that exceeds the recommended length of {recommendedMaxLength} characters.</p>
-            }
-
-            {titleTags.length > 1
-                ? <p>⚠️ Multiple title tags found.</p>
-                : null
+            {issues.length > 0
+                ? <div>
+                    <p>⚠️ Issues found:</p>
+                    <ul>
+                        {issues.map((issue, i) => {
+                            return <li key={i}>{issue}</li>
+                        })}
+                    </ul>
+                </div>
+                : <p>✅ No issues found.</p>
             }
 
             <table>
