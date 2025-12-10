@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ToolCard from "./components/toolCard";
 import { tools } from "@/data/tools";
 import {
     siteUrl,
@@ -66,15 +67,17 @@ export default function Home() {
             <p>{defaultMetaDescription}</p>
 
             {tools.length > 0
-                ? <ul>
+                ? <div className="tool-card-container">
                     {tools.map((tool, i) => {
                         return (
-                            <li key={i}>
-                                <Link href={`/tools/${tool.slug}`}>{tool.h1}</Link>
-                            </li>
+                            <ToolCard key={i} tool={tool}>
+                                <h2>
+                                    <Link href={tool.slug}>{tool.h1}</Link>
+                                </h2>
+                            </ToolCard>
                         )
                     })}
-                </ul>
+                </div>
                 : <p>No tools available.</p>
             }
 

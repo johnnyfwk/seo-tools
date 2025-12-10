@@ -178,3 +178,15 @@ table {
     bottom: 0;
     width: 100%;
 }
+
+/***************************** TOOL CARDS ********************************/
+.tool-card-container {
+    background-color: var(--light-pink);
+    display: grid;
+    gap: 10px;
+}
+
+.tool-card {
+    background-color: var(--light-blue);
+}
+/***************************** TOOL CARDS ********************************/
