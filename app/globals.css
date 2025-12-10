@@ -24,60 +24,30 @@
     box-sizing: border-box;
 }
 
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
-    white-space: nowrap;
+@font-face {
+    font-family: 'Zolando Sans';
+    src: url('/fonts/ZalandoSans-VariableFont_wdth,wght.ttf');
 }
 
-img {
-    max-width: 100%;
+@font-face {
+    font-family: 'Nunito Sans';
+    src: url('/fonts/NunitoSans-VariableFont_YTLC,opsz,wdth,wght.ttf');
 }
 
-.error-text {
-    color: var(--error);
+@font-face {
+    font-family: 'Google Sans Flex';
+    src: url('/fonts/GoogleSansFlex-VariableFont_GRAD,ROND,opsz,slnt,wdth,wght.ttf');
 }
 
-.error-background {
-    background-color: var(--error);
-    color: var(--white);
-}
-
-.warning-text {
-    color: var(--warning);
-}
-
-.warning-background {
-    background-color: var(--warning);
-}
-
-.success-background {
-    background-color: var(--success);
-    color: var(--black);
-}
-
-.success-text {
-    color: var(--success);
-}
-
-.neutral-background {
-    background-color: var(--neutral);
-    color: var(--white);
-}
-
-.neutral-text {
-    color: var(--neutral);
+@font-face {
+    font-family: 'Michroma';
+    src: url('/fonts/Michroma-Regular.ttf');
 }
 
 body {
     background-color: var(--primary-background-colour);
     color: var(--primary-text-color);
+    font-family: 'Nunito Sans', sans-serif;
 }
 
 header {
@@ -85,6 +55,7 @@ header {
 }
 
 #logo {
+    font-family: 'Michroma', sans-serif;
     font-size: 1.3rem;
 }
 
@@ -166,6 +137,57 @@ td a {
 
 footer {
     background-color: var(--light-grey);
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+    white-space: nowrap;
+}
+
+img {
+    max-width: 100%;
+}
+
+.error-text {
+    color: var(--error);
+}
+
+.error-background {
+    background-color: var(--error);
+    color: var(--white);
+}
+
+.warning-text {
+    color: var(--warning);
+}
+
+.warning-background {
+    background-color: var(--warning);
+}
+
+.success-background {
+    background-color: var(--success);
+    color: var(--black);
+}
+
+.success-text {
+    color: var(--success);
+}
+
+.neutral-background {
+    background-color: var(--neutral);
+    color: var(--white);
+}
+
+.neutral-text {
+    color: var(--neutral);
 }
 
 table {
