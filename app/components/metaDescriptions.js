@@ -5,22 +5,36 @@ export default function MetaDescriptions({ metaDescriptions }) {
         return <p>No meta description found.</p>
     }
 
+    const issues = [];
+
     const recommendedMaxLength = 160;
 
     const numberOfMetaDescriptionsExceedingRecommendedMaxLength = metaDescriptions.filter((metaDesc) => {
         return metaDesc.length > recommendedMaxLength;
     });
 
+    if (metaDescriptions.length > 1) {
+        issues.push(`Multiple (${metaDescriptions.length}) meta descriptions found.`);
+    }
+
+    if (numberOfMetaDescriptionsExceedingRecommendedMaxLength.length === 1) {
+        issues.push(`1 meta description exceeds the recommended length of ${recommendedMaxLength} characters.`);
+    } else if (numberOfMetaDescriptionsExceedingRecommendedMaxLength.length > 1) {
+        issues.push(`${numberOfMetaDescriptionsExceedingRecommendedMaxLength.length} meta descriptions exceed the recommended length of ${recommendedMaxLength} characters.`);
+    }
+
     return (
         <>
-            {numberOfMetaDescriptionsExceedingRecommendedMaxLength.length === 0
-                ? <p>✅ The page has no meta descriptions exceeding the recommended length of {recommendedMaxLength} characters.</p>
-                : <p>⚠️ The page has {numberOfMetaDescriptionsExceedingRecommendedMaxLength.length} meta description(s) that exceeds the recommended length of {recommendedMaxLength} characters.</p>
-            }
-
-            {metaDescriptions.length > 1
-                ? <p>⚠️ Multiple meta description tags found.</p>
-                : null
+            {issues.length > 0
+                ? <div>
+                    <p>⚠️ Issues found:</p>
+                    <ul>
+                        {issues.map((issue, i) => {
+                            return <li key={i}>{issue}</li>
+                        })}
+                    </ul>
+                </div>
+                : <p>✅ No issues found.</p>
             }
             
             <table>
