@@ -1,4 +1,4 @@
-import { siteUrl } from "@/data/site"
+import { siteUrl } from "@/data/site";
 
 export default function robots() {
     return {
