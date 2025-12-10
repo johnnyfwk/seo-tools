@@ -19,12 +19,19 @@ export default function Hreflang({ hreflang, contentType, xRobotsNoindex }) {
                     <th style={{ textAlign: 'center' }}>Final URL Status Code</th>
                     <th style={{ textAlign: 'center' }}>Blocked by robots.txt?</th>
                     <th style={{ textAlign: 'center' }}>Meta robots tag allows indexing?</th>
-                    <th style={{ textAlign: 'center' }}>Canonical URL matches URL?</th>
+                    <th style={{ textAlign: 'center' }}>Canonical URL matches hreflang URL?</th>
                     <th style={{ textAlign: 'center' }}>Indexable?</th>
                 </tr>
             </thead>
             <tbody>
                 {hreflang.map((hreflang, index) => {
+                    console.log("hreflang.finalUrlStatusCode:", hreflang.finalUrlStatusCode);
+                    console.log("hreflang.robotsTxt?.blocked:", hreflang.robotsTxt?.blocked);
+                    console.log("hreflang.canonicalTags?.tags[0]?.resolvedCanonicalUrlMatchesOriginalUrl:", hreflang.canonicalTags?.tags[0]?.resolvedCanonicalUrlMatchesOriginalUrl);
+                    console.log("!hreflang.metaRobotsAndXRobotsTag?.allDirectives?.includes('noindex'):", !hreflang.metaRobotsAndXRobotsTag?.allDirectives?.includes("noindex"));
+                    console.log("contentType:", contentType);
+                    console.log("xRobotsNoindex:", xRobotsNoindex);
+
                     const indexability = utils.evaluateIndexability({
                         statusCode: hreflang.finalUrlStatusCode,
                         blockedByRobots: hreflang.robotsTxt?.blocked,
@@ -87,16 +94,16 @@ export default function Hreflang({ hreflang, contentType, xRobotsNoindex }) {
                             </td>
 
                             <td
-                                style={{ textAlign: 'center' }}
+                                style={{ textAlign: "center" }}
                                 className={utils.getFinalUrlStatusCodeTextAndClass(
                                     hreflang.initialUrlStatusCode,
                                     hreflang.finalUrlStatusCode
                                 ).class}
                             >
-                                {hreflang.initialUrlStatusCode >= 200 && hreflang.initialUrlStatusCode < 300
-                                    ? "-"
-                                    : hreflang.finalUrlStatusCode || "N/A"
-                                }
+                                {utils.getFinalUrlStatusCodeTextAndClass(
+                                    hreflang.initialUrlStatusCode,
+                                    hreflang.finalUrlStatusCode
+                                ).text}
                             </td>
 
                             <td
