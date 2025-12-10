@@ -1,4 +1,6 @@
 import ClientSeoOnPageChecker from '@/app/clientPages/clientSeoOnPageChecker';
+import ToolCard from '@/app/components/toolCard';
+import Link from 'next/link';
 import * as utils from '@/app/lib/utils/utils';
 import { tools } from "@/data/tools";
 import {
@@ -54,6 +56,8 @@ export default async function Tool({ params }) {
         throw new Error(`Page not found: /tools/${slug}`)
     };
 
+    const otherTools = tools.filter((tool) => tool.slug !== slug);
+
     const structuredDataArray = utils.generateStructuredDataForToolPages(siteUrl, siteName, tool);
 
     return (
@@ -63,6 +67,25 @@ export default async function Tool({ params }) {
                 metaDescription={tool.metaDescription}
                 scrapeOptions={tool.scrapeOptions}
             />
+
+            <section>
+                <h2>Other SEO Tools</h2>
+
+                {otherTools.length > 0
+                ? <div className="tool-card-container">
+                    {otherTools.map((otherTool, i) => {
+                        return (
+                            <ToolCard key={i} tool={otherTool}>
+                                <h2>
+                                    <Link href={`/tools/${otherTool.slug}`}>{otherTool.h1}</Link>
+                                </h2>
+                            </ToolCard>
+                        )
+                    })}
+                </div>
+                : <p>No other tools available.</p>
+            }
+            </section>
 
             <script
                 type="application/ld+json"

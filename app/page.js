@@ -72,7 +72,7 @@ export default function Home() {
                         return (
                             <ToolCard key={i} tool={tool}>
                                 <h2>
-                                    <Link href={tool.slug}>{tool.h1}</Link>
+                                    <Link href={`/tools/${tool.slug}`}>{tool.h1}</Link>
                                 </h2>
                             </ToolCard>
                         )
