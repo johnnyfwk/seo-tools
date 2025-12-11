@@ -7,34 +7,33 @@ export default function Viewport({ viewport }) {
     const missingRequired = requiredProps.filter(prop => !viewport.properties[prop]);
 
     return (
-        <>
-            <div>
-                <p>
-                    <strong>Content:</strong> <code>{viewport.content}</code>
-                </p>
-            </div>
+        <div>
+            {missingRequired.length === 0
+                ? <p>✅ Includes required properties: <strong><em>width</em></strong> and <strong><em>initial-scale</em></strong>.</p>
+                : <p>❌ Missing required viewport properties: {missingRequired.join(', ')}</p>
+            }
 
-            <div>
-                <p>
-                    <strong>Properties:</strong>
-                </p>
-                <ul>
-                    {Object.entries(viewport.properties).map(([key, value]) => (
-                        <li key={key}>
-                            <strong>{key}:</strong> {value}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-            
-            <div>
-                {missingRequired.length === 0
-                    ? <p>✅ Includes required properties: <em>width</em> and <em>initial-scale</em>.</p>
-                    : <p>
-                        ❌ Missing required viewport properties: {missingRequired.join(', ')}
-                    </p>
-                }
-            </div>
-        </>
+            <table>
+                <tbody>
+                    <tr style={{ textAlign: "left" }}>
+                        <th>Content</th>
+                        <td>{viewport.content || "N/A"}</td>
+                    </tr>
+
+                    <tr style={{ textAlign: "left" }}>
+                        <th>Properties</th>
+                        <td>
+                            <ul>
+                                {Object.entries(viewport.properties).map(([key, value]) => (
+                                    <li key={key}>
+                                        <strong>{key}:</strong> {value}
+                                    </li>
+                                ))}
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     )
 }
