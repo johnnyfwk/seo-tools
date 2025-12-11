@@ -3,7 +3,6 @@ import { ISO_REGIONS, ISO_LANGUAGES } from "../lib/utils/languageMaps";
 export default function HtmlLanguageAttribute({ htmlLanguageAttribute }) {
     const {
         attribute,
-        isValid,
         issues
     } = htmlLanguageAttribute;
 
@@ -19,45 +18,10 @@ export default function HtmlLanguageAttribute({ htmlLanguageAttribute }) {
     const regionName = regionCode ? ISO_REGIONS[regionCode.toUpperCase()] : null;
 
     return (
-        <>
-            <div>
-                <p>
-                    <strong>Raw value:</strong> <code>{attribute}</code>
-                </p>
-            </div>
-            
-            <div>
-                <p>
-                    <strong>Language:</strong>{" "}
-                    {languageCode.toUpperCase() || "-"}
-                    {languageName ? ` (${languageName})` : ""}
-                </p>
-            </div>
-
-            {regionCode
-                ? <div>
-                    <p>
-                        <strong>Region:</strong>{" "}
-                        {regionCode.toUpperCase()}
-                        {regionName ? ` (${regionName})` : ""}
-                    </p>
-                </div>
-                : null
-            }
-
-            {isValid === false
-                ? <div>
-                    <p className="error-text">
-                        Invalid language format. Expected ISO format like:
-                        <br />
-                        <code>en</code>, <code>en-gb</code>, <code>fr-fr</code>, <code>es</code>.
-                    </p>
-                </div> 
-                : null
-            }
-
+        <div>
             {issues.length > 0
                 ? <div>
+                    <p>Issues found:</p>
                     <ul className="error-text">
                         {issues.map((issue, i) => (
                             <li key={i}>{issue}</li>
@@ -66,6 +30,40 @@ export default function HtmlLanguageAttribute({ htmlLanguageAttribute }) {
                 </div>
                 : null
             }
-        </>
+
+            <table>
+                <tbody>
+                    <tr style={{ textAlign: "left" }}>
+                        <th>Raw Value</th>
+                        <td>{attribute || "N/A"}</td>
+                    </tr>
+
+                    <tr style={{ textAlign: "left" }}>
+                        <th>Language</th>
+                        <td>
+                            {languageCode.toUpperCase() || "-"}
+                            {languageName
+                                ? ` (${languageName})`
+                                : ""
+                            }
+                        </td>
+                    </tr>
+
+                    {regionCode
+                        ? <tr style={{ textAlign: "left" }}>
+                            <th>Region</th>
+                            <td>
+                                {regionCode.toUpperCase()}
+                                {regionName 
+                                    ? ` (${regionName})`
+                                    : ""
+                                }
+                            </td>
+                        </tr>
+                        : null
+                    }
+                </tbody>
+            </table>
+        </div>
     )
 }
