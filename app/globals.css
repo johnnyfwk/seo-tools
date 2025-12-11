@@ -112,10 +112,12 @@ h6 {
 
 ul {
     list-style: disc;
+    margin-left: 1rem;
 }
 
 ol {
     list-style: decimal;
+    margin-left: 1rem;
 }
 
 li {
