@@ -6,39 +6,38 @@ export default function MetaRobotsAndXRobotsTag({ metaRobotsAndXRobotsTag }) {
     const allDirectivesLower = String(metaRobotsAndXRobotsTag.allDirectives || "").toLowerCase();
 
     return (
-        <>
-            <p>
-                <strong>HTML Tag Content: </strong>
-                {metaRobotsAndXRobotsTag.metaRobotsTagContent
-                    ? <code>{metaRobotsAndXRobotsTag.metaRobotsTagContent}</code>
-                    : "N/A"
-                }
-                
-            </p>
+        <table>
+            <tbody>
+                <tr style={{ textAlign: "left" }}>
+                    <th>Meta Robots Tag Content</th>
+                    <td>{metaRobotsAndXRobotsTag.metaRobotsTagContent || "N/A"}</td>
+                </tr>
 
-            <p>
-                <strong>X-Robots-Tag Content: </strong>
-                {metaRobotsAndXRobotsTag.xRobotsTagContent
-                    ? <code>{metaRobotsAndXRobotsTag.xRobotsTagContent}</code>
-                    : "N/A"
-                }
-            </p>
+                <tr style={{ textAlign: "left" }}>
+                    <th>X-Robots Tag Content</th>
+                    <td>{metaRobotsAndXRobotsTag.xRobotsTagContent || "N/A"}</td>
+                </tr>
 
-            <p>
-                <strong>Allows indexing?: </strong>
-                {allDirectivesLower.includes('noindex')
-                    ? "❌ No ('noindex' found)"
-                    : "✅ Yes"
-                }
-            </p>
+                <tr style={{ textAlign: "left" }}>
+                    <th>Allows indexing?</th>
+                    <td>
+                        {allDirectivesLower.includes('noindex')
+                            ? "❌ No ('noindex' found)"
+                            : "✅ Yes"
+                        }
+                    </td>
+                </tr>
 
-            <p>
-                <strong>Allows crawling of linked pages and passing of link equity?: </strong>
-                {allDirectivesLower.includes('nofollow')
-                    ? "❌ No ('nofollow' found)"
-                    : "✅ Yes"
-                }
-            </p>
-        </>
+                <tr style={{ textAlign: "left" }}>
+                    <th>Allows crawling of linked pages and passing of link equity?</th>
+                    <td>
+                        {allDirectivesLower.includes('nofollow')
+                            ? "❌ No ('nofollow' found)"
+                            : "✅ Yes"
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     )
 }
