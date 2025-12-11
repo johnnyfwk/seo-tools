@@ -16,17 +16,17 @@ export default function ContentType({
     else if (isOther) resourceType = "Other File Type";
 
     return (
-        <>
-            <p><strong>Content-Type:</strong> {contentType || "Unknown"}</p>
-            <p><strong>Resource Type:</strong> {resourceType}</p>
-
-            {isOther
-                ? <p>
-                    Canonical tags and meta robots tags do not apply to this resource type.
-                </p>
-                : null
-            }
-        </>
-
+        <table>
+            <tbody>
+                <tr style={{ textAlign: "left" }}>
+                    <th>Content Type</th>
+                    <td>{contentType || "Unknown"}</td>
+                </tr>
+                <tr style={{ textAlign: "left" }}>
+                    <th>Resource Type</th>
+                    <td>{resourceType || "Unknown"}</td>
+                </tr>
+            </tbody>
+        </table>
     )
 }

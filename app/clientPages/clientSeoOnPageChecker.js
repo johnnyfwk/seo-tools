@@ -267,6 +267,10 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
             component: <Url url={pageData.enteredUrl} />,
         },
         {
+            title: "Indexability",
+            component: <Indexability indexability={pageData.indexability} />,
+        },
+        {
             title: "Content Type",
             component: <ContentType
                 contentType={pageData.resource?.contentType}
@@ -277,10 +281,6 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
                 isJs={pageData.resource?.isJs}
                 isOther={pageData.resource?.isOther}
             />
-        },
-        {
-            title: "Indexability",
-            component: <Indexability indexability={pageData.indexability} />,
         },
         {
             title: "Status Code",

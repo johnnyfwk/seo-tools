@@ -24,7 +24,7 @@ export default function TitleTags({ titleTags }) {
     }
 
     return (
-        <>
+        <div>
             {issues.length > 0
                 ? <div>
                     <p>⚠️ Issues found:</p>
@@ -68,6 +68,6 @@ export default function TitleTags({ titleTags }) {
                     })}
                 </tbody>
             </table>
-        </>
+        </div>
     )
 }
