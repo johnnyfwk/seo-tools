@@ -20,7 +20,6 @@ export default function XmlSitemaps({ xmlSitemaps }) {
     const non200UrlsinChecked = checked.filter((sitemap) => {
         return sitemap.statusCode !== 200;
     });
-    console.log("non200UrlsinChecked:", non200UrlsinChecked);
 
     if (non200UrlsinChecked.length > 0) {
         issues.push("Robots.txt file contains XML sitemap URLs that do not return a status code of 200.");

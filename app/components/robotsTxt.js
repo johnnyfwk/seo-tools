@@ -1,6 +1,6 @@
 export default function RobotsTxt({ robotsTxt }) {
     if (!robotsTxt.exists) {
-        return <p>No robots.txt found. Entered URL is allowed to be crawled by bots by default.</p>;
+        return <p>No robots.txt found. URL can be crawled by bots by default.</p>;
     }
 
     const {
@@ -10,62 +10,87 @@ export default function RobotsTxt({ robotsTxt }) {
         determiningRule,
     } = robotsTxt;
 
+    const issues = [];
+
+    const non200SitemapUrls = sitemaps.filter((sitemap) => {
+        return sitemap.statusCode !== 200;
+    });
+
+    if (non200SitemapUrls.length > 0) {
+        issues.push("Robots.txt file contains XML sitemap URLs that do not return a status code of 200.");
+    }
+
     return (
-        <table>
-            <tbody>
-                <tr style={{ textAlign: "left"}}>
-                    <th>URL</th>
-                    <td>
-                        {url
-                            ? <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
-                            : "N/A"
-                        }
-                    </td>
-                </tr>
+        <div>
+            {issues.length > 0
+                ? <div>
+                    <p>⚠️ Issue(s) found:</p>
+                    <ul>
+                        {issues.map((issue, i) => {
+                            return (
+                                <li key={i}>{issue}</li>
+                            )
+                        })}
+                    </ul>
+                </div>
+                : null
+            }
 
-                <tr style={{ textAlign: "left"}}>
-                    <th>Allows crawling of URL?</th>
-                    <td>
-                        {!blocked
-                            ? "✅ Yes"
-                            : "❌ No"
-                        }
-                    </td>
-                </tr>
-
-                {determiningRule
-                    ? <tr style={{ textAlign: "left"}}>
-                        <th>{blocked ? "Disallow" : "Allow"} rule</th>
-                        <td>{determiningRule.rule}</td>
+            <table>
+                <tbody>
+                    <tr style={{ textAlign: "left"}}>
+                        <th>URL</th>
+                        <td>
+                            {url
+                                ? <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
+                                : "N/A"
+                            }
+                        </td>
                     </tr>
-                    : null
-                }
 
-                <tr style={{ textAlign: "left"}}>
-                    <th>Sitemaps found ({sitemaps.length})</th>
-                    <td>
-                        {sitemaps.length > 0
-                            ? <div className="table-links">
-                                {sitemaps.map((sitemap, i) => {
-                                    return (
-                                        <div key={i}>
-                                            <a
-                                                href={sitemap.url}
-                                                target="_blank"
-                                                rel="noreferrer noopener"
-                                            >{sitemap.url}</a>
-                                            {" "}
-                                            ({sitemap.ok ? "✅" : "❌"} {sitemap.statusCode})
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                            
-                            : <p>No sitemaps found.</p>
-                        }
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                    <tr style={{ textAlign: "left"}}>
+                        <th>Allows crawling of URL/final URL?</th>
+                        <td>
+                            {!blocked
+                                ? "✅ Yes"
+                                : "❌ No"
+                            }
+                        </td>
+                    </tr>
+
+                    {determiningRule
+                        ? <tr style={{ textAlign: "left"}}>
+                            <th>{blocked ? "Disallow" : "Allow"} rule</th>
+                            <td>{determiningRule.rule}</td>
+                        </tr>
+                        : null
+                    }
+
+                    <tr style={{ textAlign: "left"}}>
+                        <th>Sitemaps found ({sitemaps.length})</th>
+                        <td>
+                            {sitemaps.length > 0
+                                ? <div className="table-links">
+                                    {sitemaps.map((sitemap, i) => {
+                                        return (
+                                            <div key={i}>
+                                                <a
+                                                    href={sitemap.url}
+                                                    target="_blank"
+                                                    rel="noreferrer noopener"
+                                                >{sitemap.url}</a>
+                                                {" "}
+                                                ({sitemap.statusCode === 200 ? "✅" : "❌"} {sitemap.statusCode})
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                                : <p>No sitemaps found.</p>
+                            }
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     )
 }
