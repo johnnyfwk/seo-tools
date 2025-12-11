@@ -24,7 +24,7 @@ export default function MetaDescriptions({ metaDescriptions }) {
     }
 
     return (
-        <>
+        <div>
             {issues.length > 0
                 ? <div>
                     <p>⚠️ Issues found:</p>
@@ -68,6 +68,6 @@ export default function MetaDescriptions({ metaDescriptions }) {
                     })}
                 </tbody>
             </table>
-        </>
+        </div>
     )
 }
