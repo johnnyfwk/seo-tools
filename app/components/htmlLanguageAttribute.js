@@ -21,14 +21,14 @@ export default function HtmlLanguageAttribute({ htmlLanguageAttribute }) {
         <div>
             {issues.length > 0
                 ? <div>
-                    <p>Issues found:</p>
-                    <ul className="error-text">
+                    <p>⚠️ Issues found:</p>
+                    <ul>
                         {issues.map((issue, i) => (
                             <li key={i}>{issue}</li>
                         ))}
                     </ul>
                 </div>
-                : null
+                : <p>✅ No issues found.</p>
             }
 
             <table>
