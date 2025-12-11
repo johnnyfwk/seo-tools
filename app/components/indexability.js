@@ -10,12 +10,15 @@ export default function Indexability({ indexability }) {
             : "⚠️ Indexability Unknown";
 
     return (
-        <>
+        <div>
             <p>{indexableIcon}</p>
 
             {reasons.length > 0 && (
                 <div>
-                    <strong>Reason(s):</strong>
+                    <p>
+                        <strong>Reason(s):</strong>
+                    </p>
+                    
                     <ul>
                         {reasons.map((reason, i) => (
                             <li key={i}>{reason}</li>
@@ -23,6 +26,6 @@ export default function Indexability({ indexability }) {
                     </ul>
                 </div>
             )}
-        </>
+        </div>
     );
 }
