@@ -167,14 +167,12 @@ export async function checkRobotsTxt(inputUrl, userAgent = "*") {
                 sitemapResults.push({
                     url: sitemapUrl,
                     statusCode: res.status,
-                    ok: res.ok
                 });
 
             } catch (err) {
                 sitemapResults.push({
                     url: sitemapUrl,
                     statusCode: null,
-                    ok: false,
                     error: err.message
                 });
             }
