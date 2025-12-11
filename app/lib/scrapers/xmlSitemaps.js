@@ -30,16 +30,18 @@ function queue(items, limit, worker) {
 
 export async function scrapeXmlSitemaps(targetUrl) {
     const robotsData = await checkRobotsTxt(targetUrl);
+
+    // Either robots.txt sitemaps or fallback to /sitemap.xml
     const sitemapRoots = robotsData.sitemaps.length
         ? robotsData.sitemaps.map(s => s.url)
         : [new URL("/sitemap.xml", targetUrl).href];
 
-    const foundSitemaps = [];       // keep duplicates
-    const foundMatchIn = new Set(); // deduplicate matches
+    const foundSitemaps = [];       // duplicates preserved
+    const foundMatchIn = new Map(); // map sitemapURL -> sitemapObj (unique)
 
     const normalizeUrl = (u) => u.replace(/\/$/, "").toLowerCase();
 
-    async function fetchXml(url) {
+    async function fetchXmlWithStatus(url) {
         try {
             const res = await fetch(url, {
                 redirect: "follow",
@@ -49,9 +51,11 @@ export async function scrapeXmlSitemaps(targetUrl) {
                 }
             });
 
-            if (!res.ok) {
-                // console.warn(`❌ Non-OK HTTP response for ${url}: ${res.status}`);
-                return null;
+            const statusCode = res.status;
+
+            // Only 200 counts as success
+            if (statusCode !== 200) {
+                return { xml: null, statusCode };
             }
 
             const buf = Buffer.from(await res.arrayBuffer());
@@ -67,10 +71,13 @@ export async function scrapeXmlSitemaps(targetUrl) {
                 }
             }
 
-            return new DOMParser().parseFromString(xmlString, "application/xml");
+            return {
+                xml: new DOMParser().parseFromString(xmlString, "application/xml"),
+                statusCode
+            };
+
         } catch (err) {
-            console.warn(`❌ Error fetching sitemap ${url}:`, err.message);
-            return null;
+            return { xml: null, statusCode: null, error: err.message };
         }
     }
 
@@ -84,28 +91,38 @@ export async function scrapeXmlSitemaps(targetUrl) {
     }
 
     async function processSitemap(url) {
-        foundSitemaps.push(url); // keep duplicates for display
+        const result = await fetchXmlWithStatus(url);
 
-        const xmlDoc = await fetchXml(url);
-        if (!xmlDoc) return;
+        // Save every attempt (for display/logging)
+        const sitemapRecord = {
+            url,
+            statusCode: result.statusCode
+        };
+        foundSitemaps.push(sitemapRecord);
 
-        const locs = extractLocs(xmlDoc);
+        if (!result.xml) return;
+
+        const locs = extractLocs(result.xml);
         const normTarget = normalizeUrl(targetUrl);
 
         for (const loc of locs) {
             if (normalizeUrl(loc) === normTarget) {
-                foundMatchIn.add(url); // deduplicate matches
+                // save unique match
+                foundMatchIn.set(url, sitemapRecord);
             }
         }
     }
 
     await queue(sitemapRoots, 3, processSitemap);
 
+    // Only consider sitemaps with statusCode 200 as "real"
+    const successfulSitemaps = foundSitemaps.filter(s => s.statusCode === 200);
+
     return {
-        hasSitemap: foundSitemaps.length > 0,
+        hasSitemap: successfulSitemaps.length > 0,
         robotsTxtChecked: robotsData.url,
         sitemapsChecked: foundSitemaps,            // duplicates preserved
         urlFound: foundMatchIn.size > 0,
-        sitemapsContainingUrl: Array.from(foundMatchIn), // unique matches only
+        sitemapsContainingUrl: Array.from(foundMatchIn.values())
     };
 }

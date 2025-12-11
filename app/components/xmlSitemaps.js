@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function XmlSitemaps({ xmlSitemaps }) {
     if (!xmlSitemaps) {
-        return <p>N/A</p>;
+        return <p>XML sitemap data could be fetched.</p>;
     }
 
     if (xmlSitemaps.hasSitemap === null) {
@@ -13,54 +13,100 @@ export default function XmlSitemaps({ xmlSitemaps }) {
         return <p>No XML sitemaps found.</p>;
     }
 
+    const issues = [];
+
     const containing = xmlSitemaps.sitemapsContainingUrl || [];
     const checked = xmlSitemaps.sitemapsChecked || [];
-    
-    return (
-        <>
-            <div>
-                <p>
-                    <strong>Robots.txt URL:</strong>{" "}
-                    {xmlSitemaps.robotsTxtChecked
-                        ? <Link href={xmlSitemaps.robotsTxtChecked} target="_blank" rel="noopener noreferrer">
-                            {xmlSitemaps.robotsTxtChecked}
-                        </Link>
-                        : <span>N/A</span>
-                    }
-                </p>
-            </div>
-            
-            <div>
-                <strong>Sitemaps containing entered URL ({containing.length}):</strong>{" "}
-                {containing.length > 0
-                    ? <ul>
-                        {containing.map((sitemap, i) => (
-                            <li key={i}>
-                                <Link href={sitemap} target="_blank" rel="noopener noreferrer">
-                                    {sitemap}
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
-                    : <span>URL not found in any sitemap.</span>
-                }
-            </div>
+    const non200UrlsinChecked = checked.filter((sitemap) => {
+        return sitemap.statusCode !== 200;
+    });
+    console.log("non200UrlsinChecked:", non200UrlsinChecked);
 
-            <div>
-                <strong>Sitemaps checked ({checked.length}):</strong>{" "}
-                {checked.length > 0
-                    ? <ul>
-                        {checked.map((sitemap, i) => (
-                            <li key={i}>
-                                <Link href={sitemap} target="_blank" rel="noopener noreferrer">
-                                    {sitemap}
-                                </Link>
-                            </li>
-                        ))}
+    if (non200UrlsinChecked.length > 0) {
+        issues.push("Robots.txt file contains XML sitemap URLs that do not return a status code of 200.");
+    }
+
+    return (
+        <div>
+            {issues.length > 0
+                ? <div>
+                    <p>⚠️ Issue(s) found:</p>
+                    <ul>
+                        {issues.map((issue, i) => {
+                            return (
+                                <li key={i}>{issue}</li>
+                            )
+                        })}
                     </ul>
-                    : <span>No sitemaps found.</span>
-                }
-            </div>
-        </>
+                </div>
+                : null
+            }
+
+            <table>
+                <tbody>
+                    <tr style={{ textAlign: "left"}}>
+                        <th>Robots.txt URL</th>
+                        <td>
+                            {xmlSitemaps.robotsTxtChecked
+                                ? <Link href={xmlSitemaps.robotsTxtChecked} target="_blank" rel="noopener noreferrer">
+                                    {xmlSitemaps.robotsTxtChecked}
+                                </Link>
+                                : <span>No robots.txt file found</span>
+                            }
+                        </td>
+                    </tr>
+
+                    <tr style={{ textAlign: "left"}}>
+                        <th>Sitemaps containing URL/final URL ({containing.length})</th>
+                        <td>
+                            {!xmlSitemaps.hasSitemap
+                                ? "No sitemaps found"
+                                : containing.length > 0
+                                    ? <div className="table-links">
+                                        {containing.map((sitemap, i) => (
+                                            <a
+                                                key={i}
+                                                href={sitemap.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                {sitemap.url}
+                                            </a>
+                                        ))}
+                                    </div>
+                                    : <span>URL not found in any sitemap</span>
+                            }
+                        </td>
+                    </tr>
+
+                    <tr style={{ textAlign: "left"}}>
+                        <th>Sitemaps checked</th>
+                        <td>
+                            {!xmlSitemaps.hasSitemap
+                                ? "No sitemaps found"
+                                : checked.length > 0
+                                    ? <div className="table-links">
+                                        {checked.map((sitemap, i) => (
+                                            <div key={i}>
+                                                <a
+                                                    key={i}
+                                                    href={sitemap.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                >
+                                                    {sitemap.url}
+                                                </a>
+                                                {" "}
+                                                ({sitemap.statusCode === 200 ? "✅" : "❌"} {sitemap.statusCode})
+                                            </div>
+                                        ))}
+                                    </div>
+                                    : <span>Sitemaps could not be checked</span>
+                            }
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     )
 }
