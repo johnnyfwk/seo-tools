@@ -25,13 +25,6 @@ export default function Hreflang({ hreflang, contentType, xRobotsNoindex }) {
             </thead>
             <tbody>
                 {hreflang.map((hreflang, index) => {
-                    console.log("hreflang.finalUrlStatusCode:", hreflang.finalUrlStatusCode);
-                    console.log("hreflang.robotsTxt?.blocked:", hreflang.robotsTxt?.blocked);
-                    console.log("hreflang.canonicalTags?.tags[0]?.resolvedCanonicalUrlMatchesOriginalUrl:", hreflang.canonicalTags?.tags[0]?.resolvedCanonicalUrlMatchesOriginalUrl);
-                    console.log("!hreflang.metaRobotsAndXRobotsTag?.allDirectives?.includes('noindex'):", !hreflang.metaRobotsAndXRobotsTag?.allDirectives?.includes("noindex"));
-                    console.log("contentType:", contentType);
-                    console.log("xRobotsNoindex:", xRobotsNoindex);
-
                     const indexability = utils.evaluateIndexability({
                         statusCode: hreflang.finalUrlStatusCode,
                         blockedByRobots: hreflang.robotsTxt?.blocked,

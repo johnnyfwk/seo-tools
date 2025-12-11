@@ -112,12 +112,10 @@ h6 {
 
 ul {
     list-style: disc;
-    padding-left: 2rem;
 }
 
 ol {
     list-style: decimal;
-    padding-left: 2rem;
 }
 
 li {
@@ -131,8 +129,9 @@ td {
     padding: 5px;
 }
 
-td a {
-    word-break: break-all;
+.table-links {
+    display: grid;
+    justify-items: start;
 }
 
 footer {

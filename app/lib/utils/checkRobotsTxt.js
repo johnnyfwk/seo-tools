@@ -154,12 +154,38 @@ export async function checkRobotsTxt(inputUrl, userAgent = "*") {
             blockingRule = { type: 'Allow', rule: longestAllow };
         }
 
+        const sitemapResults = [];
+
+        for (const sitemapUrl of sitemaps) {
+            try {
+                const res = await fetch(sitemapUrl, {
+                    method: "HEAD",
+                    redirect: "follow",
+                    headers: { "User-Agent": "Mozilla/5.0" }
+                });
+
+                sitemapResults.push({
+                    url: sitemapUrl,
+                    statusCode: res.status,
+                    ok: res.ok
+                });
+
+            } catch (err) {
+                sitemapResults.push({
+                    url: sitemapUrl,
+                    statusCode: null,
+                    ok: false,
+                    error: err.message
+                });
+            }
+        }
+
         return {
             url: robotsTxtUrl,
             exists: true,
             blocked,
             determiningRule: blockingRule,
-            sitemaps,
+            sitemaps: sitemapResults,
         };
     } catch (err) {
         return {
@@ -172,3 +198,4 @@ export async function checkRobotsTxt(inputUrl, userAgent = "*") {
         };
     }
 }
+

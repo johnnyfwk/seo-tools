@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 export default function RobotsTxt({ robotsTxt }) {
     if (!robotsTxt.exists) {
         return <p>No robots.txt found. Entered URL is allowed to be crawled by bots by default.</p>;
@@ -13,58 +11,61 @@ export default function RobotsTxt({ robotsTxt }) {
     } = robotsTxt;
 
     return (
-        <>
-            <div>
-                <p>
-                    <strong>URL: </strong>
-                    {url
-                        ? <Link href={url} target="_blank" rel="noopener noreferrer">{url}</Link>
-                        : "N/A"
-                    }
-                </p>
-            </div>
-            
-            <div>
-                <p>
-                    <strong>Allows crawling of URL?: </strong>
-                    {!blocked
-                        ? "✅ Yes"
-                        : "❌ No"
-                    }
-                </p>
-            </div>
-            
-            {determiningRule
-                ? <div>
-                    <p>
-                        <strong>Determining {blocked ? "disallow" : "allow"} rule: </strong>
-                        <code>{determiningRule.rule}</code>
-                    </p>
-                </div>
-                : null
-            }
+        <table>
+            <tbody>
+                <tr style={{ textAlign: "left"}}>
+                    <th>URL</th>
+                    <td>
+                        {url
+                            ? <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
+                            : "N/A"
+                        }
+                    </td>
+                </tr>
 
-            <div>
-                <p>
-                    <strong>Sitemaps found ({sitemaps.length}):</strong>
-                </p>
-                {sitemaps.length > 0
-                    ? <ul>
-                        {sitemaps.map((sitemap, i) => {
-                            return (
-                                <li key={i}>
-                                    <Link
-                                        href={sitemap}
-                                        target="_blank"
-                                        rel="noreferrer noopener"
-                                    >{sitemap}</Link>
-                                </li>
-                            )
-                        })}
-                    </ul>
-                    : <p>No sitemaps found.</p>
+                <tr style={{ textAlign: "left"}}>
+                    <th>Allows crawling of URL?</th>
+                    <td>
+                        {!blocked
+                            ? "✅ Yes"
+                            : "❌ No"
+                        }
+                    </td>
+                </tr>
+
+                {determiningRule
+                    ? <tr style={{ textAlign: "left"}}>
+                        <th>{blocked ? "Disallow" : "Allow"} rule</th>
+                        <td>{determiningRule.rule}</td>
+                    </tr>
+                    : null
                 }
-            </div>
-        </>
+
+                <tr style={{ textAlign: "left"}}>
+                    <th>Sitemaps found ({sitemaps.length})</th>
+                    <td>
+                        {sitemaps.length > 0
+                            ? <div className="table-links">
+                                {sitemaps.map((sitemap, i) => {
+                                    return (
+                                        <div key={i}>
+                                            <a
+                                                href={sitemap.url}
+                                                target="_blank"
+                                                rel="noreferrer noopener"
+                                            >{sitemap.url}</a>
+                                            {" "}
+                                            ({sitemap.ok ? "✅" : "❌"} {sitemap.statusCode})
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                            
+                            : <p>No sitemaps found.</p>
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     )
 }

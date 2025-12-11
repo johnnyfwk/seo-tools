@@ -31,7 +31,7 @@ function queue(items, limit, worker) {
 export async function scrapeXmlSitemaps(targetUrl) {
     const robotsData = await checkRobotsTxt(targetUrl);
     const sitemapRoots = robotsData.sitemaps.length
-        ? robotsData.sitemaps
+        ? robotsData.sitemaps.map(s => s.url)
         : [new URL("/sitemap.xml", targetUrl).href];
 
     const foundSitemaps = [];       // keep duplicates
