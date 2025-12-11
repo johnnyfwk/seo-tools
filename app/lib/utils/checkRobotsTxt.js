@@ -159,7 +159,7 @@ export async function checkRobotsTxt(inputUrl, userAgent = "*") {
         for (const sitemapUrl of sitemaps) {
             try {
                 const res = await fetch(sitemapUrl, {
-                    method: "HEAD",
+                    method: "GET",
                     redirect: "follow",
                     headers: { "User-Agent": "Mozilla/5.0" }
                 });
