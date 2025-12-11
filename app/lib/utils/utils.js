@@ -251,7 +251,7 @@ export function evaluateIndexability({
     if (statusCode == null || contentType == null) {
         return {
             indexable: null,
-            reasons: ["Insufficient data (missing status code or content type)"]
+            reasons: ["Insufficient data to determine indexability"]
         };
     }
 
