@@ -28,7 +28,7 @@ export default function MetaDescriptions({ metaDescriptions }) {
             {issues.length > 0
                 ? <div>
                     <p>
-                        <strong>⚠️ Issues found:</strong>
+                        <strong>⚠️ Issue(s) found:</strong>
                     </p>
                     <ul>
                         {issues.map((issue, i) => {
