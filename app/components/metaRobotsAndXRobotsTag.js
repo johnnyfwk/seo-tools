@@ -5,39 +5,67 @@ export default function MetaRobotsAndXRobotsTag({ metaRobotsAndXRobotsTag }) {
 
     const allDirectivesLower = String(metaRobotsAndXRobotsTag.allDirectives || "").toLowerCase();
 
+    const issues = [];
+
+    if (allDirectivesLower.includes('noindex')) {
+        issues.push("Indexing not allowed");
+    }
+
+    if (allDirectivesLower.includes('nofollow')) {
+        issues.push("Crawling of linked pages and passing of link equity not allowed");
+    }
+
     return (
-        <table>
-            <tbody>
-                <tr style={{ textAlign: "left" }}>
-                    <th>Meta Robots Tag Content</th>
-                    <td>{metaRobotsAndXRobotsTag.metaRobotsTagContent || "N/A"}</td>
-                </tr>
+        <div>
+            {issues.length > 0
+                ? <div>
+                    <p>
+                        <strong>⚠️ Potential issue(s) found:</strong>
+                    </p>
+                    <ul>
+                        {issues.map((issue, i) => {
+                            return (
+                                <li key={i}>{issue}</li>
+                            )
+                        })}
+                    </ul>
+                </div>
+                : <p>✅ No issues found</p>
+            }
 
-                <tr style={{ textAlign: "left" }}>
-                    <th>X-Robots Tag Content</th>
-                    <td>{metaRobotsAndXRobotsTag.xRobotsTagContent || "N/A"}</td>
-                </tr>
+            <table>
+                <tbody>
+                    <tr style={{ textAlign: "left" }}>
+                        <th>Meta Robots Tag Content</th>
+                        <td>{metaRobotsAndXRobotsTag.metaRobotsTagContent || "N/A"}</td>
+                    </tr>
 
-                <tr style={{ textAlign: "left" }}>
-                    <th>Allows indexing?</th>
-                    <td>
-                        {allDirectivesLower.includes('noindex')
-                            ? "❌ No ('noindex' found)"
-                            : "✅ Yes"
-                        }
-                    </td>
-                </tr>
+                    <tr style={{ textAlign: "left" }}>
+                        <th>X-Robots Tag Content</th>
+                        <td>{metaRobotsAndXRobotsTag.xRobotsTagContent || "N/A"}</td>
+                    </tr>
 
-                <tr style={{ textAlign: "left" }}>
-                    <th>Allows crawling of linked pages and passing of link equity?</th>
-                    <td>
-                        {allDirectivesLower.includes('nofollow')
-                            ? "❌ No ('nofollow' found)"
-                            : "✅ Yes"
-                        }
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                    {/* <tr style={{ textAlign: "left" }}>
+                        <th>Allows indexing?</th>
+                        <td>
+                            {allDirectivesLower.includes('noindex')
+                                ? "❌ No ('noindex' found)"
+                                : "✅ Yes"
+                            }
+                        </td>
+                    </tr>
+
+                    <tr style={{ textAlign: "left" }}>
+                        <th>Allows crawling of linked pages and passing of link equity?</th>
+                        <td>
+                            {allDirectivesLower.includes('nofollow')
+                                ? "❌ No ('nofollow' found)"
+                                : "✅ Yes"
+                            }
+                        </td>
+                    </tr> */}
+                </tbody>
+            </table>
+        </div>
     )
 }

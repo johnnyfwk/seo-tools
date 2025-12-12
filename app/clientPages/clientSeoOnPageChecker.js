@@ -342,7 +342,7 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
             component: <MetaDescriptions metaDescriptions={pageData.scrapedData?.metaDescriptions} />,
         },
         headings: {
-            title: "Headings",
+            title: "H1 Tag & Heading Structure",
             component: <Headings headings={pageData.scrapedData?.headings} />,
         },
         internalLinks: {
@@ -448,7 +448,7 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
                     {pageData.robotsTxt.blocked && !scrapeEvenIfBlocked
                         ? <section>
                             <h2>Page Data</h2>
-                            <p>URL is blocked by robots.txt. Page data could not be fetched.</p>
+                            <p>Page data could not be fetched as the URL is blocked by robots.txt.</p>
                         </section>
                         : pageData.resource.isHtml
                             ? <RenderSections sections={contentSectionsToRender}/>

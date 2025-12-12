@@ -27,7 +27,9 @@ export default function TitleTags({ titleTags }) {
         <div>
             {issues.length > 0
                 ? <div>
-                    <p>⚠️ Issues found:</p>
+                    <p>
+                        <strong>⚠️ Issues found:</strong>
+                    </p>
                     <ul>
                         {issues.map((issue, i) => {
                             return <li key={i}>{issue}</li>

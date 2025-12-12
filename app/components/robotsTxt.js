@@ -24,7 +24,9 @@ export default function RobotsTxt({ robotsTxt }) {
         <div>
             {issues.length > 0
                 ? <div>
-                    <p>⚠️ Issue(s) found:</p>
+                    <p>
+                        <strong>⚠️ Issue(s) found:</strong>
+                    </p>
                     <ul>
                         {issues.map((issue, i) => {
                             return (

@@ -280,7 +280,7 @@ export function evaluateIndexability({
     if (isHtml) {
         if (metaRobotsAllowsIndexing === false) {
             indexable = false;
-            reasons.push("Meta robots tag has 'noindex' value");
+            reasons.push("Meta robots/x-robots tag has a 'noindex' value");
         }
 
         if (canonicalMatches === false) {
