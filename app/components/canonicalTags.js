@@ -1,34 +1,41 @@
 import Link from "next/link";
+import * as utils from '@/app/lib/utils/utils';
 
 export default function CanonicalTags({ canonicalTags }) {
-    const safe = {
-        tags: canonicalTags?.tags || [],
-        globalIssues: canonicalTags?.globalIssues || [],
-    };
+    const issues = [];
 
-    if (safe.tags.length === 0) return <p>No canonical tags found. URL is indexable by default.</p>;
+    if (canonicalTags.tags?.length === 0) {
+        issues.push("No canonical tag found. URL is indexable by default");
+    }
+
+    if (canonicalTags.tags?.length > 1) {
+        issues.push(`Multiple (${canonicalTags.tags?.length}) canonical tags found`);
+    }
+
+    if (canonicalTags.tags?.[0]?.resolvedCanonicalUrlStatusCode !== 200) {
+        issues.push("The status code of the canonical URL is not 200");
+    }
+
+    if (!canonicalTags.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl) {
+        issues.push("Cannonical URL does not match URL");
+    }
 
     return (
-        <>
-            {canonicalTags.globalIssues?.length > 0
+        <div>
+            {issues.length > 0
                 ? <div>
                     <p>
-                        <strong>Global canonical issues</strong>:
+                        <strong>⚠️ Potential issue(s) found:</strong>
                     </p>
                     <ul>
-                        {canonicalTags.globalIssues?.map((issue, i) => {
+                        {issues.map((issue, i) => {
                             return (
                                 <li key={i}>{issue}</li>
                             )
                         })}
                     </ul>
                 </div>
-                : null
-            }
-
-            {canonicalTags.tags?.length > 1
-                ? <p className="error-text">Multiple canonical tags found.</p>
-                : null
+                : <p>✅ No issues found.</p>
             }
 
             <table>
@@ -58,14 +65,7 @@ export default function CanonicalTags({ canonicalTags }) {
 
                                 <td
                                     style={{ textAlign: "center" }}
-                                    className={tag.resolvedCanonicalUrlStatusCode === 200
-                                        ? 'success-background'
-                                        : tag.resolvedCanonicalUrlStatusCode >= 300 && tag.resolvedCanonicalUrlStatusCode < 400
-                                            ? 'warning-background'
-                                            : tag.resolvedCanonicalUrlStatusCode >= 400
-                                                ? 'error-background'
-                                                : ''
-                                    }
+                                    className={utils.getInitialUrlStatusCodeClass(tag.resolvedCanonicalUrlStatusCode)}
                                 >
                                     {tag.resolvedCanonicalUrlStatusCode ?? "-"}
                                 </td>
@@ -83,7 +83,7 @@ export default function CanonicalTags({ canonicalTags }) {
                                         ? "Yes"
                                         : tag.resolvedCanonicalUrlMatchesOriginalUrl === false
                                             ? "No"
-                                            : "Unknown"
+                                            : "N/A"
                                     }
                                 </td>
                             </tr>
@@ -91,6 +91,6 @@ export default function CanonicalTags({ canonicalTags }) {
                     })}
                 </tbody>
             </table>
-        </>
+        </div>
     );
 }

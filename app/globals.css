@@ -120,11 +120,15 @@ ol {
     margin-left: 1rem;
 }
 
+li {
+    margin-left: 2rem;
+}
+
 table,
 th,
 td {
     border: 1px solid var(--black);
-    padding: 5px;
+    padding: 5px 10px;
 }
 
 .table-links {
