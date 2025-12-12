@@ -1,6 +1,7 @@
 import { DOMParser } from "@xmldom/xmldom";
 import zlib from "zlib";
 import { checkRobotsTxt } from "../utils/checkRobotsTxt";
+import { browserHeaders } from "../utils/browserHeaders";
 
 // Small concurrency limiter (3 at a time)
 function queue(items, limit, worker) {
@@ -45,10 +46,7 @@ export async function scrapeXmlSitemaps(targetUrl) {
         try {
             const res = await fetch(url, {
                 redirect: "follow",
-                headers: {
-                    "User-Agent": "Mozilla/5.0 (compatible; MySEOChecker/1.0)",
-                    "Accept": "application/xml,text/xml,*/*;q=0.8"
-                }
+                headers: browserHeaders
             });
 
             const statusCode = res.status;

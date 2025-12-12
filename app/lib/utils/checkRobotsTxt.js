@@ -1,3 +1,5 @@
+import { browserHeaders } from "./browserHeaders";
+
 export async function checkRobotsTxt(inputUrl, userAgent = "*") {
     try {
         const urlObj = new URL(inputUrl);
@@ -21,11 +23,7 @@ export async function checkRobotsTxt(inputUrl, userAgent = "*") {
             try {
                 const res = await fetch(candidate, {
                     redirect: "follow",
-                    headers: {
-                        "User-Agent":
-                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
-                        "Accept": "text/plain,*/*;q=0.8",
-                    },
+                    headers: browserHeaders
                 });
 
                 if (res.ok) {
@@ -161,7 +159,7 @@ export async function checkRobotsTxt(inputUrl, userAgent = "*") {
                 const res = await fetch(sitemapUrl, {
                     method: "GET",
                     redirect: "follow",
-                    headers: { "User-Agent": "Mozilla/5.0" }
+                    headers: browserHeaders
                 });
 
                 sitemapResults.push({

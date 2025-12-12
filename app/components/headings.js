@@ -38,7 +38,7 @@ export default function Headings({ headings }) {
             {missingLevels.length > 0
                 ? <div>
                     <p>
-                        <strong>⚠️ Issues found:</strong>
+                        <strong>⚠️ Issue(s) found:</strong>
                     </p>
                     <ul>
                         {missingLevels.map(level => (
