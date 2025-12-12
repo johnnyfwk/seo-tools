@@ -294,11 +294,11 @@ export function evaluateIndexability({
 
 export function getInitialUrlStatusCodeClass(statusCode) {
     if (!statusCode) return "";
-    if (statusCode >= 200 && statusCode < 300) return "success-background";
+    if (statusCode === 200) return "success-background";
+    if (statusCode >= 201 && statusCode < 300) return "warning-background";
     if (statusCode >= 300 && statusCode < 400) return "warning-background";
-    if (statusCode === 404 || statusCode === 410) return "error-background";
     if (statusCode >= 400 && statusCode < 500) return "error-background";
-    if (statusCode >= 500 && statusCode < 600) return "server-error-background";
+    if (statusCode >= 500) return "error-background";
     return "warning-background";
 }
 
