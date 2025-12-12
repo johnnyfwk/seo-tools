@@ -37,14 +37,16 @@ export default function Headings({ headings }) {
         <>
             {missingLevels.length > 0
                 ? <div>
-                    <p><strong>Issues found</strong>:</p>
+                    <p>
+                        <strong>⚠️ Issues found:</strong>
+                    </p>
                     <ul>
                         {missingLevels.map(level => (
-                            <li key={level}>❌ {level} tag missing</li>
+                            <li key={level}>{level} tag missing</li>
                         ))}
                     </ul>
                 </div>
-                : <p>✅ No issues found with heading structure.</p>
+                : <p>✅ No issues found.</p>
             }
 
             {headingLevels.map(level => (

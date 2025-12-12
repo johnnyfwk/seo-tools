@@ -21,7 +21,9 @@ export default function HtmlLanguageAttribute({ htmlLanguageAttribute }) {
         <div>
             {issues.length > 0
                 ? <div>
-                    <p>⚠️ Issues found:</p>
+                    <p>
+                        <strong>⚠️ Issues found:</strong>
+                    </p>
                     <ul>
                         {issues.map((issue, i) => (
                             <li key={i}>{issue}</li>
