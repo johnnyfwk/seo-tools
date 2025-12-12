@@ -5,7 +5,7 @@ export default function CanonicalTags({ canonicalTags }) {
     const issues = [];
 
     if (canonicalTags.tags?.length === 0) {
-        issues.push("No canonical tag found. URL is indexable by default");
+        issues.push("No canonical tag found. URL is indexable by default.");
     }
 
     if (canonicalTags.tags?.length > 1) {

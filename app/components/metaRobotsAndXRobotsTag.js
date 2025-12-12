@@ -44,26 +44,6 @@ export default function MetaRobotsAndXRobotsTag({ metaRobotsAndXRobotsTag }) {
                         <th>X-Robots Tag Content</th>
                         <td>{metaRobotsAndXRobotsTag.xRobotsTagContent || "N/A"}</td>
                     </tr>
-
-                    {/* <tr style={{ textAlign: "left" }}>
-                        <th>Allows indexing?</th>
-                        <td>
-                            {allDirectivesLower.includes('noindex')
-                                ? "❌ No ('noindex' found)"
-                                : "✅ Yes"
-                            }
-                        </td>
-                    </tr>
-
-                    <tr style={{ textAlign: "left" }}>
-                        <th>Allows crawling of linked pages and passing of link equity?</th>
-                        <td>
-                            {allDirectivesLower.includes('nofollow')
-                                ? "❌ No ('nofollow' found)"
-                                : "✅ Yes"
-                            }
-                        </td>
-                    </tr> */}
                 </tbody>
             </table>
         </div>

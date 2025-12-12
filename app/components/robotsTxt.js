@@ -16,8 +16,14 @@ export default function RobotsTxt({ robotsTxt }) {
         return sitemap.statusCode !== 200;
     });
 
-    if (non200SitemapUrls.length > 0) {
-        issues.push("Robots.txt file contains XML sitemap URLs that do not return a status code of 200.");
+    if (blocked) {
+        issues.push("URL is blocked by robots.txt");
+    }
+
+    if (non200SitemapUrls.length === 1) {
+        issues.push(`1 XML sitemap URL returns a status code that is not 200`);
+    } else if (non200SitemapUrls.length > 1) {
+        issues.push(`${non200SitemapUrls.length} XML sitemap URLs return status codes that are not 200`);
     }
 
     return (
