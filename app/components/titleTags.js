@@ -14,13 +14,13 @@ export default function TitleTags({ titleTags }) {
     });
 
     if (titleTags.length > 1) {
-        issues.push(`Multiple (${titleTags.length}) title tags found.`);
+        issues.push(`Multiple (${titleTags.length}) title tags found`);
     }
 
     if (numberOfTitleTagsExceedingRecommendedMaxLength.length === 1) {
-        issues.push(`1 title tag exceeds the recommended length of ${recommendedMaxLength} characters.`);
+        issues.push(`1 title tag exceeds the recommended length of ${recommendedMaxLength} characters`);
     } else if (numberOfTitleTagsExceedingRecommendedMaxLength.length > 1) {
-        issues.push(`${numberOfTitleTagsExceedingRecommendedMaxLength.length} title tags exceed the recommended length of ${recommendedMaxLength} characters.`);
+        issues.push(`${numberOfTitleTagsExceedingRecommendedMaxLength.length} title tags exceed the recommended length of ${recommendedMaxLength} characters`);
     }
 
     return (

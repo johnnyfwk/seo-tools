@@ -18,9 +18,9 @@ export default function MetaDescriptions({ metaDescriptions }) {
     }
 
     if (numberOfMetaDescriptionsExceedingRecommendedMaxLength.length === 1) {
-        issues.push(`1 meta description exceeds the recommended length of ${recommendedMaxLength} characters.`);
+        issues.push(`1 meta description exceeds the recommended length of ${recommendedMaxLength} characters`);
     } else if (numberOfMetaDescriptionsExceedingRecommendedMaxLength.length > 1) {
-        issues.push(`${numberOfMetaDescriptionsExceedingRecommendedMaxLength.length} meta descriptions exceed the recommended length of ${recommendedMaxLength} characters.`);
+        issues.push(`${numberOfMetaDescriptionsExceedingRecommendedMaxLength.length} meta descriptions exceed the recommended length of ${recommendedMaxLength} characters`);
     }
 
     return (

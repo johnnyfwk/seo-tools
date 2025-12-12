@@ -21,8 +21,14 @@ export default function XmlSitemaps({ xmlSitemaps }) {
         return sitemap.statusCode !== 200;
     });
 
-    if (non200UrlsinChecked.length > 0) {
-        issues.push("Robots.txt file contains XML sitemap URLs that do not return a status code of 200.");
+    if (non200UrlsinChecked.length === 1) {
+        issues.push(`1 XML sitemap URL returns a status code that is not 200`);
+    } else if (non200UrlsinChecked.length > 1) {
+        issues.push(`${non200UrlsinChecked.length} XML sitemap URLs return status codes that are not 200`);
+    }
+
+    if (containing.length === 0) {
+        issues.push("URL not found in any sitemap.")
     }
 
     return (
@@ -30,7 +36,7 @@ export default function XmlSitemaps({ xmlSitemaps }) {
             {issues.length > 0
                 ? <div>
                     <p>
-                        <strong>⚠️ Issue(s) found:</strong>
+                        <strong>⚠️ Potential issue(s) found:</strong>
                     </p>
                     <ul>
                         {issues.map((issue, i) => {
