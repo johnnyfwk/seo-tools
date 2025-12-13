@@ -46,7 +46,7 @@ export default function XmlSitemaps({ xmlSitemaps }) {
                         })}
                     </ul>
                 </div>
-                : null
+                : <p>✅ No issues found.</p>
             }
 
             <table>
