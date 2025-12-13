@@ -41,7 +41,7 @@ export default function RobotsTxt({ robotsTxt }) {
                         })}
                     </ul>
                 </div>
-                : null
+                : <p>✅ No issues found.</p>
             }
 
             <table>
