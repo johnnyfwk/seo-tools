@@ -8,7 +8,7 @@ export default function HtmlLanguageAttribute({ htmlLanguageAttribute }) {
 
     if (!attribute) {
         return (
-            <p>No lang attribute found.</p>
+            <p>❌ No HTML language attribute found.</p>
         )
     }
 
