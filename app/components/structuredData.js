@@ -58,8 +58,36 @@ export default function StructuredData({ structuredData }) {
         });
     };
 
+    let numberOfJsonLdSchema = 0;
+    let numberOfMicrodataSchema = 0;
+    let numberofRdfaSchema = 0;
+    
+    structuredData.forEach((schema) => {
+        if (schema.format.toLowerCase() === 'json-ld') {
+            numberOfJsonLdSchema++;
+        } else if (schema.format.toLowerCase() === 'microdata') {
+            numberOfMicrodataSchema++;
+        } else if (schema.format.toLowerCase() === 'rdfa') {
+            numberofRdfaSchema++;
+        }
+    });
+
     return (
-        <>
+        <div>
+            <div>
+                <p>Formats found:</p>
+                <ul>
+                    <li>
+                        <strong>JSON-LD:</strong> {numberOfJsonLdSchema}
+                    </li>
+                    <li>
+                        <strong>Microdata:</strong> {numberOfMicrodataSchema}
+                    </li>
+                    <li>
+                        <strong>RDFa:</strong> {numberofRdfaSchema}
+                    </li>
+                </ul>
+            </div>
             {structuredData.map((structuredData, idx) => (
                 <div
                     key={idx}
@@ -101,6 +129,6 @@ export default function StructuredData({ structuredData }) {
                     {expanded.has(idx) && <RenderValue value={structuredData.raw} />}
                 </div>
             ))}
-        </>
+        </div>
     );
 }
