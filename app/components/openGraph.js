@@ -142,7 +142,7 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
                                     </div>
 
                                     <div>
-                                        <strong>Meta robots allows indexing?:</strong>{" "}
+                                        <strong>Meta robots/x-robots tag allows indexing?:</strong>{" "}
                                         {og.metaRobotsAndXRobots?.allDirectives === null
                                             ? "No meta robots tag found"
                                             : !og.metaRobotsAndXRobots?.allDirectives?.includes("noindex")
@@ -151,10 +151,8 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
                                         }
                                     </div>
 
-                                    {renderUrlRow("Canonical URL", og.canonical?.tags?.[0]?.resolvedCanonicalUrl)}
-
                                     <div>
-                                        <strong>Canonical matches URL?:</strong>{" "}
+                                        <strong>Canonical URL matches URL?:</strong>{" "}
                                         {og.canonical?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl === true
                                             ? "✅ Yes"
                                             : og.canonical?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl === false
@@ -164,7 +162,7 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
                                     </div>
 
                                     <div>
-                                        <strong>Indexable?:</strong>{" "}
+                                        <strong>URL is indexable?:</strong>{" "}
                                         {indexability.indexable === true
                                             ? "✅ Yes"
                                             : indexability.indexable === false
