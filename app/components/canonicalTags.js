@@ -1,7 +1,7 @@
 import Link from "next/link";
 import * as utils from '@/app/lib/utils/utils';
 
-export default function CanonicalTags({ canonicalTags }) {
+export default function CanonicalTags({ canonicalTags, finalUrl }) {
     const issues = [];
 
     if (canonicalTags.tags?.length === 0) {
@@ -13,11 +13,11 @@ export default function CanonicalTags({ canonicalTags }) {
     }
 
     if (canonicalTags.tags?.[0]?.resolvedCanonicalUrlStatusCode !== 200) {
-        issues.push("The status code of the canonical URL is not 200");
+        issues.push("Canonical URL status code is not 200");
     }
 
     if (!canonicalTags.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl) {
-        issues.push("Cannonical URL does not match URL");
+        issues.push("Canonical URL does not match URL");
     }
 
     return (
@@ -42,9 +42,10 @@ export default function CanonicalTags({ canonicalTags }) {
                 <thead>
                     <tr>
                         <th style={{ textAlign: "center" }}>#</th>
+                        <th style={{ textAlign: "left" }}>URL</th>
                         <th style={{ textAlign: "left" }}>Canonical URL</th>
                         <th style={{ textAlign: "center" }}>Status Code</th>
-                        <th style={{ textAlign: "center" }}>Matches URL?</th>
+                        <th style={{ textAlign: "center" }}>Canonical URL Matches URL?</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -52,6 +53,16 @@ export default function CanonicalTags({ canonicalTags }) {
                         return (
                             <tr key={i}>
                                 <td style={{ textAlign: "center" }}>{i + 1}</td>
+
+                                <td style={{ textAlign: "left" }}>
+                                    <Link
+                                        href={finalUrl || "#"}
+                                        target="_blank"
+                                        rel="noreferrer noopener"
+                                    >
+                                        {finalUrl || "Invalid URL"}
+                                    </Link>
+                                </td>
 
                                 <td style={{ textAlign: "left" }}>
                                     <Link
