@@ -11,15 +11,15 @@ export default function Links({ links }) {
 
     const issues = [];
 
-    const nofollowLinks = crawlableLinks.filter((link) => link.nofollow);
+    const nofollowLinks = crawlableLinks.filter((link) => link.internal === true && link.nofollow);
     const non200Links = crawlableLinks.filter((link) => link.initialUrlStatusCode !== 200);
 
     if (nofollowLinks.length > 0) {
-        issues.push(`${nofollowLinks.length} nofollow links`);
+        issues.push(`${nofollowLinks.length} links have a 'nofollow' attribute value`);
     }
 
     if (non200Links.length > 0) {
-        issues.push(`${non200Links.length} non-200 status code links`);
+        issues.push(`${non200Links.length} links return a non-200 status code`);
     }
 
     return (
@@ -91,9 +91,11 @@ export default function Links({ links }) {
 
                                 <td
                                     style={{ textAlign: 'center' }}
-                                    className={link.nofollow
+                                    className={link.internal === true && link.nofollow
                                         ? "warning-background"
-                                        : ""
+                                        : link.internal === false && link.nofollow
+                                            ? "neutral-background"
+                                            : ""
                                     }
                                 >
                                     {link.nofollow === true ? "Yes" : "No"}
@@ -101,9 +103,11 @@ export default function Links({ links }) {
 
                                 <td
                                     style={{ textAlign: 'center' }}
-                                    className={link.noopener
-                                        ? "neutral-background"
-                                        : ""
+                                    className={link.internal === true && link.noopener
+                                        ? "warning-background"
+                                        : link.internal === false && link.noopener
+                                            ? "neutral-background"
+                                            : ""
                                     }
                                 >
                                     {link.noopener === true ? "Yes" : "No"}
@@ -111,9 +115,11 @@ export default function Links({ links }) {
 
                                 <td
                                     style={{ textAlign: 'center' }}
-                                    className={link.noreferrer
-                                        ? "neutral-background"
-                                        : ""
+                                    className={link.internal === true && link.noreferrer
+                                        ? "warning-background"
+                                        : link.internal === false && link.noreferrer
+                                            ? "neutral-background"
+                                            : ""
                                     }
                                 >
                                     {link.noreferrer === true ? "Yes" : "No"}
