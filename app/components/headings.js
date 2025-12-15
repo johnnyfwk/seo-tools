@@ -1,6 +1,10 @@
 import * as utils from '@/app/lib/utils/utils';
 
 export default function Headings({ headings }) {
+    if (headings.length === 0) {
+        return <p>No headings found.</p>;
+    }
+
     const headingLevels = ['h1','h2','h3','h4','h5','h6'];
 
     const grouped = headingLevels.reduce((acc, level) => {
@@ -9,11 +13,11 @@ export default function Headings({ headings }) {
     }, {});
 
     // Require H1 to exist
-    const missingLevels = [];
+    const issues = [];
 
     // 1️⃣ Check for missing H1
     if (grouped.h1.length === 0) {
-        missingLevels.push('h1');
+        issues.push('h1');
     }
 
     // 2️⃣ Identify all used heading levels
@@ -28,20 +32,20 @@ export default function Headings({ headings }) {
         for (let i = firstUsedIndex + 1; i < lastUsedIndex; i++) {
             const level = headingLevels[i];
             if (grouped[level].length === 0) {
-                missingLevels.push(level);
+                issues.push(level);
             }
         }
     }
 
     return (
         <>
-            {missingLevels.length > 0
+            {issues.length > 0
                 ? <div>
                     <p>
                         <strong>⚠️ Issue(s) found:</strong>
                     </p>
                     <ul>
-                        {missingLevels.map(level => (
+                        {issues.map(level => (
                             <li key={level}>{level} tag missing</li>
                         ))}
                     </ul>
