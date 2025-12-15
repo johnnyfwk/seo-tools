@@ -323,7 +323,10 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
         },
         canonicalTags: {
             title: `Canonical Tags (${pageData.scrapedData?.canonicalTags?.tags?.length})`,
-            component: <CanonicalTags canonicalTags={pageData.scrapedData?.canonicalTags} />
+            component: <CanonicalTags
+                finalUrl={pageData.finalUrl}
+                canonicalTags={pageData.scrapedData?.canonicalTags}
+            />
         },
         htmlLanguageAttribute: {
             title: "HTML Language Attribute",
