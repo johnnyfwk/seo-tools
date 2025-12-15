@@ -11,15 +11,25 @@ export default function Links({ links }) {
 
     const issues = [];
 
-    const nofollowLinks = crawlableLinks.filter((link) => link.internal === true && link.nofollow);
     const non200Links = crawlableLinks.filter((link) => link.initialUrlStatusCode !== 200);
-
-    if (nofollowLinks.length > 0) {
-        issues.push(`${nofollowLinks.length} links have a 'nofollow' attribute value`);
-    }
+    const nofollowInternalLinks = crawlableLinks.filter((link) => link.internal === true && link.nofollow === true);
+    const noopenerInternalLinks = crawlableLinks.filter((link) => link.internal === true && link.noopener === true);
+    const noreferrerInternalLinks = crawlableLinks.filter((link) => link.internal === true && link.noreferrer === true);
 
     if (non200Links.length > 0) {
         issues.push(`${non200Links.length} links return a non-200 status code`);
+    }
+
+    if (nofollowInternalLinks.length > 0) {
+        issues.push(`${nofollowInternalLinks.length} links have a 'nofollow' attribute value`);
+    }
+
+    if (noopenerInternalLinks.length > 0) {
+        issues.push(`${noopenerInternalLinks.length} links have a 'noopener' attribute value`);
+    }
+
+    if (noreferrerInternalLinks.length > 0) {
+        issues.push(`${noreferrerInternalLinks.length} links have a 'noreferrer' attribute value`);
     }
 
     return (
