@@ -8,8 +8,12 @@ export default function Hreflang({ hreflang, contentType, xRobotsNoindex }) {
 
     const issues = [];
 
+    const nullStatusCodeLinks = hreflang.filter((h) => {
+        return h.initialUrlStatusCode === null;
+    });
+
     const non200links = hreflang.filter((h) => {
-        return h.initialUrlStatusCode !== 200;
+        return h.initialUrlStatusCode !== null && h.initialUrlStatusCode !== 200;
     });
 
     const linksBlockedByRobotsTxt = hreflang.filter((h) => {
@@ -22,7 +26,15 @@ export default function Hreflang({ hreflang, contentType, xRobotsNoindex }) {
 
     const canonicalUrlDoesntMatch = hreflang.filter((h) => {
         return h.canonicalTags?.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl === false;
-    })
+    });
+
+    if (nullStatusCodeLinks.length > 0) {
+        if (nullStatusCodeLinks.length === 1) {
+            issues.push("1 link status code could not be fetched");
+        } else if (nullStatusCodeLinks.length > 1) {
+            issues.push(`${nullStatusCodeLinks.length} link status codes could not be fetched`);
+        }
+    }
 
     if (non200links.length > 0) {
         if (non200links.length === 1) {

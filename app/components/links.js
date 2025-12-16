@@ -11,25 +11,50 @@ export default function Links({ links }) {
 
     const issues = [];
 
-    const non200Links = crawlableLinks.filter((link) => link.initialUrlStatusCode !== 200);
+    const nullStatusCodeLinks = crawlableLinks.filter((link) => link.initialUrlStatusCode === null);
+    const non200Links = crawlableLinks.filter((link) => link.initialUrlStatusCode !== null && link.initialUrlStatusCode !== 200);
     const nofollowInternalLinks = crawlableLinks.filter((link) => link.internal === true && link.nofollow === true);
     const noopenerInternalLinks = crawlableLinks.filter((link) => link.internal === true && link.noopener === true);
     const noreferrerInternalLinks = crawlableLinks.filter((link) => link.internal === true && link.noreferrer === true);
 
+    if (nullStatusCodeLinks.length > 0) {
+        if (nullStatusCodeLinks.length === 1) {
+            issues.push(`1 link status code could not be fetched`);
+        } else if (nullStatusCodeLinks.length > 1) {
+            issues.push(`${nullStatusCodeLinks.length} link status codes could not be fetched`);
+        }
+    }
+
     if (non200Links.length > 0) {
-        issues.push(`${non200Links.length} links return a non-200 status code`);
+        if (non200Links.length === 1) {
+            issues.push(`1 link returns a non-200 status code`);
+        } else if (non200Links.length > 1) {
+            issues.push(`${non200Links.length} links return a non-200 status code`);
+        }
     }
 
     if (nofollowInternalLinks.length > 0) {
-        issues.push(`${nofollowInternalLinks.length} links have a 'nofollow' attribute value`);
+        if (nofollowInternalLinks.length === 1) {
+            issues.push(`1 link has a 'nofollow' attribute value`);
+        } else if (nofollowInternalLinks.length > 1) {
+            issues.push(`${nofollowInternalLinks.length} links have a 'nofollow' attribute value`);
+        }
     }
 
     if (noopenerInternalLinks.length > 0) {
-        issues.push(`${noopenerInternalLinks.length} links have a 'noopener' attribute value`);
+        if (noopenerInternalLinks.length === 1) {
+            issues.push(`1 link has a 'noopener' attribute value`);
+        } else if (noopenerInternalLinks.length > 1) {
+            issues.push(`${noopenerInternalLinks.length} links have a 'noopener' attribute value`);
+        }
     }
 
     if (noreferrerInternalLinks.length > 0) {
-        issues.push(`${noreferrerInternalLinks.length} links have a 'noreferrer' attribute value`);
+        if (noreferrerInternalLinks.length === 1) {
+            issues.push(`1 link has a 'noreferrer' attribute value`);
+        } else if (noreferrerInternalLinks.length > 1) {
+            issues.push(`${noreferrerInternalLinks.length} links have a 'noreferrer' attribute value`);
+        }
     }
 
     return (

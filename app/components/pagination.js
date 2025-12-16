@@ -8,8 +8,17 @@ export default function Pagination({ pagination }) {
 
     const issues = [];
 
-    const non200links = pagination.filter((p) => p.initialUrlStatusCode !== 200);
+    const nullStatusCodeLinks = pagination.filter((p) => p.initialUrlStatusCode === null);
+    const non200links = pagination.filter((p) => p.initialUrlStatusCode !== null && p.initialUrlStatusCode !== 200);
     const nonMatchingCanonicalUrls = pagination.filter((p) => p.canonicalTags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl === false);
+
+    if (nullStatusCodeLinks.length > 0) {
+        if (nullStatusCodeLinks.length === 1) {
+            issues.push("1 link status code could not be fetched");
+        } else if (nullStatusCodeLinks.length > 1) {
+            issues.push(`${nullStatusCodeLinks.length} link status codes could not be fetched`);
+        }
+    }
 
     if (non200links.length > 0) {
         if (non200links.length === 1) {

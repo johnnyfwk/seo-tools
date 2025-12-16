@@ -8,20 +8,40 @@ export default function Images({ images }) {
 
     const issues = [];
 
+    const nullStatusCodeImages = images.filter((image) => {
+        return image.initialUrlStatusCode === null;
+    })
+
     const non200images = images.filter((image) => {
-        return image.initialUrlStatusCode !== 200;
+        return image.initialUrlStatusCode !== null && image.initialUrlStatusCode !== 200;
     });
 
     const missingAltText = images.filter((image) => {
         return !image.alt;
-    })
+    });
+
+    if (nullStatusCodeImages.length > 0) {
+        if (nullStatusCodeImages.length === 1) {
+            issues.push("1 image could not be fetched");
+        } else if (nullStatusCodeImages.length > 1) {
+            issues.push(`${nullStatusCodeImages.length} images could not be fetched`);
+        }
+    }
 
     if (non200images.length > 0) {
-        issues.push(`${non200images.length} image(s) return a non-200 status code`);
+        if (non200images.length === 1) {
+            issues.push(`1 image returns a non-200 status code`);
+        } else if (non200images.length > 1) {
+            issues.push(`${non200images.length} images return a non-200 status code`);
+        }
     }
 
     if (missingAltText.length > 0) {
-        issues.push(`${missingAltText.length} image(s) are missing alt text`)
+        if (missingAltText.length === 1) {
+            issues.push(`1 image is missing alt text`);
+        } else if (missingAltText.length > 1) {
+            issues.push(`${missingAltText.length} images are missing alt text`);
+        }
     }
 
     return (
