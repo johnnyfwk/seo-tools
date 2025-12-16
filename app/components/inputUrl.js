@@ -20,7 +20,7 @@ export default function InputUrl({
             }}
             aria-busy={isCheckingPage}
         >
-            <fieldset disabled={isCheckingPage} style={{ border: "none", padding: 0 }}>
+            <fieldset disabled={isCheckingPage}>
                 <label htmlFor="url" className="sr-only">Enter URL:</label>
 
                 {error
@@ -43,7 +43,6 @@ export default function InputUrl({
                     placeholder="Enter URL to check..."
                     aria-invalid={!!error}
                     aria-describedby={error ? "url-error" : undefined}
-                    style={{width: '100%', padding: "10px"}}
                 />
 
                 {page !== "robots-txt-checker"

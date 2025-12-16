@@ -10,7 +10,7 @@ function RenderValue({ value, depth = 0 }) {
 
     if (Array.isArray(value)) {
         return (
-            <div style={{ marginLeft: indent }}>
+            <div>
                 {value.map((v, i) => (
                     <RenderValue key={i} value={v} depth={depth + 1} />
                 ))}
@@ -22,7 +22,7 @@ function RenderValue({ value, depth = 0 }) {
         return (
             <div style={{ marginLeft: indent }}>
                 {Object.entries(value).map(([k, v]) => (
-                    <div key={k} style={{ marginBottom: 5 }}>
+                    <div key={k}>
                         <strong>{k}:</strong>{' '}
                         {typeof v === 'object' ? (
                             <RenderValue value={v} depth={depth + 1} />
@@ -92,13 +92,7 @@ export default function StructuredData({ structuredData }) {
             {structuredData.map((structuredData, idx) => (
                 <div
                     key={idx}
-                    style={{
-                        border: '1px solid #ccc',
-                        padding: '0.75rem',
-                        marginBottom: '1rem',
-                        borderRadius: '4px',
-                        backgroundColor: '#f9f9f9'
-                    }}
+                    className="structured-data-card"
                 >
                     <h3>
                         {Array.isArray(structuredData.raw['@type'])
@@ -108,20 +102,12 @@ export default function StructuredData({ structuredData }) {
                         {structuredData.raw.name ? `: ${structuredData.raw.name}` : ''}
                     </h3>
 
-                    <h4 style={{ marginTop: 0, marginBottom: '0.5rem', color: '#555' }}>
+                    <h4>
                         {structuredData.format}
                     </h4>
 
                     <button
-                        style={{
-                            marginBottom: '0.5rem',
-                            padding: '0.25rem 0.5rem',
-                            cursor: 'pointer',
-                            backgroundColor: '#0070f3',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px'
-                        }}
+                        className="structured-data-card-show-hide-details-button"
                         onClick={() => toggleStructuredData(idx)}
                     >
                         {expanded.has(idx) ? 'Hide Details' : 'Show Details'}

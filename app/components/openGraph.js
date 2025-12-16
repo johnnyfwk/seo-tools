@@ -38,7 +38,7 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
                     <img
                         src={src}
                         alt=""
-                        style={{ maxWidth: "150px", maxHeight: "150px", display: "block" }}
+                        style={{ maxWidth: "200px", maxHeight: "200px", display: "block" }}
                     />
                     <div>{src}</div>
                 </a>
@@ -60,7 +60,7 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
     return (
         <>
             {missingFields.length > 0 && (
-                <section style={{ marginBottom: "1rem" }}>
+                <section>
                     <h3>Missing Fields:</h3>
                     <ul>{missingFields.map(f => <li key={f}>{f}</li>)}</ul>
                 </section>

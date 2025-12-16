@@ -44,70 +44,72 @@ export default function CanonicalTags({ canonicalTags, finalUrl }) {
                 : <p>✅ No issues found.</p>
             }
 
-            <table>
-                <thead>
-                    <tr>
-                        <th style={{ textAlign: "center" }}>#</th>
-                        <th style={{ textAlign: "left" }}>URL</th>
-                        <th style={{ textAlign: "left" }}>Canonical URL</th>
-                        <th style={{ textAlign: "center" }}>Status Code</th>
-                        <th style={{ textAlign: "center" }}>Canonical URL matches URL?</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {canonicalTags.tags?.map((tag, i) => {
-                        return (
-                            <tr key={i}>
-                                <td style={{ textAlign: "center" }}>{i + 1}</td>
+            <div className="table-wrapper">
+                <table style={{ width: "max-content" }}>
+                    <thead>
+                        <tr>
+                            <th style={{ textAlign: "center" }}>#</th>
+                            <th style={{ textAlign: "left" }}>URL</th>
+                            <th style={{ textAlign: "left" }}>Canonical URL</th>
+                            <th style={{ textAlign: "center" }}>Status Code</th>
+                            <th style={{ textAlign: "center" }}>Canonical URL matches URL?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {canonicalTags.tags?.map((tag, i) => {
+                            return (
+                                <tr key={i}>
+                                    <td style={{ textAlign: "center" }}>{i + 1}</td>
 
-                                <td style={{ textAlign: "left" }}>
-                                    <Link
-                                        href={finalUrl || "#"}
-                                        target="_blank"
-                                        rel="noreferrer noopener"
+                                    <td style={{ textAlign: "left" }}>
+                                        <Link
+                                            href={finalUrl || "#"}
+                                            target="_blank"
+                                            rel="noreferrer noopener"
+                                        >
+                                            {finalUrl || "Invalid URL"}
+                                        </Link>
+                                    </td>
+
+                                    <td style={{ textAlign: "left" }}>
+                                        <Link
+                                            href={tag.resolvedCanonicalUrl || "#"}
+                                            target="_blank"
+                                            rel="noreferrer noopener"
+                                        >
+                                            {tag.originalUrl || "Invalid URL"}
+                                        </Link>
+                                    </td>
+
+                                    <td
+                                        style={{ textAlign: "center" }}
+                                        className={utils.getInitialUrlStatusCodeClass(tag.resolvedCanonicalUrlStatusCode)}
                                     >
-                                        {finalUrl || "Invalid URL"}
-                                    </Link>
-                                </td>
+                                        {tag.resolvedCanonicalUrlStatusCode ?? "-"}
+                                    </td>
 
-                                <td style={{ textAlign: "left" }}>
-                                    <Link
-                                        href={tag.resolvedCanonicalUrl || "#"}
-                                        target="_blank"
-                                        rel="noreferrer noopener"
+                                    <td
+                                        style={{ textAlign: "center" }}
+                                        className={tag.resolvedCanonicalUrlMatchesOriginalUrl === true
+                                            ? 'success-background'
+                                            : tag.resolvedCanonicalUrlMatchesOriginalUrl === false
+                                                ? 'warning-background'
+                                                : ''
+                                        }
                                     >
-                                        {tag.originalUrl || "Invalid URL"}
-                                    </Link>
-                                </td>
-
-                                <td
-                                    style={{ textAlign: "center" }}
-                                    className={utils.getInitialUrlStatusCodeClass(tag.resolvedCanonicalUrlStatusCode)}
-                                >
-                                    {tag.resolvedCanonicalUrlStatusCode ?? "-"}
-                                </td>
-
-                                <td
-                                    style={{ textAlign: "center" }}
-                                    className={tag.resolvedCanonicalUrlMatchesOriginalUrl === true
-                                        ? 'success-background'
-                                        : tag.resolvedCanonicalUrlMatchesOriginalUrl === false
-                                            ? 'warning-background'
-                                            : ''
-                                    }
-                                >
-                                    {tag.resolvedCanonicalUrlMatchesOriginalUrl === true
-                                        ? "Yes"
-                                        : tag.resolvedCanonicalUrlMatchesOriginalUrl === false
-                                            ? "No"
-                                            : "N/A"
-                                    }
-                                </td>
-                            </tr>
-                        )
-                    })}
-                </tbody>
-            </table>
+                                        {tag.resolvedCanonicalUrlMatchesOriginalUrl === true
+                                            ? "Yes"
+                                            : tag.resolvedCanonicalUrlMatchesOriginalUrl === false
+                                                ? "No"
+                                                : "N/A"
+                                        }
+                                    </td>
+                                </tr>
+                            )
+                        })}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }
