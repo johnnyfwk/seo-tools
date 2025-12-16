@@ -3,7 +3,7 @@ import { tools } from "@/data/tools";
 
 export default function Nav({ isNavVisible, setIsNavVisible }) {   
     const navStyle = {
-        display: isNavVisible ? "grid" : "none",
+        left: isNavVisible ? "0%" : "100%",
     };
 
     function handleNavLinks() {
