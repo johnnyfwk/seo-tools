@@ -88,6 +88,7 @@ export default function StructuredData({ structuredData }) {
                     </li>
                 </ul>
             </div>
+            
             {structuredData.map((structuredData, idx) => (
                 <div
                     key={idx}

@@ -2,18 +2,24 @@ import Link from "next/link";
 import * as utils from '@/app/lib/utils/utils';
 
 export default function CanonicalTags({ canonicalTags, finalUrl }) {
-    const issues = [];
-
     if (canonicalTags.tags?.length === 0) {
         return <p>No canonical tag found.</p>;
     }
+
+    const issues = [];
 
     if (canonicalTags.tags?.length > 1) {
         issues.push(`Multiple (${canonicalTags.tags?.length}) canonical tags found`);
     }
 
-    if (canonicalTags.tags?.[0]?.resolvedCanonicalUrlStatusCode !== 200) {
-        issues.push("Canonical URL status code is not 200");
+    if (canonicalTags.tags?.[0]?.resolvedCanonicalUrlStatusCode === null) {
+        issues.push("Canonical URL status code could not be fetched");
+    }
+
+    if (canonicalTags.tags?.[0]?.resolvedCanonicalUrlStatusCode === null &&
+        canonicalTags.tags?.[0]?.resolvedCanonicalUrlStatusCode !== 200
+    ) {
+        issues.push("Canonical URL returned a non-200 status code");
     }
 
     if (!canonicalTags.tags?.[0]?.resolvedCanonicalUrlMatchesOriginalUrl) {

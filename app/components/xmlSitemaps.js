@@ -17,18 +17,33 @@ export default function XmlSitemaps({ xmlSitemaps }) {
 
     const containing = xmlSitemaps.sitemapsContainingUrl || [];
     const checked = xmlSitemaps.sitemapsChecked || [];
-    const non200UrlsinChecked = checked.filter((sitemap) => {
-        return sitemap.statusCode !== 200;
+
+    const nullStatusCodeUrlsInChecked = checked.filter((sitemap) => {
+        return sitemap.statusCode === null;
     });
 
-    if (non200UrlsinChecked.length === 1) {
-        issues.push(`1 XML sitemap URL returns a status code that is not 200`);
-    } else if (non200UrlsinChecked.length > 1) {
-        issues.push(`${non200UrlsinChecked.length} XML sitemap URLs return status codes that are not 200`);
-    }
+    const non200UrlsinChecked = checked.filter((sitemap) => {
+        return sitemap.statusCode !== null && sitemap.statusCode !== 200;
+    });
 
     if (containing.length === 0) {
-        issues.push("URL not found in any sitemap.")
+        issues.push("URL not found in any sitemap.");
+    }
+
+    if (nullStatusCodeUrlsInChecked.length > 0) {
+        if (nullStatusCodeUrlsInChecked.length === 1) {
+            issues.push(`1 XML sitemap URL status code could not be fetched`);
+        } else if (nullStatusCodeUrlsInChecked.length > 1) {
+            issues.push(`${nullStatusCodeUrlsInChecked.length} XML sitemap URL status codes could not be fetched`);
+        }
+    }
+
+    if (non200UrlsinChecked.length > 0) {
+        if (non200UrlsinChecked.length === 1) {
+            issues.push(`1 XML sitemap URL returns a status code that is not 200`);
+        } else if (non200UrlsinChecked.length > 1) {
+            issues.push(`${non200UrlsinChecked.length} XML sitemap URLs return status codes that are not 200`);
+        }
     }
 
     return (

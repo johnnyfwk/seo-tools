@@ -12,20 +12,34 @@ export default function RobotsTxt({ robotsTxt }) {
 
     const issues = [];
 
-    const non200SitemapUrls = sitemaps.filter((sitemap) => {
-        return sitemap.statusCode !== 200;
-    });
-
     if (blocked) {
         issues.push("URL is blocked by robots.txt");
     }
 
-    if (non200SitemapUrls.length === 1) {
-        issues.push(`1 XML sitemap URL returns a status code that is not 200`);
-    } else if (non200SitemapUrls.length > 1) {
-        issues.push(`${non200SitemapUrls.length} XML sitemap URLs return status codes that are not 200`);
+    const nullStatusCodeSitemapUrls = sitemaps.filter((sitemap) => {
+        return sitemap.statusCode === null;
+    });
+
+    const non200SitemapUrls = sitemaps.filter((sitemap) => {
+        return sitemap.statusCode !== null && sitemap.statusCode !== 200;
+    });
+
+    if (nullStatusCodeSitemapUrls.length > 0) {
+        if (nullStatusCodeSitemapUrls.length === 1) {
+            issues.push(`1 XML sitemap URL status code could not be fetched`);
+        } else if (nullStatusCodeSitemapUrls.length > 1) {
+            issues.push(`${nullStatusCodeSitemapUrls.length} XML sitemap URL status codes could not be fetched`);
+        }
     }
 
+    if (non200SitemapUrls.length > 0) {
+        if (non200SitemapUrls.length === 1) {
+            issues.push(`1 XML sitemap URL returns a non-200 status code`);
+        } else if (non200SitemapUrls.length > 1) {
+            issues.push(`${non200SitemapUrls.length} XML sitemap URLs return non-200 status codes`);
+        }
+    }
+    
     return (
         <div>
             {issues.length > 0
