@@ -42,7 +42,8 @@
 
     --table-border-colour: var(--grey);
     --table-th-background-colour: var(--dark-grey);
-    --table-th-font-colour: var(--light-grey);
+    --table-th-font-colour: var(--white);
+    --table-td-background-colour: var(--white);
 
     --structured-data-card-background-colour: var(--grey);
     --structured-data-card-border-colour: var(--red);
@@ -98,6 +99,9 @@ body {
     white-space: nowrap;
 }
 
+
+
+/************************************** SYSTEM COLOURS *******************************************/
 .error-text {
     color: var(--error);
 }
@@ -132,6 +136,8 @@ body {
 .neutral-text {
     color: var(--neutral);
 }
+/************************************** SYSTEM COLOURS *******************************************/
+
 
 #cookie-consent-banner {
     background-color: red;
@@ -223,10 +229,6 @@ main {
     margin: auto;
 }
 
-section {
-    /* background-color: var(--section-background-colour); */
-}
-
 ul,
 ol {
     margin-left: 3rem;
@@ -244,6 +246,13 @@ img {
     max-width: 100%;
 }
 
+.wrap-url {
+    word-break: break-word;
+}
+
+
+
+/************************************** FORMS *******************************************/
 fieldset {
     background-color: var(--light-pink);
     border: none;
@@ -284,7 +293,11 @@ input#url {
     padding: 15px;
     font-weight: bold;
 }
+/************************************** FORMS *******************************************/
 
+
+
+/************************************** TABLES *******************************************/
 table,
 th,
 td {
@@ -305,7 +318,7 @@ td {
 .table-wrapper {
     overflow-x: auto;
     max-width: 100%;
-    max-height: 80vh;
+    max-height: 75vh;
 }
 
 table {
@@ -322,15 +335,19 @@ thead th {
     top: 0;
 }
 
+td {
+    background-color: var(--table-td-background-colour);
+}
+
 .table-links {
     display: grid;
     justify-items: start;
 }
+/************************************** TABLES *******************************************/
 
-.wrap-url {
-    word-break: break-word;
-}
 
+
+/************************************** FOOTER *******************************************/
 footer {
     background-color: var(--grey);
     padding: var(--default-padding);
@@ -347,6 +364,8 @@ footer {
 #copyright {
     font-size: 0.9rem;
 }
+/************************************** FOOTER *******************************************/
+
 
 
 /***************************** TOOL CARDS ********************************/
