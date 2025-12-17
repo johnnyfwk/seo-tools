@@ -6,6 +6,7 @@
     --dark-grey: #2c2c2c;
     --red: #ff0000;
     --orange: #ff9900;
+    --yellow: #ffff00;
     --green: #09ff00;
     --blue: #00a2ff;
     --light-pink: #ffd3d3;
@@ -45,6 +46,8 @@
     --structured-data-card-border-colour: var(--red);
     --structured-data-card-show-hide-details-button-background-colour: var(--dark-grey);
     --structured-data-card-show-hide-details-button-font-colour: var(--white);
+
+    --ignore-robots-txt-warning-message: var(--yellow)
 }
 
 * {
@@ -236,13 +239,25 @@ img {
 }
 
 fieldset {
-    background-color: var(--grey);
+    background-color: var(--light-pink);
     border: none;
 }
 
 input#url {
     width: 100%;
     padding: 10px;
+}
+
+.url-input-and-check-page-button-container {
+    /* background-color: orange; */
+    display: grid;
+    grid-template-columns: auto 100px;
+}
+
+#ignore-robots-message {
+    background-color: var(--ignore-robots-txt-warning-message);
+    padding: 20px;
+    font-weight: bold;
 }
 
 table,
