@@ -114,6 +114,7 @@ export default function Links({ links }) {
                                                 href={link.imageSrc}
                                                 target="_blank"
                                                 rel="noreferrer noopener"
+                                                className="component-links"
                                             >
                                                 <img
                                                     src={link.imageSrc}
