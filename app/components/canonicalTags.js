@@ -49,10 +49,10 @@ export default function CanonicalTags({ canonicalTags, finalUrl }) {
                     <thead>
                         <tr>
                             <th style={{ textAlign: "center" }}>#</th>
-                            <th style={{ textAlign: "left" }}>URL</th>
+                            <th style={{ textAlign: "left" }}>URL / Final URL</th>
                             <th style={{ textAlign: "left" }}>Canonical URL</th>
                             <th style={{ textAlign: "center" }}>Status Code</th>
-                            <th style={{ textAlign: "center" }}>Canonical URL matches URL?</th>
+                            <th style={{ textAlign: "center" }}>Canonical URL matches URL/Final URL?</th>
                         </tr>
                     </thead>
                     <tbody>
