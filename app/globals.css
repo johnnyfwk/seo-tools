@@ -246,12 +246,20 @@ fieldset {
 input#url {
     width: 100%;
     padding: 10px;
+    font-size: 1.3rem;
 }
 
 .url-input-and-check-page-button-container {
-    /* background-color: orange; */
     display: grid;
     grid-template-columns: auto 100px;
+}
+
+.url-input-and-check-page-button-container button {
+    cursor: pointer;
+    font-weight: bold;
+    bordeR: none;
+    background-color: var(--dark-grey);
+    color: var(--white);
 }
 
 #ignore-robots-message {
