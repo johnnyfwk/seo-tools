@@ -42,7 +42,7 @@ export default function XmlSitemaps({ xmlSitemaps }) {
         if (non200UrlsinChecked.length === 1) {
             issues.push(`1 XML sitemap URL returns a status code that is not 200`);
         } else if (non200UrlsinChecked.length > 1) {
-            issues.push(`${non200UrlsinChecked.length} XML sitemap URLs return status codes that are not 200`);
+            issues.push(`${non200UrlsinChecked.length} XML sitemap URLs return non-200 status codes`);
         }
     }
 
