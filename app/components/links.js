@@ -186,6 +186,7 @@ export default function Links({ links }) {
                                             href={link.initialUrl}
                                             target="_blank"
                                             rel="noreferrer noopener"
+                                            className="component-links"
                                         >
                                             {link.rawHref}
                                         </a>
@@ -205,6 +206,7 @@ export default function Links({ links }) {
                                                     href={link.finalUrl}
                                                     target="_blank"
                                                     rel="noreferrer noopener"
+                                                    className="component-links"
                                                 >
                                                     {link.finalUrl}
                                                 </a>

@@ -66,6 +66,7 @@ export default function CanonicalTags({ canonicalTags, finalUrl }) {
                                             href={finalUrl || "#"}
                                             target="_blank"
                                             rel="noreferrer noopener"
+                                            className="component-links"
                                         >
                                             {finalUrl || "Invalid URL"}
                                         </Link>
@@ -76,6 +77,7 @@ export default function CanonicalTags({ canonicalTags, finalUrl }) {
                                             href={tag.resolvedCanonicalUrl || "#"}
                                             target="_blank"
                                             rel="noreferrer noopener"
+                                            className="component-links"
                                         >
                                             {tag.originalUrl || "Invalid URL"}
                                         </Link>

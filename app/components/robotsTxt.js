@@ -64,7 +64,12 @@ export default function RobotsTxt({ robotsTxt }) {
                         <th>URL</th>
                         <td className="wrap-url">
                             {url
-                                ? <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
+                                ? <a
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="component-links"
+                                >{url}</a>
                                 : "N/A"
                             }
                         </td>
@@ -100,6 +105,7 @@ export default function RobotsTxt({ robotsTxt }) {
                                                     href={sitemap.url}
                                                     target="_blank"
                                                     rel="noreferrer noopener"
+                                                    className="component-links"
                                                 >{sitemap.url}</a>
                                                 {" "}
                                                 ({sitemap.statusCode === 200 ? "✅" : "❌"} {sitemap.statusCode})

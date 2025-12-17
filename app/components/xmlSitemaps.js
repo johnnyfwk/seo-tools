@@ -70,7 +70,12 @@ export default function XmlSitemaps({ xmlSitemaps }) {
                         <th>Robots.txt URL</th>
                         <td className="wrap-url">
                             {xmlSitemaps.robotsTxtChecked
-                                ? <Link href={xmlSitemaps.robotsTxtChecked} target="_blank" rel="noopener noreferrer">
+                                ? <Link
+                                    href={xmlSitemaps.robotsTxtChecked}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="component-links"
+                                >
                                     {xmlSitemaps.robotsTxtChecked}
                                 </Link>
                                 : <span>No robots.txt file found</span>
@@ -91,6 +96,7 @@ export default function XmlSitemaps({ xmlSitemaps }) {
                                                 href={sitemap.url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
+                                                className="component-links"
                                             >
                                                 {sitemap.url}
                                             </a>
@@ -115,6 +121,7 @@ export default function XmlSitemaps({ xmlSitemaps }) {
                                                     href={sitemap.url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
+                                                    className="component-links"
                                                 >
                                                     {sitemap.url}
                                                 </a>

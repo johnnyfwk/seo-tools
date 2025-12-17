@@ -97,11 +97,12 @@ export default function Images({ images }) {
 
                                     <td style={{ textAlign: 'left' }}>
                                         {image.src
-                                            ? <Link
+                                            ? <a
                                                 href={image.src}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                            >{image.src}</Link>
+                                                className="component-links"
+                                            >{image.src}</a>
                                             : "N/A"
                                         }
                                     </td>
@@ -120,6 +121,7 @@ export default function Images({ images }) {
                                                     href={image.finalUrl}
                                                     target="_blank"
                                                     rel="noreferrer noopener"
+                                                    className="component-links"
                                                 >
                                                     {image.finalUrl}
                                                 </a>

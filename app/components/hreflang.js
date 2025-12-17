@@ -128,13 +128,14 @@ export default function Hreflang({ hreflang, contentType, xRobotsNoindex }) {
 
                                     <td style={{ textAlign: 'left' }}>
                                         {hreflang.initialUrl
-                                            ? <Link
+                                            ? <a
                                                 href={hreflang.initialUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
+                                                className="component-links"
                                             >
                                                 {hreflang.initialUrl}
-                                            </Link>
+                                            </a>
                                             : "N/A"
                                         }
                                         
@@ -154,6 +155,7 @@ export default function Hreflang({ hreflang, contentType, xRobotsNoindex }) {
                                                     href={hreflang.finalUrl}
                                                     target="_blank"
                                                     rel="noreferrer noopener"
+                                                    className="component-links"
                                                 >
                                                     {hreflang.finalUrl}
                                                 </a>
