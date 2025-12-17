@@ -47,7 +47,9 @@
     --structured-data-card-show-hide-details-button-background-colour: var(--dark-grey);
     --structured-data-card-show-hide-details-button-font-colour: var(--white);
 
-    --ignore-robots-txt-warning-message: var(--yellow)
+    --ignore-robots-txt-warning-message: var(--yellow);
+
+    --checkbox-dimensions: 20px;
 }
 
 * {
@@ -262,9 +264,20 @@ input#url {
     color: var(--white);
 }
 
+#ignore-robots-check-button-and-text {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#ignore-robots-check-button-and-text input {
+    width: var(--checkbox-dimensions);
+    height: var(--checkbox-dimensions);
+}
+
 #ignore-robots-message {
     background-color: var(--ignore-robots-txt-warning-message);
-    padding: 20px;
+    padding: 15px;
     font-weight: bold;
 }
 
