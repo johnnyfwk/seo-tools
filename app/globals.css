@@ -290,6 +290,7 @@ input#url {
 .url-input-and-check-page-button-container {
     display: grid;
     grid-template-columns: auto 100px;
+    margin-bottom: 10px;
 }
 
 .url-input-and-check-page-button-container button {
