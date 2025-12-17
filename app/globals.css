@@ -349,11 +349,11 @@ footer {
 .tool-card-container {
     background-color: var(--light-pink);
     display: grid;
-    gap: 10px;
+    gap: 20px;
 }
 
 .tool-card {
-    background-color: var(--light-green);
+    background-color: var(--light-blue);
 }
 /***************************** TOOL CARDS ********************************/
 
