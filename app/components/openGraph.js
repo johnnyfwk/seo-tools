@@ -32,7 +32,7 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
     const renderMediaArray = (label, arr) => arr.map((src, idx) => (
         <tr key={`${label}-${idx}`}>
             <td>{`${label} [${idx + 1}]`}</td>
-            <td>
+            <td className="wrap-url">
                 {label === "image" ? (
                 <a href={src} target="_blank" rel="noopener noreferrer">
                     <img

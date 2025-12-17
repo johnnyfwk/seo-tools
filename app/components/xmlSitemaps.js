@@ -68,7 +68,7 @@ export default function XmlSitemaps({ xmlSitemaps }) {
                 <tbody>
                     <tr style={{ textAlign: "left"}}>
                         <th>Robots.txt URL</th>
-                        <td>
+                        <td className="wrap-url">
                             {xmlSitemaps.robotsTxtChecked
                                 ? <Link href={xmlSitemaps.robotsTxtChecked} target="_blank" rel="noopener noreferrer">
                                     {xmlSitemaps.robotsTxtChecked}
@@ -80,7 +80,7 @@ export default function XmlSitemaps({ xmlSitemaps }) {
 
                     <tr style={{ textAlign: "left"}}>
                         <th>Sitemaps containing URL/final URL ({containing.length})</th>
-                        <td>
+                        <td className="wrap-url">
                             {!xmlSitemaps.hasSitemap
                                 ? "No sitemaps found"
                                 : containing.length > 0
@@ -103,7 +103,7 @@ export default function XmlSitemaps({ xmlSitemaps }) {
 
                     <tr style={{ textAlign: "left"}}>
                         <th>Sitemaps checked</th>
-                        <td>
+                        <td className="wrap-url">
                             {!xmlSitemaps.hasSitemap
                                 ? "No sitemaps found"
                                 : checked.length > 0

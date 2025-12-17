@@ -20,7 +20,7 @@ function RenderValue({ value, depth = 0 }) {
 
     if (typeof value === 'object') {
         return (
-            <div style={{ marginLeft: indent }}>
+            <div style={{ marginLeft: indent }} className="wrap-url">
                 {Object.entries(value).map(([k, v]) => (
                     <div key={k}>
                         <strong>{k}:</strong>{' '}
