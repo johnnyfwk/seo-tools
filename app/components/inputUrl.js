@@ -32,18 +32,27 @@ export default function InputUrl({
                     : null
                 }
 
-                <input
-                    id="url"
-                    type="url"
-                    value={inputUrl}
-                    onChange={(e) => {
-                        setInputUrl(e.target.value);
-                        if (error) setError(null);
-                    }}
-                    placeholder="Enter URL to check..."
-                    aria-invalid={!!error}
-                    aria-describedby={error ? "url-error" : undefined}
-                />
+                <div className="url-input-and-check-page-button-container">
+                    <input
+                        id="url"
+                        type="url"
+                        value={inputUrl}
+                        onChange={(e) => {
+                            setInputUrl(e.target.value);
+                            if (error) setError(null);
+                        }}
+                        placeholder="Enter URL to check..."
+                        aria-invalid={!!error}
+                        aria-describedby={error ? "url-error" : undefined}
+                    />
+                    <button
+                        type="submit"
+                        disabled={isCheckingPage || !inputUrl.trim() || !!error}
+                    >
+                        {isCheckingPage ? "Checking..." : "Check"}
+                    </button>
+                </div>
+                
 
                 {page !== "robots-txt-checker"
                     ? <RobotsDisclaimer
@@ -55,13 +64,6 @@ export default function InputUrl({
                     />
                     : null
                 }
-
-                <button
-                    type="submit"
-                    disabled={isCheckingPage || !inputUrl.trim() || !!error}
-                >
-                    {isCheckingPage ? "Fetching data..." : "Check Page"}
-                </button>
             </fieldset>
         </form>
     )
