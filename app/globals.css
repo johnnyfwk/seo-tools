@@ -200,8 +200,8 @@ nav {
     background-color: var(--back-to-top-button-background-colour);
     color: var(--back-to-top-button-font-colour);
     position: fixed;
-    bottom: var(--back-to-top-button-margin);
-    right: var(--back-to-top-button-margin);
+    bottom: var(--default-padding);
+    right: var(--default-padding);
     padding: 10px 20px;
     border: 0px;
     border-radius: 10%;
@@ -228,6 +228,10 @@ ul {
 
 ol {
     list-style: decimal;
+}
+
+img {
+    max-width: 100%;
 }
 
 fieldset {
@@ -288,12 +292,20 @@ thead th {
 
 footer {
     background-color: var(--grey);
+    padding: var(--default-padding);
+    display: grid;
+    gap: 20px;
 }
 
-img {
-    max-width: 100%;
+.footer-links {
+    display: grid;
+    gap: 20px;
+    justify-items: start;
 }
 
+#copyright {
+    font-size: 0.9rem;
+}
 
 
 /***************************** TOOL CARDS ********************************/
@@ -323,3 +335,13 @@ img {
     padding: 5px 10px;
 }
 /***************************** STRUCTURED DATA CARDS ********************************/
+
+
+
+
+@media only screen and (min-width: 768px) {
+    .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}
