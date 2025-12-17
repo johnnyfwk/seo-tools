@@ -22,7 +22,7 @@ function RenderValue({ value, depth = 0 }) {
         return (
             <div style={{ marginLeft: indent }} className="wrap-url">
                 {Object.entries(value).map(([k, v]) => (
-                    <div key={k}>
+                    <div key={k} className="structured-data-card-value">
                         <strong>{k}:</strong>{' '}
                         {typeof v === 'object' ? (
                             <RenderValue value={v} depth={depth + 1} />
