@@ -13,14 +13,20 @@ export default function Nav({ isNavVisible, setIsNavVisible }) {
     return (
         <nav style={navStyle}>
             {tools.length > 0
-                ? <div onClick={handleNavLinks}>
-                    <div className="nav-section-heading">
-                        <Link href="/tools">Tools</Link>
-                    </div>
-                    <div className="nav-section">
+                ? <div className="nav-section">
+                    <Link
+                        href="/tools"
+                        onClick={handleNavLinks}
+                        className="nav-section-heading"
+                    >Tools</Link>
+                    <div className="nav-section-links">
                         {tools.map((tool, i) => {
                             return (
-                                <Link key={i} href={`/tools/${tool.slug}`}>{tool.h1}</Link>
+                                <Link
+                                    key={i}
+                                    href={`/tools/${tool.slug}`}
+                                    onClick={handleNavLinks}
+                                >{tool.h1}</Link>
                             )
                         })}
                     </div>
@@ -28,9 +34,9 @@ export default function Nav({ isNavVisible, setIsNavVisible }) {
                 : null
             }
             
-            <div>
+            <div className="nav-section">
                 <div className="nav-section-heading">SEOTools</div>
-                <div onClick={handleNavLinks} className="nav-section">
+                <div onClick={handleNavLinks} className="nav-section-links">
                     <Link href="/">Home</Link>
                     <Link href="/about">About</Link>
                     <Link href="/contact">Contact</Link>
