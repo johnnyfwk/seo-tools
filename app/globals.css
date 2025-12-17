@@ -41,9 +41,10 @@
     --table-th-background-colour: var(--dark-grey);
     --table-th-font-colour: var(--light-grey);
 
-    --structured-data-card-background-colour: var(--light-red);
-    --structured-data-card-border-colour: var(--grey);
-    --structured-data-card-show-hide-details-button-background-colour: var(--blue);
+    --structured-data-card-background-colour: var(--grey);
+    --structured-data-card-border-colour: var(--red);
+    --structured-data-card-show-hide-details-button-background-colour: var(--dark-grey);
+    --structured-data-card-show-hide-details-button-font-colour: var(--white);
 }
 
 * {
@@ -323,19 +324,25 @@ footer {
 
 
 /***************************** STRUCTURED DATA CARDS ********************************/
+.structured-data-card-container {
+    display: grid;
+    gap: 20px;
+}
+
 .structured-data-card {
     background-color: var(--structured-data-card-background-colour);
-    border: 1px solid var(--structured-data-card-border-colour);
+    border: none;
+    padding: 20px;
 }
 
 .structured-data-card-show-hide-details-button {
     cursor: pointer;
     background-color: var(--structured-data-card-show-hide-details-button-background-colour);
+    color: var(--structured-data-card-show-hide-details-button-font-colour);
     border: none;
-    padding: 5px 10px;
+    padding: 10px 15px;
 }
 /***************************** STRUCTURED DATA CARDS ********************************/
-
 
 
 

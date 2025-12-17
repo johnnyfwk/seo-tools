@@ -89,33 +89,35 @@ export default function StructuredData({ structuredData }) {
                 </ul>
             </div>
             
-            {structuredData.map((structuredData, idx) => (
-                <div
-                    key={idx}
-                    className="structured-data-card"
-                >
-                    <h3>
-                        {Array.isArray(structuredData.raw['@type'])
-                            ? structuredData.raw['@type'].join(', ')
-                            : structuredData.raw['@type'] || structuredData.type || 'Unknown'
-                        }
-                        {structuredData.raw.name ? `: ${structuredData.raw.name}` : ''}
-                    </h3>
-
-                    <h4>
-                        {structuredData.format}
-                    </h4>
-
-                    <button
-                        className="structured-data-card-show-hide-details-button"
-                        onClick={() => toggleStructuredData(idx)}
+            <div className="structured-data-card-container">
+                {structuredData.map((structuredData, idx) => (
+                    <div
+                        key={idx}
+                        className="structured-data-card"
                     >
-                        {expanded.has(idx) ? 'Hide Details' : 'Show Details'}
-                    </button>
+                        <h3>
+                            {Array.isArray(structuredData.raw['@type'])
+                                ? structuredData.raw['@type'].join(', ')
+                                : structuredData.raw['@type'] || structuredData.type || 'Unknown'
+                            }
+                            {structuredData.raw.name ? `: ${structuredData.raw.name}` : ''}
+                        </h3>
 
-                    {expanded.has(idx) && <RenderValue value={structuredData.raw} />}
-                </div>
-            ))}
+                        <h4>
+                            {structuredData.format}
+                        </h4>
+
+                        <button
+                            className="structured-data-card-show-hide-details-button"
+                            onClick={() => toggleStructuredData(idx)}
+                        >
+                            {expanded.has(idx) ? 'Hide Details' : 'Show Details'}
+                        </button>
+
+                        {expanded.has(idx) && <RenderValue value={structuredData.raw} />}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }
