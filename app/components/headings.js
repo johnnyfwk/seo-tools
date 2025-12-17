@@ -54,7 +54,7 @@ export default function Headings({ headings }) {
             }
 
             {headingLevels.map(level => (
-                <section key={level} id={level}>
+                <section key={level} id={level} className="section-margin-bottom">
                     <h3>{level.toUpperCase()} Tags ({grouped[level].length})</h3>
                     
                     {grouped[level].length === 0
