@@ -34,7 +34,7 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
             <td>{`${label} [${idx + 1}]`}</td>
             <td className="wrap-url">
                 {label === "image" ? (
-                <a href={src} target="_blank" rel="noopener noreferrer">
+                <a href={src} target="_blank" rel="noopener noreferrer" className="component-links">
                     <img
                         src={src}
                         alt=""
@@ -43,7 +43,7 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
                     <div>{src}</div>
                 </a>
                 ) : (
-                    <a href={src} target="_blank" rel="noopener noreferrer">{src}</a>
+                    <a href={src} target="_blank" rel="noopener noreferrer" className="component-links">{src}</a>
                 )}
             </td>
         </tr>
@@ -53,7 +53,7 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
     const renderUrlRow = (label, url) => (
         <div>
             <strong>{label}:</strong>{" "}
-            {url ? <a href={url} target="_blank" rel="noopener noreferrer">{url}</a> : "N/A"}
+            {url ? <a href={url} target="_blank" rel="noopener noreferrer" className="component-links">{url}</a> : "N/A"}
         </div>
     );
 

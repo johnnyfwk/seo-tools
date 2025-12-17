@@ -130,13 +130,13 @@ export function highlightWhitespace(str) {
     return (
         <>
             {leading && (
-                <span style={{ background: "yellow" }}>
+                <span className="highlight-whitespace-background">
                     {"␣".repeat(leading.length)}
                 </span>
             )}
             {core}
             {trailing && (
-                <span style={{ background: "yellow" }}>
+                <span className="highlight-whitespace-background">
                     {"␣".repeat(trailing.length)}
                 </span>
             )}

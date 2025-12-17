@@ -56,7 +56,10 @@ export default function Tools() {
                         {tools.map((tool, i) => {
                             return (
                                 <li key={i}>
-                                    <Link href={`/tools/${tool.slug}`}>{tool.h1}</Link>
+                                    <Link
+                                        href={`/tools/${tool.slug}`}
+                                        className="tools-page-link"
+                                    >{tool.h1}</Link>
                                 </li>
                             )
                         })}

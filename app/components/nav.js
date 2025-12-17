@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { tools } from "@/data/tools";
+import { siteName } from "@/data/site";
 
 export default function Nav({ isNavVisible, setIsNavVisible }) {   
     const navStyle = {
@@ -31,7 +32,7 @@ export default function Nav({ isNavVisible, setIsNavVisible }) {
             }
             
             <div className="nav-section">
-                <div className="nav-section-heading">SEOTools</div>
+                <div className="nav-section-heading">{siteName}</div>
                 <div onClick={handleNavLinks} className="nav-section-links">
                     <Link href="/">Home</Link>
                     <Link href="/about">About</Link>

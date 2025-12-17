@@ -5,11 +5,11 @@ export default function NavButton({ isNavVisible, setIsNavVisible }) {
             onClick={() => {setIsNavVisible(!isNavVisible)}}
         >
             {isNavVisible
-                ? <div></div>
+                ? <div className="nav-close-button-line"></div>
                 : <>
-                    <div></div>
-                    <div></div>
-                    <div></div>
+                    <div className="nav-open-button-line"></div>
+                    <div className="nav-open-button-line"></div>
+                    <div className="nav-open-button-line"></div>
                 </>
             }
         </div>

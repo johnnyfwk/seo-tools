@@ -258,10 +258,10 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
     const scrapeDuration = utils.formatScrapeDuration(pageData.scrapeDuration);
 
     const mainSections = [
-        {
-            title: "Scrape Duration",
-            component: <p>{scrapeDuration}</p>,
-        },
+        // {
+        //     title: "Scrape Duration",
+        //     component: <p>{scrapeDuration}</p>,
+        // },
         {
             title: "URL",
             component: <Url url={pageData.enteredUrl} />,

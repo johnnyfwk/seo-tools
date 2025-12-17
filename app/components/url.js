@@ -4,6 +4,7 @@ export default function Url({ url }) {
             href={url}
             target="_blank"
             rel="noopener noreferrer"
+            className="component-links"
         >{url}</a>
     )
 }
