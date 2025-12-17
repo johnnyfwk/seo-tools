@@ -1,7 +1,7 @@
 :root {
     --white: #FFFFFF;
     --black: #000000;
-    --light-grey: #efefef;
+    --light-grey: #f5f5f5;
     --grey: #8a8a8a;
     --dark-grey: #2c2c2c;
     --red: #ff0000;
@@ -20,13 +20,15 @@
     --soft-linen: #E8EDDF;
     --tuscan-sun: #F5CB5C;
 
-    --primary-background-colour: var(--white);
+    --primary-background-colour: var(--light-grey);
     --primary-text-color: var(--black);
 
     --error: var(--red);
     --warning: var(--orange);
     --success: var(--green);
     --neutral: var(--blue);
+
+    --main-max-width: 1200px;
 
     --default-padding: 20px;
 
@@ -217,10 +219,12 @@ nav {
 
 main {
     padding: var(--default-padding);
+    max-width: var(--main-max-width);
+    margin: auto;
 }
 
 section {
-    background-color: var(--section-background-colour);
+    /* background-color: var(--section-background-colour); */
 }
 
 ul,
