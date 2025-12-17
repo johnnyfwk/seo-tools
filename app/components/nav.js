@@ -14,11 +14,7 @@ export default function Nav({ isNavVisible, setIsNavVisible }) {
         <nav style={navStyle}>
             {tools.length > 0
                 ? <div className="nav-section">
-                    <Link
-                        href="/tools"
-                        onClick={handleNavLinks}
-                        className="nav-section-heading"
-                    >Tools</Link>
+                    <div className="nav-section-heading">Tools</div>
                     <div className="nav-section-links">
                         {tools.map((tool, i) => {
                             return (
