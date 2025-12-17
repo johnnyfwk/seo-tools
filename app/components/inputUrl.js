@@ -45,6 +45,7 @@ export default function InputUrl({
                         aria-invalid={!!error}
                         aria-describedby={error ? "url-error" : undefined}
                     />
+                    
                     <button
                         type="submit"
                         disabled={isCheckingPage || !inputUrl.trim() || !!error}
