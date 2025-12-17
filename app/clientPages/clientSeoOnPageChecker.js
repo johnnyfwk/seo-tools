@@ -412,7 +412,7 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
 
     function RenderSections({ sections }) {
          return sections.map((s, i) => (
-            <section key={i}>
+            <section key={i} className="section-margin-bottom">
                 <h2>{s.title}</h2>
                 {s.component}
             </section>
@@ -421,7 +421,7 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
 
     return (
         <>
-            <section>
+            <section className="section-margin-bottom">
                 <h1>Free {h1}</h1>
 
                 <p>{metaDescription}</p>

@@ -62,24 +62,26 @@ export default function Home() {
 
     return (
         <>
-            <h1>{defaultTitle}</h1>
+            <section>
+                <h1>{defaultTitle}</h1>
 
-            <p>{defaultMetaDescription}</p>
+                <p>{defaultMetaDescription}</p>
 
-            {tools.length > 0
-                ? <div className="tool-card-container">
-                    {tools.map((tool, i) => {
-                        return (
-                            <ToolCard key={i} tool={tool}>
-                                <h2>
-                                    <Link href={`/tools/${tool.slug}`}>{tool.h1}</Link>
-                                </h2>
-                            </ToolCard>
-                        )
-                    })}
-                </div>
-                : <p>No tools available.</p>
-            }
+                {tools.length > 0
+                    ? <div className="tool-card-container">
+                        {tools.map((tool, i) => {
+                            return (
+                                <ToolCard key={i} tool={tool}>
+                                    <h2>
+                                        <Link href={`/tools/${tool.slug}`}>{tool.h1}</Link>
+                                    </h2>
+                                </ToolCard>
+                            )
+                        })}
+                    </div>
+                    : <p>No tools available.</p>
+                }
+            </section>
 
             <script
                 type="application/ld+json"

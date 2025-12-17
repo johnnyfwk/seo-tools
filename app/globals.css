@@ -33,6 +33,7 @@
     --default-padding: 20px;
 
     --section-background-colour: var(--light-grey);
+    --section-margin-bottom: 30px;
 
     --nav-button-margin: 10px;
 
@@ -244,6 +245,10 @@ ol {
 
 img {
     max-width: 100%;
+}
+
+.section-margin-bottom {
+    margin-bottom: var(--section-margin-bottom);
 }
 
 .wrap-url {
