@@ -134,9 +134,11 @@ body {
 
 header {
     background-color: var(--orange);
+    padding: 5px var(--default-padding);
 }
 
 #logo {
+    background-color: var(--blue);
     font-family: 'Michroma', sans-serif;
     font-size: 1.3rem;
 }
@@ -152,6 +154,7 @@ nav {
     height: 100%;
     align-content: start;
     transition: left 0.2s ease-in-out;
+    z-index: 999;
 }
 
 .nav-section {
@@ -170,6 +173,7 @@ nav {
     top: var(--nav-button-margin);
     right: var(--nav-button-margin);
     font-size: 1.5rem;
+    z-index: 1000;
 }
 
 #back-to-top-button {
@@ -265,6 +269,10 @@ thead th {
 .table-links {
     display: grid;
     justify-items: start;
+}
+
+.wrap-url {
+    word-break: break-word;
 }
 
 footer {

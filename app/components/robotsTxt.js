@@ -62,7 +62,7 @@ export default function RobotsTxt({ robotsTxt }) {
                 <tbody>
                     <tr style={{ textAlign: "left"}}>
                         <th>URL</th>
-                        <td>
+                        <td className="wrap-url">
                             {url
                                 ? <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
                                 : "N/A"
@@ -90,7 +90,7 @@ export default function RobotsTxt({ robotsTxt }) {
 
                     <tr style={{ textAlign: "left"}}>
                         <th>Sitemaps found ({sitemaps.length})</th>
-                        <td>
+                        <td className="wrap-url">
                             {sitemaps.length > 0
                                 ? <div className="table-links">
                                     {sitemaps.map((sitemap, i) => {
