@@ -6,7 +6,7 @@ export default function Links({ links }) {
     })
 
     if (crawlableLinks.length === 0) {
-        return <p>⚠️ No links found</p>;
+        return <p>No links found</p>;
     }
 
     const issues = [];
