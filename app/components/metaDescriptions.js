@@ -59,7 +59,10 @@ export default function MetaDescriptions({ metaDescriptions }) {
                             <tr key={i}>
                                 <td style={{ textAlign: 'center' }}>{i + 1}</td>
 
-                                <td style={{ textAlign: 'left' }}>{utils.highlightWhitespace(metaDesc)}</td>
+                                <td
+                                    style={{ textAlign: 'left' }}
+                                    className="wrap-text"
+                                >{utils.highlightWhitespace(metaDesc)}</td>
 
                                 <td
                                     style={{ textAlign: 'center' }}

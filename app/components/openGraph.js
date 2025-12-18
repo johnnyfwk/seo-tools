@@ -38,7 +38,7 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
                     <img
                         src={src}
                         alt=""
-                        style={{ maxWidth: "200px", maxHeight: "200px", display: "block" }}
+                        style={{ maxWidth: "150px", maxHeight: "150px", display: "block" }}
                     />
                     <div>{src}</div>
                 </a>
@@ -51,7 +51,7 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
 
     // Helper: Render a label + clickable URL row
     const renderUrlRow = (label, url) => (
-        <div>
+        <div className="wrap-text">
             <strong>{label}:</strong>{" "}
             {url ? <a href={url} target="_blank" rel="noopener noreferrer" className="component-links">{url}</a> : "N/A"}
         </div>
