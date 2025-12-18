@@ -82,7 +82,12 @@ export default function Pagination({ pagination }) {
 
                                     <td style={{ textAlign: 'left' }}>
                                         {p.initialUrl
-                                            ? <Link href={p.initialUrl} target="_blank" rel="noreferrer noopener">
+                                            ? <Link
+                                                href={p.initialUrl}
+                                                target="_blank"
+                                                rel="noreferrer noopener"
+                                                className="component-links"
+                                            >
                                                 {p.initialUrl}
                                             </Link>
                                             : "N/A"
@@ -104,6 +109,7 @@ export default function Pagination({ pagination }) {
                                                     href={p.finalUrl}
                                                     target="_blank"
                                                     rel="noreferrer noopener"
+                                                    className="component-links"
                                                 >
                                                     {p.finalUrl}
                                                 </a>
@@ -130,6 +136,8 @@ export default function Pagination({ pagination }) {
                                                 href={p.canonicalTags[0].resolvedCanonicalUrl}
                                                 target="_blank"
                                                 rel="noreferrer noopener"
+                                                className="component-links"
+                                                
                                             >
                                                 {p.canonicalTags[0].resolvedCanonicalUrl}
                                             </Link>
