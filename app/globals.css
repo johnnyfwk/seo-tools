@@ -153,7 +153,8 @@ p {
     background-color: var(--royal-gold);
 }
 
-.wrap-url {
+.wrap-url,
+.wrap-text {
     word-break: break-word;
 }
 

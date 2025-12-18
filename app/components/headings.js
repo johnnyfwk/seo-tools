@@ -70,7 +70,10 @@ export default function Headings({ headings }) {
                                 {grouped[level].map((h, i) => (
                                     <tr key={i}>
                                         <td style={{ textAlign: 'center' }}>{i + 1}</td>
-                                        <td style={{ textAlign: 'left' }}>
+                                        <td
+                                            style={{ textAlign: 'left' }}
+                                            className="wrap-text"
+                                        >
                                             {utils.highlightWhitespace(h.text)}
                                         </td>
                                     </tr>
