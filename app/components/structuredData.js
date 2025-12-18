@@ -4,15 +4,22 @@ import React, { useState } from 'react';
 
 // Recursive renderer for nested values
 function RenderValue({ value, depth = 0 }) {
-    if (value === null || value === undefined) return <span>null</span>;
+    if (value === null || value === undefined) {
+        return <span>null</span>;
+    }
 
-    const indent = depth * 20;
+    const indentStyle = { marginLeft: depth * 20 };
 
     if (Array.isArray(value)) {
         return (
             <div>
                 {value.map((v, i) => (
-                    <RenderValue key={i} value={v} depth={depth + 1} />
+                    <div key={i}>
+                        <RenderValue
+                            value={v}
+                            depth={depth + 1}
+                        />
+                    </div>
                 ))}
             </div>
         );
@@ -20,9 +27,13 @@ function RenderValue({ value, depth = 0 }) {
 
     if (typeof value === 'object') {
         return (
-            <div style={{ marginLeft: indent }} className="wrap-url">
+            <div>
                 {Object.entries(value).map(([k, v]) => (
-                    <div key={k} className="structured-data-card-value">
+                    <div
+                        key={k}
+                        className="structured-data-card-value"
+                        style={indentStyle}
+                    >
                         <strong>{k}:</strong>{' '}
                         {typeof v === 'object' ? (
                             <RenderValue value={v} depth={depth + 1} />
@@ -35,7 +46,7 @@ function RenderValue({ value, depth = 0 }) {
         );
     }
 
-    return <span style={{ marginLeft: indent }}>{value.toString()}</span>;
+    return <span style={indentStyle}>{value.toString()}</span>;
 }
 
 export default function StructuredData({ structuredData }) {
@@ -93,7 +104,7 @@ export default function StructuredData({ structuredData }) {
                 {structuredData.map((structuredData, idx) => (
                     <div
                         key={idx}
-                        className="structured-data-card"
+                        className="structured-data-card card-wrapper"
                     >
                         <h3>
                             {Array.isArray(structuredData.raw['@type'])
