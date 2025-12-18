@@ -1,4 +1,5 @@
 import "./globals.css";
+import Script from "next/script";
 import Link from "next/link";
 import NavAndNavButton from "./components/navAndNavButton";
 import Footer from "./components/footer";
@@ -43,6 +44,21 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
+        {/* Google Analytics */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=G-E03GW5TD4R`}
+          strategy="afterInteractive"
+        />
+        <Script id="ga4" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-E03GW5TD4R', {
+              page_path: window.location.pathname,
+            });
+          `}
+        </Script>
         <header>
           <Link href="/" id="logo">{siteName}</Link>
           <NavAndNavButton />

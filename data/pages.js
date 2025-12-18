@@ -33,16 +33,16 @@ export const pages = [
         metaDescription: "Learn who we are and how our SEO tools help improve your website.",
         priority: 5,
     },
-    {
-        slug: "contact",
-        robots: {
-            index: true,
-            follow: true,
-        },
-        h1: "Contact Us",
-        metaDescription: "Have questions or feedback? Contact us and let us know how we can improve our SEO tools.",
-        priority: 5,
-    },
+    // {
+    //     slug: "contact",
+    //     robots: {
+    //         index: true,
+    //         follow: true,
+    //     },
+    //     h1: "Contact Us",
+    //     metaDescription: "Have questions or feedback? Contact us and let us know how we can improve our SEO tools.",
+    //     priority: 5,
+    // },
     {
         slug: "privacy-policy",
         robots: {
