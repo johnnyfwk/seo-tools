@@ -2,7 +2,7 @@ import * as utils from '@/app/lib/utils/utils';
 
 export default function TitleTags({ titleTags }) {
     if (titleTags.length === 0) {
-        return <p>No title tag found.</p>
+        return <p>⚠️ No title tag found</p>
     }
 
     const issues = [];
@@ -36,7 +36,7 @@ export default function TitleTags({ titleTags }) {
                         })}
                     </ul>
                 </div>
-                : <p>✅ No issues found.</p>
+                : <p>✅ No issues found</p>
             }
 
             <table>

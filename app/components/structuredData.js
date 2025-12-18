@@ -40,7 +40,7 @@ function RenderValue({ value, depth = 0 }) {
 
 export default function StructuredData({ structuredData }) {
     if (!structuredData || !structuredData.length) {
-        return <p>No structured data found.</p>;
+        return <p>⚠️ No structured data found</p>;
     }
 
     // Use a Set to track which structured data indices are expanded

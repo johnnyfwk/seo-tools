@@ -2,7 +2,7 @@ import * as utils from '@/app/lib/utils/utils';
 
 export default function Headings({ headings }) {
     if (headings.length === 0) {
-        return <p>No headings found.</p>;
+        return <p>⚠️ No headings found</p>;
     }
 
     const headingLevels = ['h1','h2','h3','h4','h5','h6'];
@@ -50,7 +50,7 @@ export default function Headings({ headings }) {
                         ))}
                     </ul>
                 </div>
-                : <p>✅ No issues found.</p>
+                : <p>✅ No issues found</p>
             }
 
             {headingLevels.map(level => (
@@ -58,7 +58,7 @@ export default function Headings({ headings }) {
                     <h3>{level.toUpperCase()} Tags ({grouped[level].length})</h3>
                     
                     {grouped[level].length === 0
-                        ? <p>No {level} tags found.</p>
+                        ? <p>No {level} tags found</p>
                         : <table>
                             <thead>
                                 <tr>

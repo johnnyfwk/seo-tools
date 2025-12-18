@@ -3,7 +3,7 @@ import * as utils from '@/app/lib/utils/utils';
 
 export default function CanonicalTags({ canonicalTags, finalUrl }) {
     if (canonicalTags.tags?.length === 0) {
-        return <p>No canonical tag found.</p>;
+        return <p>⚠️ No canonical tag found</p>;
     }
 
     const issues = [];
@@ -41,7 +41,7 @@ export default function CanonicalTags({ canonicalTags, finalUrl }) {
                         })}
                     </ul>
                 </div>
-                : <p>✅ No issues found.</p>
+                : <p>✅ No issues found</p>
             }
 
             <div className="table-wrapper">
