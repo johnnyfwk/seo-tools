@@ -1,18 +1,10 @@
 :root {
     --white: #FFFFFF;
+    --carbon-black: #242423;
     --black: #000000;
     --light-grey: #f5f5f5;
     --grey: #dcdcdc;
     --dark-grey: #676767;
-    --red: #ff0000;
-    --orange: #ff9900;
-    --yellow: #ffff00;
-    --green: #09ff00;
-    --blue: #00a2ff;
-    --light-pink: #ffd3d3;
-    --light-blue: #d0d0ff;
-    --light-green: #bcffc2;
-    --light-red: #ffc7c7;
 
     --light-royal-navy: #9acbff;
     --royal-navy: #083D77;
@@ -21,27 +13,13 @@
     --sandy-brown: #EE964B;
     --tomato: #F95738;
 
-    --mint-leaf: #61C9A8;
-    --golden-apricot: #ED9B40;
-    --intense-cherry: #BA3B46;
-
-    --pitch-black: #0B0500;
-    --jungle-green: #00A878;
-    --lime-cream: #D8F1A0;
-    --sunlit-clay: #F3C178;
-    --tomato: #FE5E41;
-
-    --carbon-black: #242423;
-    --graphite: #333533;
-    --alabaster-grey: #CFDBD5;
-    --soft-linen: #E8EDDF;
-    --tuscan-sun: #F5CB5C;
-
     --primary-background-colour: var(--white);
     --primary-text-color: var(--carbon-black);
 
     --primary-element-background-colour: var(--carbon-black);
     --primary-element-text-colour: var(--white);
+
+    --page-link-colour: var(--royal-gold);
 
     --error: var(--tomato);
     --warning: var(--sandy-brown);
@@ -143,6 +121,14 @@ ol {
 
 p {
     line-height: 1.5rem;
+}
+
+.page-link-colour {
+    color: var(--primary-text-color);
+}
+
+.page-link-colour:hover {
+    color: var(--page-link-colour);
 }
 
 .section-margin-bottom {
@@ -249,7 +235,6 @@ header {
 }
 
 #logo {
-    /* background-color: var(--blue); */
     font-family: 'Michroma', sans-serif;
     font-size: 1.3rem;
     color: var(--primary-element-text-colour);
@@ -261,7 +246,6 @@ header {
 }
 
 #nav-button {
-    /* background-color: greenyellow; */
     cursor: pointer;
     z-index: 1000;
     position: fixed;
@@ -354,7 +338,6 @@ main {
 
 /************************************** FORMS *******************************************/
 fieldset {
-    /* background-color: var(--light-pink); */
     border: none;
 }
 
@@ -483,7 +466,6 @@ footer {
 
 /***************************** TOOL CARDS ********************************/
 .tool-card-container {
-    /* background-color: var(--light-pink); */
     display: grid;
     gap: 10px;
 }

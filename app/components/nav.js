@@ -36,7 +36,6 @@ export default function Nav({ isNavVisible, setIsNavVisible }) {
                 <div onClick={handleNavLinks} className="nav-section-links">
                     <Link href="/">Home</Link>
                     <Link href="/about">About</Link>
-                    <Link href="/contact">Contact</Link>
                 </div>
             </div>
         </nav>

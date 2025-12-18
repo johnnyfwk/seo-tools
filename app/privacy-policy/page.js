@@ -60,7 +60,7 @@ export default function PrivacyPolicy() {
             <ul>
                 <li>Provide, maintain, and improve our services.</li>
                 <li>Communicate updates or promotional content (if you opt-in).</li>
-                <li>Analyze website usage and performance.</li>
+                <li>Analyse website usage and performance.</li>
             </ul>
 
             <h2>3. Sharing Your Information</h2>
@@ -80,11 +80,7 @@ export default function PrivacyPolicy() {
 
             <p>We implement reasonable security measures to protect your data but cannot guarantee absolute security.</p>
 
-            <h2>6. Your Rights</h2>
-
-            <p>Depending on your location, you may have rights to access, correct, or delete your personal data. Contact us at xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.</p>
-
-            <h2>7. Changes to This Policy</h2>
+            <h2>6. Changes to This Policy</h2>
 
             <p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated effective date.</p>
 
