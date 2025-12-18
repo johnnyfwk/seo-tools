@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function XmlSitemaps({ xmlSitemaps }) {
     if (!xmlSitemaps) {
-        return <p>XML sitemap data could be fetched.</p>;
+        return <p>XML sitemap data could be fetched</p>;
     }
 
     if (xmlSitemaps.hasSitemap === null) {
@@ -10,7 +10,7 @@ export default function XmlSitemaps({ xmlSitemaps }) {
     }
 
     if (xmlSitemaps.hasSitemap === false) {
-        return <p>No XML sitemaps found.</p>;
+        return <p>⚠️ No XML sitemaps found.</p>;
     }
 
     const issues = [];
@@ -61,7 +61,7 @@ export default function XmlSitemaps({ xmlSitemaps }) {
                         })}
                     </ul>
                 </div>
-                : <p>✅ No issues found.</p>
+                : <p>✅ No issues found</p>
             }
 
             <table>

@@ -3,7 +3,7 @@ import * as utils from '@/app/lib/utils/utils';
 
 export default function Pagination({ pagination }) {
     if (!pagination || pagination.length === 0) {
-        return <p>No pagination links found.</p>;
+        return <p>No pagination links found</p>;
     }
 
     const issues = [];
@@ -49,7 +49,7 @@ export default function Pagination({ pagination }) {
                         })}
                     </ul>
                 </div>
-                : <p>✅ No issues found.</p>
+                : <p>✅ No issues found</p>
             }
 
             <div className="table-wrapper">

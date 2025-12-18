@@ -1,6 +1,6 @@
 export default function Viewport({ viewport }) {
     if (!viewport.content) {
-        return <p>No viewport tag found.</p>;
+        return <p>⚠️ No viewport tag found</p>;
     }
 
     const issues = [];
@@ -26,7 +26,7 @@ export default function Viewport({ viewport }) {
                         })}
                     </ul>
                 </div>
-                : <p>✅ No issues found.</p>
+                : <p>✅ No issues found</p>
             }
 
             <table>

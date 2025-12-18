@@ -16,7 +16,7 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
     const hasOgData = Object.values(openGraph).some(
         (v) => v !== null && v !== "" && !(Array.isArray(v) && v.length === 0)
     );
-    if (!hasOgData) return <p>No open graph tags found.</p>;
+    if (!hasOgData) return <p>⚠️ No open graph tags found</p>;
 
     // Detect missing standard fields
     const expectedOgFields = [

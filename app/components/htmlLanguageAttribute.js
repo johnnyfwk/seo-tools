@@ -8,7 +8,7 @@ export default function HtmlLanguageAttribute({ htmlLanguageAttribute }) {
 
     if (!attribute) {
         return (
-            <p>❌ No HTML language attribute found.</p>
+            <p>⚠️ No HTML language attribute found</p>
         )
     }
 
@@ -30,7 +30,7 @@ export default function HtmlLanguageAttribute({ htmlLanguageAttribute }) {
                         ))}
                     </ul>
                 </div>
-                : <p>✅ No issues found.</p>
+                : <p>✅ No issues found</p>
             }
 
             <table>

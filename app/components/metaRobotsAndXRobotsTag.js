@@ -1,6 +1,6 @@
 export default function MetaRobotsAndXRobotsTag({ metaRobotsAndXRobotsTag }) {
     if (!metaRobotsAndXRobotsTag || !metaRobotsAndXRobotsTag.allDirectives) {
-        return <p>No meta robots or x-robots tag found. URL is indexable and links on the page are followable by default.</p>;
+        return <p>⚠️ No meta robots or x-robots tag found. URL is indexable and links on the page are followable by default.</p>;
     }
 
     const allDirectivesLower = String(metaRobotsAndXRobotsTag.allDirectives || "").toLowerCase();

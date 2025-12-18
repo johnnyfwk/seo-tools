@@ -3,7 +3,7 @@ import * as utils from '@/app/lib/utils/utils';
 
 export default function Images({ images }) {
     if (images.length === 0) {
-        return <p>No images found.</p>
+        return <p>No images found</p>
     }
 
     const issues = [];
@@ -57,7 +57,7 @@ export default function Images({ images }) {
                         })}
                     </ul>
                 </div>
-                : <p>✅ No issues found.</p>
+                : <p>✅ No issues found</p>
             }
 
             <div className="table-wrapper">

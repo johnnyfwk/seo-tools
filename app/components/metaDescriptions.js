@@ -2,7 +2,7 @@ import * as utils from '@/app/lib/utils/utils';
 
 export default function MetaDescriptions({ metaDescriptions }) {
     if (metaDescriptions.length === 0) {
-        return <p>No meta description found.</p>
+        return <p>⚠️ No meta description found</p>
     }
 
     const issues = [];
@@ -36,7 +36,7 @@ export default function MetaDescriptions({ metaDescriptions }) {
                         })}
                     </ul>
                 </div>
-                : <p>✅ No issues found.</p>
+                : <p>✅ No issues found</p>
             }
             
             <table>

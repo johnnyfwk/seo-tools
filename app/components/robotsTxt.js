@@ -1,6 +1,6 @@
 export default function RobotsTxt({ robotsTxt }) {
     if (!robotsTxt.exists) {
-        return <p>No robots.txt found. URL can be crawled by bots by default.</p>;
+        return <p>⚠️ No robots.txt found. URL can be crawled by bots by default.</p>;
     }
 
     const {
@@ -55,7 +55,7 @@ export default function RobotsTxt({ robotsTxt }) {
                         })}
                     </ul>
                 </div>
-                : <p>✅ No issues found.</p>
+                : <p>✅ No issues found</p>
             }
 
             <table>

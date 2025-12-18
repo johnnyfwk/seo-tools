@@ -3,7 +3,7 @@ import * as utils from '@/app/lib/utils/utils';
 
 export default function Hreflang({ hreflang, contentType, xRobotsNoindex }) {
     if (hreflang.length === 0) {
-        return <p>No hreflang tags found.</p>
+        return <p>No hreflang tags found</p>
     }
 
     const issues = [];
@@ -81,7 +81,7 @@ export default function Hreflang({ hreflang, contentType, xRobotsNoindex }) {
                         })}
                     </ul>
                 </div>
-                : <p>✅ No issues found.</p>
+                : <p>✅ No issues found</p>
             }
 
             <div className="table-wrapper">

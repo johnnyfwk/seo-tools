@@ -6,7 +6,7 @@ export default function Links({ links }) {
     })
 
     if (crawlableLinks.length === 0) {
-        return <p>No links found.</p>;
+        return <p>⚠️ No links found</p>;
     }
 
     const issues = [];
@@ -70,7 +70,7 @@ export default function Links({ links }) {
                         })}
                     </ul>
                 </div>
-                : <p>✅ No issues found.</p>
+                : <p>✅ No issues found</p>
             }
 
             <div className="table-wrapper">
