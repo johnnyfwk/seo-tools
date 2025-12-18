@@ -66,7 +66,7 @@ export default function CookiePolicy() {
 
             <p>You can manage your cookie preferences through your browser settings. You may choose to block or delete cookies, but please note that certain features of the site may not function as intended if cookies are disabled.</p>
 
-            <p>To learn how to manage cookies, you can visit <a href="https://allaboutcookies.org/" target="_blank" rel="noreferrer noopener">All About Cookies</a>.</p>
+            <p>To learn how to manage cookies, you can visit <a href="https://allaboutcookies.org/" target="_blank" rel="noreferrer noopener" className="page-link-colour">All About Cookies</a>.</p>
 
             <h2>Changes to this Cookie Policy</h2>
 

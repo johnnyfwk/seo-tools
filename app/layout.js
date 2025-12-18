@@ -11,6 +11,7 @@ import {
   defaultMetaDescription,
   openGraphLocale,
   openGraphType,
+  openGraphImage
 } from "@/data/site";
 
 export const metadata = {
@@ -32,8 +33,7 @@ export const metadata = {
     type: openGraphType,
     images: [
       {
-        // url: `${siteUrl}${openGraphImage}`
-        url: "https://cdn.pixabay.com/photo/2015/08/09/14/26/frog-881654_1280.jpg"
+        url: `${siteUrl}${openGraphImage}`
       }
     ],
   },
