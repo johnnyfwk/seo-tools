@@ -11,7 +11,6 @@ import {
   defaultMetaDescription,
   openGraphLocale,
   openGraphType,
-  openGraphImage,
 } from "@/data/site";
 
 export const metadata = {
