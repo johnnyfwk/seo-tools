@@ -1,6 +1,3 @@
-// utils/languageMaps.js
-
-// ISO 639-1 Language Codes
 export const ISO_LANGUAGES = {
     en: "English",
     fr: "French",
@@ -34,7 +31,6 @@ export const ISO_LANGUAGES = {
     sr: "Serbian",
     hr: "Croatian",
     sl: "Slovenian",
-    // Add more as needed
 };
 
 // ISO 3166-1 Alpha-2 Region Codes
@@ -72,10 +68,8 @@ export const ISO_REGIONS = {
     CH: "Switzerland",
     AT: "Austria",
     IE: "Ireland",
-    // Add more as needed
 };
 
-// Converts `en-gb` → "English (United Kingdom)"
 export function getHumanReadableLang(langTag = "") {
     if (!langTag) return null;
 
@@ -90,7 +84,6 @@ export function getHumanReadableLang(langTag = "") {
 
     if (languageName) return languageName;
 
-    // Unknown but present
     if (lang) return lang.toUpperCase() + (region ? `-${region.toUpperCase()}` : "");
 
     return null;

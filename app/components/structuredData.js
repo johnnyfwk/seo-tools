@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 
-// Recursive renderer for nested values
 function RenderValue({ value, depth = 0 }) {
     if (value === null || value === undefined) {
         return <span>null</span>;
@@ -54,7 +53,6 @@ export default function StructuredData({ structuredData }) {
         return <p>⚠️ No structured data found</p>;
     }
 
-    // Use a Set to track which structured data indices are expanded
     const [expanded, setExpanded] = useState(new Set());
 
     const toggleStructuredData = (idx) => {

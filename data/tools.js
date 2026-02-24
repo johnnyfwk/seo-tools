@@ -1,18 +1,5 @@
 import { siteUrl, siteName } from "./site";
 
-/*****************************************************
-    {
-        slug: "xxxxxxxxxxxxxxxxxxxxxxxxxx",
-        robots: {
-            index: true,
-            follow: true,
-        },
-        h1: "xxxxxxxxxxxxxxxxxxxxxxxxxx",
-        metaDescription: "xxxxxxxxxxxxxxxxxxxxxxxxxx",
-        scrapeOptions: { all: true },
-    },
-*****************************************************/
-
 export const tools = [
     {
         slug: "seo-on-page-checker",

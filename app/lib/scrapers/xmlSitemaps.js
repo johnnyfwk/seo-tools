@@ -3,7 +3,6 @@ import zlib from "zlib";
 import { checkRobotsTxt } from "../utils/checkRobotsTxt";
 import { browserHeaders } from "../utils/browserHeaders";
 
-// Small concurrency limiter (3 at a time)
 function queue(items, limit, worker) {
     const running = new Set();
 
@@ -32,13 +31,12 @@ function queue(items, limit, worker) {
 export async function scrapeXmlSitemaps(targetUrl) {
     const robotsData = await checkRobotsTxt(targetUrl);
 
-    // Either robots.txt sitemaps or fallback to /sitemap.xml
     const sitemapRoots = robotsData.sitemaps.length
         ? robotsData.sitemaps.map(s => s.url)
         : [new URL("/sitemap.xml", targetUrl).href];
 
-    const foundSitemaps = [];       // duplicates preserved
-    const foundMatchIn = new Map(); // map sitemapURL -> sitemapObj (unique)
+    const foundSitemaps = [];
+    const foundMatchIn = new Map();
 
     const normalizeUrl = (u) => u.replace(/\/$/, "").toLowerCase();
 
@@ -51,7 +49,6 @@ export async function scrapeXmlSitemaps(targetUrl) {
 
             const statusCode = res.status;
 
-            // Only 200 counts as success
             if (statusCode !== 200) {
                 return { xml: null, statusCode };
             }
@@ -91,7 +88,6 @@ export async function scrapeXmlSitemaps(targetUrl) {
     async function processSitemap(url) {
         const result = await fetchXmlWithStatus(url);
 
-        // Save every attempt (for display/logging)
         const sitemapRecord = {
             url,
             statusCode: result.statusCode
@@ -105,7 +101,6 @@ export async function scrapeXmlSitemaps(targetUrl) {
 
         for (const loc of locs) {
             if (normalizeUrl(loc) === normTarget) {
-                // save unique match
                 foundMatchIn.set(url, sitemapRecord);
             }
         }
@@ -113,13 +108,12 @@ export async function scrapeXmlSitemaps(targetUrl) {
 
     await queue(sitemapRoots, 3, processSitemap);
 
-    // Only consider sitemaps with statusCode 200 as "real"
     const successfulSitemaps = foundSitemaps.filter(s => s.statusCode === 200);
 
     return {
         hasSitemap: successfulSitemaps.length > 0,
         robotsTxtChecked: robotsData.url,
-        sitemapsChecked: foundSitemaps,            // duplicates preserved
+        sitemapsChecked: foundSitemaps,
         urlFound: foundMatchIn.size > 0,
         sitemapsContainingUrl: Array.from(foundMatchIn.values())
     };

@@ -1,7 +1,6 @@
 export function validateUrlFrontend(inputUrl) {
     const trimmedUrl = inputUrl.trim();
 
-    // 1. Reject clearly invalid protocols (htps://, htp://, ftp:// etc.)
     if (/^[a-zA-Z]+:\/\//.test(trimmedUrl)) {
         if (!/^https?:\/\//i.test(trimmedUrl)) {
             return {
@@ -11,12 +10,10 @@ export function validateUrlFrontend(inputUrl) {
         }
     }
 
-    // 2. If no protocol → add http://
     const withProtocol = /^https?:\/\//i.test(trimmedUrl)
         ? trimmedUrl
         : "http://" + trimmedUrl;
 
-    // 3. Try URL parsing (this catches 'http://????', 'http://htps://', etc.)
     let url;
     try {
         url = new URL(withProtocol);
@@ -27,7 +24,6 @@ export function validateUrlFrontend(inputUrl) {
         };
     }
 
-    // 4. Reject URLs without a real hostname
     if (!url.hostname.includes(".") || url.hostname.length < 3) {
         return {
             valid: false,
@@ -35,7 +31,6 @@ export function validateUrlFrontend(inputUrl) {
         };
     }
 
-    // 5. Reject obviously incorrect domains (numbers only, one letter, etc.)
     if (!/^[a-z0-9.-]+$/i.test(url.hostname)) {
         return {
             valid: false,
@@ -69,7 +64,6 @@ export function validateUrlBackend(inputUrl) {
 
     const hostname = parsedUrl.hostname;
 
-    // Domain must contain at least one dot
     if (!hostname.includes(".")) {
         return {
             valid: false,
@@ -77,7 +71,6 @@ export function validateUrlBackend(inputUrl) {
         };
     }
 
-    // Only valid characters
     if (!/^[a-zA-Z0-9.-]+$/.test(hostname)) {
         return {
             valid: false,
@@ -85,7 +78,6 @@ export function validateUrlBackend(inputUrl) {
         };
     }
 
-    // Hyphen rules
     if (hostname.startsWith("-") || hostname.endsWith("-")) {
         return {
             valid: false,
@@ -93,7 +85,6 @@ export function validateUrlBackend(inputUrl) {
         };
     }
 
-    // No double dots
     if (hostname.includes("..")) {
         return {
             valid: false,
@@ -101,7 +92,6 @@ export function validateUrlBackend(inputUrl) {
         };
     }
 
-    // Top-level domain rules
     const tld = hostname.split(".").pop();
     if (tld.length < 2) {
         return {
@@ -148,14 +138,11 @@ export function normaliseUrl(url) {
     try {
         const u = new URL(url.trim());
 
-        // Lowercase hostname (domains are case-insensitive)
         u.hostname = u.hostname.toLowerCase();
 
-        // Remove hash (#fragment) and query parameters (?utm= etc.)
         u.hash = "";
         u.search = "";
 
-        // Remove trailing slash unless it's the root
         if (u.pathname.endsWith("/") && u.pathname !== "/") {
             u.pathname = u.pathname.slice(0, -1);
         }
@@ -166,17 +153,14 @@ export function normaliseUrl(url) {
     }
 }
 
-// NEW: normalizer that PRESERVES the query/search for canonical comparison
 export function normaliseUrlKeepSearch(url) {
     try {
         const u = new URL(url.trim());
         u.hostname = u.hostname.toLowerCase();
-        u.hash = ""; // keep search but remove fragment
-        // leave u.search intact (do NOT clear)
+        u.hash = "";
         if (u.pathname.endsWith("/") && u.pathname !== "/") {
             u.pathname = u.pathname.slice(0, -1);
         }
-        // return full href including search
         return u.href;
     } catch {
         return url.trim();
@@ -230,13 +214,12 @@ export function createLimiter(maxConcurrency) {
 }
 
 /**
- * Evaluate if a URL is indexable.
  * @param {Object} params
- * @param {number} params.statusCode - Final HTTP status code of the URL
- * @param {boolean} params.blockedByRobots - True if URL is blocked by robots.txt
- * @param {boolean} params.canonicalMatches - True if canonical URL matches this URL
- * @param {boolean} params.metaRobotsAllowsIndexing - True if meta robots allows indexing
- * @returns {Object} { indexable: boolean, reasons: string[] }
+ * @param {number} params.statusCode
+ * @param {boolean} params.blockedByRobots
+ * @param {boolean} params.canonicalMatches
+ * @param {boolean} params.metaRobotsAllowsIndexing
+ * @returns {Object}
 */
 export function evaluateIndexability({
     statusCode,

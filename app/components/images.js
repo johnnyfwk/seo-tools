@@ -1,4 +1,3 @@
-import Link from "next/link";
 import * as utils from '@/app/lib/utils/utils';
 
 export default function Images({ images }) {

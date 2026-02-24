@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sitealyser.com
 
-## Getting Started
+A full-stack SEO auditing tool built with Next.js that analyses on-page SEO elements for any URL.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### URL & Crawl Analysis
+- URL validation
+- Redirect chain detection
+- HTTP → HTTPS checks
+- Status code reporting
+- Final URL resolution
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Indexability Checks
+- Robots.txt parsing and blocking detection
+- Meta Robots & X-Robots-Tag analysis
+- Canonical tag evaluation
+- Indexability assessment logic
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Technical SEO Elements
+- XML sitemap detection
+- Content type detection (HTML, PDF, image, etc.)
+- HTML language attribute validation
+- Viewport meta tag analysis
+- Pagination tag detection
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### On-Page SEO Elements
+- Title tags
+- Meta descriptions
+- Heading structure (H1–H6)
+- Internal and external links
+- Image alt text
+- Structured data extraction
+- Hreflang validation
+- Open Graph tags
 
-## Learn More
+## Tech Stack
+- **Frontend:** React, Next.js
+- **Backend:** Next.js API Routes
+- **Scraping Engine:** Cheerio
+- **Architecture:** Modular scraper functions
+- **Deployment:** Vercel
 
-To learn more about Next.js, take a look at the following resources:
+## Live Site
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Visit the live site: https://sitealyser.com/

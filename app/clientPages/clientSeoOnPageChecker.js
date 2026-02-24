@@ -27,7 +27,6 @@ import * as utils from '@/app/lib/utils/utils';
 
 export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOptions }) {
     const initialPageData = {
-        scrapeDuration: null,
         enteredUrl: "",
         enteredUrlStatusCode: null,
         finalUrl: "",
@@ -126,8 +125,6 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
 
         setIsCheckingPage(true);
 
-        const startTime = performance.now();
-
         try {
             const response = await fetch('/api/seo-on-page-checker', {
                 method: 'POST',
@@ -146,10 +143,6 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
             }
 
             const data = await response.json();
-            console.log("Data:", data);
-
-            const endTime = performance.now();
-            const elapsedMs = endTime - startTime;
 
             const metaRobotsAllDirectivesLowercase = String(data.scrapedData?.metaRobotsAndXRobotsTag?.allDirectives || "").toLowerCase();
 
@@ -166,7 +159,6 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
             setPageData({
                 ...initialPageData,
                 ...data,
-                scrapeDuration: elapsedMs || initialPageData.scrapeDuration,
                 enteredUrl: data.enteredUrl || initialPageData.enteredUrl,
                 indexability: urlIndexability || initialPageData.indexability,
                 enteredUrlStatusCode: data.enteredUrlStatusCode || initialPageData.enteredUrlStatusCode,
@@ -255,13 +247,7 @@ export default function ClientSeoOnPageChecker({ h1, metaDescription, scrapeOpti
         }
     }
 
-    const scrapeDuration = utils.formatScrapeDuration(pageData.scrapeDuration);
-
     const mainSections = [
-        // {
-        //     title: "Scrape Duration",
-        //     component: <p>{scrapeDuration}</p>,
-        // },
         {
             title: "URL",
             component: <Url url={pageData.enteredUrl} />,

@@ -2,9 +2,8 @@ import * as cheerio from "cheerio";
 import { getRedirects } from "../utils/getRedirects";
 
 /**
- * Scrapes links from HTML and fetches HTTP info
- * @param {string|function} htmlOr$ - raw HTML or a cheerio instance
- * @param {string} pageUrl - the base URL of the page
+ * @param {string|function} htmlOr$
+ * @param {string} pageUrl
 */
 export async function scrapeLinks(htmlOr$, pageUrl) {
     const $ = typeof htmlOr$ === "function" && htmlOr$.root
@@ -19,7 +18,6 @@ export async function scrapeLinks(htmlOr$, pageUrl) {
 
         const cleanHref = rawHref.trim();
 
-        // Detect JS/click-tracking links
         const uncrawlable =
             cleanHref === "" ||
             cleanHref === "#" ||
@@ -27,7 +25,6 @@ export async function scrapeLinks(htmlOr$, pageUrl) {
             cleanHref.startsWith("tel:") ||
             cleanHref.startsWith("mailto:");
 
-        // URL resolution
         let initialUrl;
         try {
             initialUrl = new URL(cleanHref, pageUrl).href;
@@ -41,7 +38,6 @@ export async function scrapeLinks(htmlOr$, pageUrl) {
         const imageSrc = extractImagePreview($, el, pageUrl);
         const imageAlt = type === "image" ? ($(el).find("img").attr("alt") || null) : null;
 
-        // Extract rel attributes (nofollow, ugc, sponsored, noopener, noreferrer)
         const rel = ($(el).attr("rel") || "").split(/\s+/).filter(Boolean);
         const linkRelInfo = {
             rel: rel.length ? rel.join(" ") : null,
@@ -52,7 +48,6 @@ export async function scrapeLinks(htmlOr$, pageUrl) {
             noreferrer: rel.includes("noreferrer")
         };
 
-        // Check broken image preview
         let imageStatus = null;
         if (imageSrc) {
             try {
@@ -63,14 +58,12 @@ export async function scrapeLinks(htmlOr$, pageUrl) {
             }
         }
 
-        // Optional URL fetch (limited for performance)
         let initialUrlStatusCode = null;
         let finalUrl = null;
         let finalUrlStatusCode = null;
         let redirects = [];
 
         try {
-            // const response = await fetch(initialUrl, { method: "GET", redirect: "follow" });
             const response = await getRedirects(initialUrl);
             initialUrlStatusCode = response.initialUrlStatusCode;
             finalUrl = response.finalUrl;
@@ -86,19 +79,15 @@ export async function scrapeLinks(htmlOr$, pageUrl) {
             finalUrl,
             finalUrlStatusCode,
             redirects,
-
             rawHref,
             cleanHref,
-
             type,
             anchorText,
             imageSrc,
             imageAlt,
             imageStatus,
-
             internal: isInternal,
             uncrawlable,
-
             ...linkRelInfo,
         };
     }
@@ -117,8 +106,6 @@ export async function scrapeLinks(htmlOr$, pageUrl) {
         },
     };
 }
-
-/* -------------------- HELPERS -------------------- */
 
 function classifyLink($, el, uncrawlable) {
     if (uncrawlable) return "Uncrawlable";

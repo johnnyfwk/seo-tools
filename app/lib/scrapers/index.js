@@ -15,7 +15,7 @@ import { scrapeOpenGraph } from './openGraph';
 import { scrapePagination } from './pagination';
 
 function shouldScrape(optionKey, opts) {
-    if (opts[optionKey] === false) return false; // explicitly disabled
+    if (opts[optionKey] === false) return false;
     
     return opts[optionKey] === true || opts.all === true;
 }
@@ -31,8 +31,8 @@ export async function scrapeWithCheerio(
     const $ = typeof html === 'function' && html.root
         ? html
         : cheerio.load(html, {
-            xmlMode: false,      // parse as lenient HTML
-            decodeEntities: true // converts HTML entities
+            xmlMode: false,
+            decodeEntities: true
         });
 
     const results = {};

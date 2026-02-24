@@ -58,8 +58,8 @@ export async function scrapePagination($, pageUrl, headers = {}) {
             const response = await getRedirects(link.href);
 
             entry.initialUrlStatusCode = response.initialUrlStatusCode;
-            entry.finalUrl = response.finalUrl; // fetch automatically resolves redirects
-            entry.finalUrlStatusCode = response.finalUrlStatusCode; // same status code for final URL
+            entry.finalUrl = response.finalUrl;
+            entry.finalUrlStatusCode = response.finalUrlStatusCode;
 
             const finalHtmlResponse = await fetch(response.finalUrl, {
                 method: "GET",

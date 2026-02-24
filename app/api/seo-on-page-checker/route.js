@@ -46,13 +46,10 @@ export async function POST(request) {
             redirects
         } = redirectData;
 
-        // --- ROBOTS.TXT ---
         const robotsTxt = await checkRobotsTxt(finalUrl);
 
-        // --- XML SITEMAPS ---
         const xmlSitemaps = await scrapeXmlSitemaps(finalUrl);
 
-        // --- FETCH RESOURCE ---
         let resource = {
             headers: {},
             data: null,

@@ -45,7 +45,6 @@ export async function getRedirects(inputUrl) {
             statusCode,
         });
 
-        // Not a redirect → done
         if (![301, 302, 303, 307, 308].includes(statusCode)) {
             return {
                 initialUrl: inputUrl,
