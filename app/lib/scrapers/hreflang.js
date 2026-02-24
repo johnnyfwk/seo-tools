@@ -7,7 +7,6 @@ import { scrapeMetaRobotsAndXRobotsTag } from './metaRobotsAndXRobotsTag';
 export async function scrapeHreflang($, pageUrl, headers = {}) {
     const hreflangs = [];
 
-    // 1️⃣ Collect <link hreflang>
     $('link[hreflang]').each((_, el) => {
         const href = $(el).attr('href')?.trim();
         const hreflang = $(el).attr('hreflang')?.trim();
@@ -20,7 +19,6 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
         }
     });
 
-    // 2️⃣ Collect hreflangs from headers
     const linkHeader = headers['link'] || headers['Link'];
     if (linkHeader) {
         const matches = linkHeader.matchAll(
@@ -49,7 +47,6 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
                 continue;
             }
 
-            // Resolve redirects
             const redirectInfo = await getRedirects(absoluteUrl);
 
             const initialUrl = redirectInfo.initialUrl;
@@ -57,10 +54,8 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
             const finalUrl = redirectInfo.finalUrl;
             const finalUrlStatusCode = redirectInfo.finalUrlStatusCode;
 
-            // Initial robots.txt
             const robotsTxt = await checkRobotsTxt(finalUrl);
 
-            // Initial HTML (for meta robots + canonical)
             let metaRobotsAndXRobotsTag = null;
             let canonicalTags = null;
 
@@ -80,18 +75,13 @@ export async function scrapeHreflang($, pageUrl, headers = {}) {
             results.push({
                 ...item,
 
-                // Initial URL
                 initialUrl,
                 initialUrlStatusCode,
                 robotsTxt,
                 metaRobotsAndXRobotsTag: metaRobotsAndXRobotsTag?.metaRobotsAndXRobotsTag || null,
                 canonicalTags,
-
-                // Final URL
                 finalUrl,
                 finalUrlStatusCode,
-
-                // Redirects
                 redirects: redirectInfo.redirects
             });
 

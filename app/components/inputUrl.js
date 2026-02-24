@@ -60,7 +60,7 @@ export default function InputUrl({
                         checked={scrapeEvenIfBlocked}
                         onChange={(value) => {
                             setScrapeEvenIfBlocked(value);
-                            setHasCheckedPage(false); // reset until next fetch
+                            setHasCheckedPage(false);
                         }}
                     />
                     : null

@@ -4,7 +4,7 @@ import { scrapeCanonicalTags } from "./canonicalTags";
 import { scrapeMetaRobotsAndXRobotsTag } from "./metaRobotsAndXRobotsTag";
 import { checkRobotsTxt } from "../utils/checkRobotsTxt";
 
-export async function scrapeOpenGraph($, pageUrl) {
+export async function scrapeOpenGraph($) {
     if (!$) return {};
 
     const expectedOgFields = [
@@ -24,7 +24,6 @@ export async function scrapeOpenGraph($, pageUrl) {
 
     const multiValueKeys = ["image", "video", "audio", "url"];
 
-    // Extract OG meta tags
     $("meta[property^='og:']").each((_, el) => {
         const property = $(el).attr("property");
         const content = $(el).attr("content")?.trim();
@@ -37,12 +36,10 @@ export async function scrapeOpenGraph($, pageUrl) {
             if (!openGraph[key]) openGraph[key] = [];
             openGraph[key].push(content);
         } else {
-            // single value: only keep first occurrence
             if (!openGraph[key]) openGraph[key] = content;
         }
     });
 
-    // Handle og:url as array
     const ogUrls = Array.isArray(openGraph.url)
         ? openGraph.url
         : [openGraph.url].filter(Boolean);
@@ -53,7 +50,6 @@ export async function scrapeOpenGraph($, pageUrl) {
         let validUrl = true;
         let visitableRawUrl = null;
 
-        // Validate URL
         try {
             visitableRawUrl = new URL(ogUrl).href;
         } catch {
@@ -66,7 +62,6 @@ export async function scrapeOpenGraph($, pageUrl) {
             continue;
         }
 
-        // --- 3. Resolve redirects ---
         const redirectData = await getRedirects(visitableRawUrl);
 
         const initialUrl = redirectData.initialUrl;
@@ -74,10 +69,8 @@ export async function scrapeOpenGraph($, pageUrl) {
         const finalUrl = redirectData.finalUrl;
         const finalStatus = redirectData.finalUrlStatusCode;
 
-        // --- 4. Check robots.txt for final URL ---
         const robotsTxt = await checkRobotsTxt(finalUrl);
 
-        // --- 5. Fetch final URL HTML ---
         let $final = null;
         let metaRobotsAndXRobots = null;
         let canonical = null;
@@ -88,17 +81,14 @@ export async function scrapeOpenGraph($, pageUrl) {
                 const html = await res.text();
                 $final = cheerio.load(html);
 
-                // Extract meta robots
                 metaRobotsAndXRobots = scrapeMetaRobotsAndXRobotsTag($final, res.headers)?.metaRobotsAndXRobotsTag;
 
-                // Extract canonical for the final URL only
                 canonical = (await scrapeCanonicalTags($final, finalUrl)).canonicalTags;
             }
         } catch (err) {
             // If HTML fetch fails, still report redirects + robots
         }
 
-        // --- 6. Push result ---
         results.push({
             rawUrl: ogUrl,
 

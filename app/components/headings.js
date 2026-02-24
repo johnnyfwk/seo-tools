@@ -12,23 +12,18 @@ export default function Headings({ headings }) {
         return acc;
     }, {});
 
-    // Require H1 to exist
     const issues = [];
 
-    // 1️⃣ Check for missing H1
     if (grouped.h1.length === 0) {
         issues.push('h1');
     }
 
-    // 2️⃣ Identify all used heading levels
     const usedLevels = headingLevels.filter(level => grouped[level].length > 0);
 
     if (usedLevels.length > 0) {
-        // Determine the lowest and highest used levels (e.g., h1 → h4)
         const firstUsedIndex = headingLevels.indexOf(usedLevels[0]);
         const lastUsedIndex = headingLevels.indexOf(usedLevels[usedLevels.length - 1]);
 
-        // 3️⃣ Check intermediate levels for gaps
         for (let i = firstUsedIndex + 1; i < lastUsedIndex; i++) {
             const level = headingLevels[i];
             if (grouped[level].length === 0) {

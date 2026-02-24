@@ -4,10 +4,8 @@ export async function checkRobotsTxt(inputUrl, userAgent = "*") {
     try {
         const urlObj = new URL(inputUrl);
 
-        // Normalize host without "www."
         const bareHost = urlObj.hostname.replace(/^www\./, "");
 
-        // Generate all likely robots.txt URLs
         const robotsCandidates = [
             `https://${bareHost}/robots.txt`,
             `https://www.${bareHost}/robots.txt`,
@@ -18,7 +16,6 @@ export async function checkRobotsTxt(inputUrl, userAgent = "*") {
         let robotsTxtUrl = null;
         let text = null;
 
-        // Try candidates in order until one succeeds
         for (const candidate of robotsCandidates) {
             try {
                 const res = await fetch(candidate, {
@@ -27,10 +24,8 @@ export async function checkRobotsTxt(inputUrl, userAgent = "*") {
                 });
 
                 if (res.ok) {
-                    // Always try to read it — almost all robots.txt are plain text even if content-type is wrong
                     const body = await res.text();
 
-                    // Simple sanity check: must at least contain User-agent or Sitemap
                     if (body.length > 0) {
                         text = body;
                         robotsTxtUrl = candidate;
@@ -43,7 +38,6 @@ export async function checkRobotsTxt(inputUrl, userAgent = "*") {
             }
         }
 
-        // If none worked → treat robots.txt as missing
         if (!text) {
             return {
                 url: null,
@@ -55,7 +49,6 @@ export async function checkRobotsTxt(inputUrl, userAgent = "*") {
             };
         }
 
-        // --- PARSE ROBOTS.TXT ---
         const lines = text.split("\n");
 
         const groups = [];
@@ -97,7 +90,6 @@ export async function checkRobotsTxt(inputUrl, userAgent = "*") {
             }
         }
 
-        // --- RULE MATCHING ---
         const uaLower = userAgent.toLowerCase();
 
         const matchedGroup =
@@ -113,15 +105,12 @@ export async function checkRobotsTxt(inputUrl, userAgent = "*") {
         const matchesRule = (rule, path) => {
             if (!rule || rule === "") return false;
 
-            // Escape regex special chars except * and $
             let pattern = rule
                 .replace(/[.+^${}()|[\]\\]/g, "\\$&")
                 .replace(/\*/g, ".*");
 
-            // '^' anchor if rule doesn’t start with *
             if (!rule.startsWith("*")) pattern = "^" + pattern;
 
-            // If rule ends with '$', ensure correct end anchor
             if (rule.endsWith("$")) {
                 pattern = pattern.replace(/\\\$$/, "") + "$";
             }

@@ -64,7 +64,6 @@ export async function scrapeCanonicalTags($, pageUrl) {
                         redirect: 'manual',
                     });
                 } catch {
-                    // Fallback: some servers block HEAD
                     response = await fetch(resolvedCanonicalUrl, {
                         method: 'GET',
                         headers: browserHeaders,

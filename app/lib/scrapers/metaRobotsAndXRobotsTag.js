@@ -3,7 +3,7 @@ export function scrapeMetaRobotsAndXRobotsTag($, headers = {}) {
     const xRobotsTagContent = headers['x-robots-tag'] || headers['X-Robots-Tag'] || null;
 
     const allDirectives = [metaRobotsTagContent, xRobotsTagContent]
-        .filter(c => c) // Remove nulls/empties
+        .filter(c => c)
         .join(', ');
 
     return {

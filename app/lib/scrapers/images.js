@@ -10,7 +10,6 @@ export async function scrapeImages($, pageUrl, { checkStatus = false } = {}) {
             const $el = $(el);
             const alt = $el.attr('alt') || '';
 
-            // Gather all possible image URLs
             let urls = [];
             const srcAttrs = [
                 'src',
@@ -25,7 +24,6 @@ export async function scrapeImages($, pageUrl, { checkStatus = false } = {}) {
                 if (!val) continue;
 
                 if (attr === 'data-srcset' || val.includes(',')) {
-                    // Handle srcset with multiple URLs
                     val.split(',').forEach(item => {
                         const urlPart = item.trim().split(' ')[0];
                         if (urlPart) urls.push(urlPart);
@@ -35,12 +33,11 @@ export async function scrapeImages($, pageUrl, { checkStatus = false } = {}) {
                 }
             }
 
-            // Resolve relative URLs
             urls = urls.map(url => {
                 try {
                     return new URL(url, pageUrl).href;
                 } catch {
-                    return url; // keep invalid URLs for reporting
+                    return url;
                 }
             });
 
@@ -87,6 +84,5 @@ export async function scrapeImages($, pageUrl, { checkStatus = false } = {}) {
         }))
     );
 
-    // Flatten the array because each img may return multiple URLs
     return { images: images.flat() };
 }

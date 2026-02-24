@@ -5,22 +5,27 @@ import * as utils from "@/app/lib/utils/utils";
 export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
     if (!openGraph) return null;
 
-    // Normalize og:url
     const ogUrls = Array.isArray(openGraph.url)
         ? openGraph.url
         : typeof openGraph.url === "string"
         ? [{ initialUrl: openGraph.url }]
         : [];
 
-    // Check for OG presence
     const hasOgData = Object.values(openGraph).some(
         (v) => v !== null && v !== "" && !(Array.isArray(v) && v.length === 0)
     );
     if (!hasOgData) return <p>⚠️ No open graph tags found</p>;
 
-    // Detect missing standard fields
     const expectedOgFields = [
-        "title","type","url","description","image","siteName","video","audio","locale"
+        "title",
+        "type",
+        "url",
+        "description",
+        "image",
+        "siteName",
+        "video",
+        "audio",
+        "locale"
     ];
 
     const missingFields = expectedOgFields.filter(field => {
@@ -28,7 +33,6 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
         return val === null || val === "" || (Array.isArray(val) && val.length === 0);
     });
 
-    // Helper: Render media arrays (images/videos) as clickable links
     const renderMediaArray = (label, arr) => arr.map((src, idx) => (
         <tr key={`${label}-${idx}`}>
             <td>{`${label} [${idx + 1}]`}</td>
@@ -49,7 +53,6 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
         </tr>
     ));
 
-    // Helper: Render a label + clickable URL row
     const renderUrlRow = (label, url) => (
         <div className="wrap-text">
             <strong>{label}:</strong>{" "}
@@ -77,7 +80,6 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {/* General OG fields except url */}
                         {Object.entries(openGraph).map(([key, value]) => {
                             if (key === "url" || !value) return null;
 
@@ -87,7 +89,6 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
                             if ((key === "image" || key === "video") && typeof value === "string")
                             return renderMediaArray(key, [value]);
 
-                            // Make any string starting with http clickable
                             const displayValue = typeof value === "string" && value.startsWith("http")
                                 ? <a href={value} target="_blank" rel="noopener noreferrer">{value}</a>
                                 : value;
@@ -100,7 +101,6 @@ export default function OpenGraph({ openGraph, contentType, xRobotsNoindex }) {
                             );
                         })}
 
-                        {/* og:url entries */}
                         {ogUrls.map((og, idx) => {
                             const finalStatus = og.finalUrlStatusCode ?? og.initialUrlStatusCode;
 

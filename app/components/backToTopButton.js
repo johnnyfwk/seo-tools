@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react';
 
 export default function BackToTopButton() {
     const [visible, setVisible] = useState(false);
-
-    // Show button after scrolling down 300px
+    
     useEffect(() => {
         const handleScroll = () => {
             setVisible(window.scrollY > 300);

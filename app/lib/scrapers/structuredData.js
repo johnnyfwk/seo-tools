@@ -24,7 +24,6 @@ function handleStructuredData(node, results) {
 export function scrapeStructuredData($) {
     const results = [];
 
-    // --- JSON-LD ---
     $('script[type*="ld+json" i]').each((i, el) => {
         try {
             const jsonText = $(el).html().trim();
@@ -32,7 +31,7 @@ export function scrapeStructuredData($) {
 
             if (Array.isArray(parsed)) {
                 parsed.forEach(node => handleStructuredData(node, results));
-            } else if (parsed['@graph']) { // ✅ handle Yoast SEO structured data
+            } else if (parsed['@graph']) {
                 parsed['@graph'].forEach(node => handleStructuredData(node, results));
             } else {
                 handleStructuredData(parsed, results);
@@ -44,7 +43,6 @@ export function scrapeStructuredData($) {
         }
     });
 
-    // --- Microdata ---
     $('[itemscope]').each((i, el) => {
         const type = $(el).attr('itemtype');
 
@@ -58,7 +56,6 @@ export function scrapeStructuredData($) {
         }
     });
 
-    // --- RDFa ---
     $('[typeof]').each((i, el) => {
         const type = $(el).attr('typeof');
 

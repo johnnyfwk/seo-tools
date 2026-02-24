@@ -4,7 +4,7 @@ export function scrapeViewport($) {
     const properties = content
         ? content.split(',').reduce((acc, pair) => {
             const [key, value] = pair.split('=').map(s => s.trim());
-            if (key) acc[key] = value ?? true; // if no value, set as true
+            if (key) acc[key] = value ?? true;
             return acc;
         }, {})
         : {};
