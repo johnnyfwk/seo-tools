@@ -8,7 +8,6 @@ import {
     siteName,
     openGraphLocale,
     openGraphType,
-    openGraphImage,
 } from "@/data/site";
 
 export async function generateMetadata({ params }) {
@@ -39,11 +38,6 @@ export async function generateMetadata({ params }) {
             siteName,
             locale: openGraphLocale,
             type: openGraphType,
-            images: [
-                {
-                    url: `${siteUrl}${openGraphImage}`
-                }
-            ],
         }
     }
 }
