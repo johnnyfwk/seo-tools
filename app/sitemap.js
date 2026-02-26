@@ -8,7 +8,6 @@ const toolsArray = tools.map((tool, i) => {
             url: `${siteUrl}tools/${tool.slug}`,
             lastModified: new Date().toISOString(),
             changeFrequency: 'monthly',
-            priority: 0.9,
         }
     )
 })
@@ -19,7 +18,6 @@ const pagesArray = pages.map((page, i) => {
             url: `${siteUrl}${page.slug}`,
             lastModified: new Date().toISOString(),
             changeFrequency: 'yearly',
-            priority: page.priority,
         }
     )
 })
@@ -30,7 +28,6 @@ export default function sitemap() {
             url: siteUrl,
             lastModified: new Date().toISOString(),
             changeFrequency: 'monthly',
-            priority: 1.0,
         },
         ...toolsArray,
         ...pagesArray,
