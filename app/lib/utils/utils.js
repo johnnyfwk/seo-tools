@@ -471,3 +471,14 @@ export function generateStructuredDataForToolPages(siteUrl, siteName, tool) {
         breadcrumbSchema
     ];
 }
+
+export function isPaginationUrl(url) {
+    try {
+        const u = new URL(url);
+        const page = u.searchParams.get("page");
+
+        return page && Number(page) > 1;
+    } catch {
+        return false;
+    }
+}

@@ -2,7 +2,6 @@ import Link from "next/link";
 import * as utils from '@/app/lib/utils/utils';
 
 export default function Pagination({ pagination }) {
-    console.log("Pagination:", pagination);
     if (!pagination || pagination.length === 0) {
         return <p>No pagination links found</p>;
     }
