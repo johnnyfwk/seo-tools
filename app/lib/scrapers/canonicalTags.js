@@ -46,8 +46,21 @@ export async function scrapeCanonicalTags($, pageUrl) {
         }
 
         if (resolvedCanonicalUrl) {
-            resolvedCanonicalUrlMatchesOriginalUrl = 
-                utils.normaliseUrlKeepSearch(resolvedCanonicalUrl) === utils.normaliseUrlKeepSearch(pageUrl);
+            const pageUrlObj = new URL(pageUrl);
+            const canonicalObj = new URL(resolvedCanonicalUrl);
+
+            let pageUrlForComparison = new URL(pageUrlObj.href);
+
+            const pageParam = pageUrlObj.searchParams.get("page");
+
+            if (pageParam === "1") {
+                pageUrlForComparison.searchParams.delete("page");
+            }
+
+            resolvedCanonicalUrlMatchesOriginalUrl =
+                utils.normaliseUrlKeepSearch(canonicalObj.href) ===
+                utils.normaliseUrlKeepSearch(pageUrlForComparison.href);
+                
             if (!resolvedCanonicalUrlMatchesOriginalUrl) {
                 issues.push(`Canonical URL points elsewhere: ${resolvedCanonicalUrl}`)
             };
