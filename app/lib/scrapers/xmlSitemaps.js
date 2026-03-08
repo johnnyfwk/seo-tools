@@ -1,7 +1,8 @@
-import { DOMParser } from "@xmldom/xmldom";
 import zlib from "zlib";
+import { DOMParser } from "@xmldom/xmldom";
 import { checkRobotsTxt } from "../utils/checkRobotsTxt";
 import { browserHeaders } from "../utils/browserHeaders";
+import { isPaginationUrl, normaliseUrl } from "../utils/utils";
 
 function queue(items, limit, worker) {
     const running = new Set();
@@ -37,8 +38,6 @@ export async function scrapeXmlSitemaps(targetUrl) {
 
     const foundSitemaps = [];
     const foundMatchIn = new Map();
-
-    const normalizeUrl = (u) => u.replace(/\/$/, "").toLowerCase();
 
     async function fetchXmlWithStatus(url) {
         try {
@@ -97,10 +96,10 @@ export async function scrapeXmlSitemaps(targetUrl) {
         if (!result.xml) return;
 
         const locs = extractLocs(result.xml);
-        const normTarget = normalizeUrl(targetUrl);
+        const normTarget = normaliseUrl(targetUrl);
 
         for (const loc of locs) {
-            if (normalizeUrl(loc) === normTarget) {
+            if (normaliseUrl(loc) === normTarget) {
                 foundMatchIn.set(url, sitemapRecord);
             }
         }
@@ -110,11 +109,14 @@ export async function scrapeXmlSitemaps(targetUrl) {
 
     const successfulSitemaps = foundSitemaps.filter(s => s.statusCode === 200);
 
+    const paginationUrl = isPaginationUrl(targetUrl);
+
     return {
         hasSitemap: successfulSitemaps.length > 0,
         robotsTxtChecked: robotsData.url,
         sitemapsChecked: foundSitemaps,
         urlFound: foundMatchIn.size > 0,
+        skippedBecausePagination: paginationUrl,
         sitemapsContainingUrl: Array.from(foundMatchIn.values())
     };
 }

@@ -17,6 +17,7 @@ export default function XmlSitemaps({ xmlSitemaps }) {
 
     const containing = xmlSitemaps.sitemapsContainingUrl || [];
     const checked = xmlSitemaps.sitemapsChecked || [];
+    const skipped = xmlSitemaps.skippedBecausePagination === true;
 
     const nullStatusCodeUrlsInChecked = checked.filter((sitemap) => {
         return sitemap.statusCode === null;
@@ -26,7 +27,7 @@ export default function XmlSitemaps({ xmlSitemaps }) {
         return sitemap.statusCode !== null && sitemap.statusCode !== 200;
     });
 
-    if (containing.length === 0) {
+    if (containing.length <= 0 && !skipped) {
         issues.push("URL not found in any sitemap.");
     }
 
