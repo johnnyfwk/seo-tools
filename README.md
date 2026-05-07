@@ -23,6 +23,9 @@ A full-stack SEO auditing tool built with Next.js that analyses on-page SEO elem
 - HTML language attribute validation
 - Viewport meta tag analysis
 - Pagination tag detection
+- Structured data extraction
+- Hreflang validation
+- Open Graph tags
 
 ### On-Page SEO Elements
 - Title tags
@@ -30,9 +33,6 @@ A full-stack SEO auditing tool built with Next.js that analyses on-page SEO elem
 - Heading structure (H1–H6)
 - Internal and external links
 - Image alt text
-- Structured data extraction
-- Hreflang validation
-- Open Graph tags
 
 ## Tech Stack
 - **Frontend:** React, Next.js
